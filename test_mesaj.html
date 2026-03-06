@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mesaj Test</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body { font-family: monospace; padding: 20px; background: #0f0f0f; color: #00ff00; }
+    button { background: #1a1a1a; color: #00ff00; border: 1px solid #00ff00; padding: 10px 20px; cursor: pointer; margin: 5px; border-radius: 4px; }
+    button:hover { background: #003300; }
+    #log { background: #1a1a1a; border: 1px solid #333; padding: 16px; border-radius: 8px; margin-top: 16px; white-space: pre-wrap; font-size: 13px; min-height: 200px; }
+    .ok { color: #00ff00; }
+    .err { color: #ff4444; }
+    .info { color: #ffaa00; }
+    input { background: #1a1a1a; border: 1px solid #333; color: white; padding: 8px; border-radius: 4px; width: 100%; margin: 4px 0; }
+    label { color: #aaa; font-size: 12px; }
+  </style>
+</head>
+<body>
+<h2>🔧 Pazaryeri — Mesaj Sistemi Test Aracı</h2>
+
+<div>
+  <label>E-posta:</label>
+  <input type="email" id="email" placeholder="mail@ornek.com">
+  <label>Şifre:</label>
+  <input type="password" id="pass" placeholder="şifre">
+  <button onclick="testLogin()">1. Giriş Yap</button>
+</div>
+
+<div style="margin-top:12px">
+  <label>Alıcı User ID (UUID):</label>
+  <input type="text" id="aliciId" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx">
+  <label>İlan ID (boş bırakılabilir):</label>
+  <input type="text" id="ilanId" placeholder="opsiyonel">
+  <label>Mesaj:</label>
+  <input type="text" id="mesajText" value="Test mesajı" placeholder="mesaj içeriği">
+</div>
+
+<div style="margin-top:8px">
+  <button onclick="testTableAccess()">2. Tablo Erişimi Test Et</button>
+  <button onclick="testSendMsg()">3. Mesaj Gönder Test Et</button>
+  <button onclick="testListMsgs()">4. Mesajları Listele</button>
+  <button onclick="clearLog()">Log Temizle</button>
+</div>
+
+<div id="log">Loglar burada görünecek...\n</div>
+
+<script>
+const SURL = 'https://sbubvjeguxuqgiklrajk.supabase.co';
+const SKEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNidWJ2amVndXh1cWdpa2xyYWprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIzOTQxNTIsImV4cCI6MjA4Nzk3MDE1Mn0.dVwPmfxu2B0o9M-lMr5_k_Qy3YPDfiuk-TX2emDk9SQ';
+const sb = window.supabase.createClient(SURL, SKEY);
+let currentUser = null;
+
+function log(msg, type='info') {
+  const el = document.getElementById('log');
+  const time = new Date().toLocaleTimeString('tr-TR');
+  el.innerHTML += `<span class="${type}">[${time}] ${msg}</span>\n`;
+  el.scrollTop = el.scrollHeight;
+}
+
+function clearLog() { document.getElementById('log').innerHTML = ''; }
+
+async function testLogin() {
+  const email = document.getElementById('email').value;
+  const pass = document.getElementById('pass').value;
+  if (!email || !pass) { log('❌ E-posta ve şifre gerekli', 'err'); return; }
+  
+  log(`🔐 Giriş yapılıyor: ${email}...`, 'info');
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+  
+  if (error) {
+    log(`❌ Giriş hatası: ${error.message}`, 'err');
+    return;
+  }
+  currentUser = data.user;
+  log(`✅ Giriş başarılı!\n   User ID: ${currentUser.id}\n   Email: ${currentUser.email}`, 'ok');
+}
+
+async function testTableAccess() {
+  if (!currentUser) { log('⚠️ Önce giriş yapın', 'err'); return; }
+  log('🔍 Tablo erişimi test ediliyor...', 'info');
+  
+  // Select test
+  const { data, error, count } = await sb.from('mesajlar').select('*', { count: 'exact' }).limit(5);
+  if (error) {
+    log(`❌ SELECT hatası: ${error.code} — ${error.message}\n   Detay: ${error.details || '-'}\n   İpucu: ${error.hint || '-'}`, 'err');
+  } else {
+    log(`✅ SELECT çalışıyor. ${count ?? data?.length ?? 0} mesaj bulundu.`, 'ok');
+    if (data && data.length > 0) {
+      log(`📋 İlk mesaj örneği:\n${JSON.stringify(data[0], null, 2)}`, 'info');
+    }
+  }
+}
+
+async function testSendMsg() {
+  if (!currentUser) { log('⚠️ Önce giriş yapın', 'err'); return; }
+  
+  const aliciId = document.getElementById('aliciId').value.trim();
+  const ilanId = document.getElementById('ilanId').value.trim() || null;
+  const text = document.getElementById('mesajText').value.trim();
+  
+  if (!aliciId) { log('⚠️ Alıcı User ID gerekli', 'err'); return; }
+  if (aliciId === currentUser.id) { log('⚠️ Kendinize mesaj gönderemezsiniz', 'err'); return; }
+  
+  const payload = {
+    gonderen_id: currentUser.id,
+    alici_id: aliciId,
+    ilan_id: ilanId,
+    icerik: text || 'test',
+    okundu: false
+  };
+  
+  log(`📤 Gönderiliyor:\n${JSON.stringify(payload, null, 2)}`, 'info');
+  
+  const { data, error } = await sb.from('mesajlar').insert([payload]).select().single();
+  
+  if (error) {
+    log(`❌ INSERT hatası!\n   Kod: ${error.code}\n   Mesaj: ${error.message}\n   Detay: ${error.details || '-'}\n   İpucu: ${error.hint || '-'}`, 'err');
+  } else {
+    log(`✅ Mesaj başarıyla gönderildi!\n   ID: ${data.id}\n   Zaman: ${data.created_at}`, 'ok');
+  }
+}
+
+async function testListMsgs() {
+  if (!currentUser) { log('⚠️ Önce giriş yapın', 'err'); return; }
+  log('📋 Mesajlar listeleniyor...', 'info');
+  
+  const { data, error } = await sb.from('mesajlar')
+    .select('*')
+    .or(`gonderen_id.eq.${currentUser.id},alici_id.eq.${currentUser.id}`)
+    .order('created_at', { ascending: false })
+    .limit(10);
+    
+  if (error) {
+    log(`❌ Listeleme hatası: ${error.code} — ${error.message}`, 'err');
+  } else {
+    log(`✅ ${data.length} mesaj bulundu.`, 'ok');
+    data.forEach((m, i) => {
+      const dir = m.gonderen_id === currentUser.id ? '→ Gönderilen' : '← Alınan';
+      log(`  [${i+1}] ${dir} | "${m.icerik || '📷'}" | ${new Date(m.created_at).toLocaleString('tr-TR')}`, 'info');
+    });
+  }
+}
+</script>
+</body>
+</html>
