@@ -337,20 +337,22 @@ async function loadConvs() {
     .or('gonderen_id.eq.' + user.id + ',alici_id.eq.' + user.id)
     .order('created_at', { ascending: true });
 
+  // DEBUG — sayfada göster
   if (res.error) {
     document.getElementById('convItems').innerHTML =
       '<div style="padding:24px;text-align:center;color:#ef4444;font-size:13px">' +
-      '⚠️ <b>Hata:</b> ' + esc(res.error.message) + '<br><br>' +
+      '⚠️ <b>Hata:</b> ' + esc(res.error.message) + '<br><small>' + esc(res.error.code||'') + '</small><br><br>' +
       '<button onclick="loadConvs()" style="padding:8px 18px;background:var(--primary);color:white;border:none;border-radius:8px;cursor:pointer;font-weight:700">Tekrar Dene</button>' +
       '</div>';
     return;
   }
 
+  var rawCount = (res.data||[]).length;
+
   // Mesajları konuşmalara grupla
   var map = {};
   (res.data || []).forEach(function(m) {
     var otherId = m.gonderen_id === user.id ? m.alici_id : m.gonderen_id;
-    // Kendinize gönderilen mesajları atla
     if (otherId === user.id) return;
     var key = [user.id, otherId].sort().join('_') + '__' + (m.ilan_id || 'x');
     if (!map[key]) map[key] = { key:key, otherId:otherId, listingId:m.ilan_id||null, msgs:[], unread:0, otherName:'', listingTitle:'' };
@@ -363,6 +365,25 @@ async function loadConvs() {
     var lb = (b.msgs[b.msgs.length-1]||{}).created_at || '';
     return lb.localeCompare(la);
   });
+
+  // Eğer mesaj yoksa debug bilgisi göster
+  if (rawCount === 0) {
+    document.getElementById('convItems').innerHTML =
+      '<div style="padding:20px;font-size:12px;color:#888;background:#f9f9f9;border-radius:8px;margin:10px">' +
+      '⚠️ Supabase\'den 0 mesaj geldi.<br>' +
+      '<small>User: ' + user.id.slice(0,8) + '...</small>' +
+      '</div>';
+    return;
+  }
+
+  if (convs.length === 0 && rawCount > 0) {
+    document.getElementById('convItems').innerHTML =
+      '<div style="padding:20px;font-size:12px;color:#888;background:#fff3cd;border-radius:8px;margin:10px">' +
+      '⚠️ ' + rawCount + ' mesaj geldi ama konuşma oluşturulamadı.<br>' +
+      '<small>(Tüm mesajlar kendinize gönderilmiş olabilir)</small>' +
+      '</div>';
+    return;
+  }
 
   // URL parametresi: ilan sahibiyle konuşma aç
   var targetSeller  = paramSeller;
