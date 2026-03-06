@@ -211,7 +211,11 @@ if (!window._sbClient) {
       storageKey: 'sb-pazaryeri-auth',
       autoRefreshToken: true,
       persistSession: true,
-      detectSessionInUrl: false
+      detectSessionInUrl: false,
+      lock: function(name, acquireTimeout, fn) {
+        // Lock mekanizmasını bypass et
+        return fn();
+      }
     }
   });
 }
