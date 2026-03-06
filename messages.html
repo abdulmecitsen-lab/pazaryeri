@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mesajlar — Pazaryeri</title>
   <link rel="stylesheet" href="css/style.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.38.4"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0"></script>
   <style>
     /* ── MSG-ROW (eksikti, eklendi) ── */
     .msg-row { display:flex; margin-bottom:4px; }
@@ -206,7 +206,14 @@ const SURL = 'https://sbubvjeguxuqgiklrajk.supabase.co';
 const SKEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNidWJ2amVndXh1cWdpa2xyYWprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIzOTQxNTIsImV4cCI6MjA4Nzk3MDE1Mn0.dVwPmfxu2B0o9M-lMr5_k_Qy3YPDfiuk-TX2emDk9SQ';
 // Singleton: aynı sayfada birden fazla client oluşmasını önle
 if (!window._sbClient) {
-  window._sbClient = window.supabase.createClient(SURL, SKEY);
+  window._sbClient = window.supabase.createClient(SURL, SKEY, {
+    auth: {
+      storageKey: 'pz_auth',
+      autoRefreshToken: true,
+      persistSession: true,
+      detectSessionInUrl: false
+    }
+  });
 }
 const sb = window._sbClient;
 
@@ -705,24 +712,21 @@ function subscribeRealtime() {
 /* ── AUTH STATE ── */
 // Sayfa yüklenince hemen başlat
 async function init() {
-  // Önce localStorage'dan session'ı direkt oku (lock hatası olmaz)
+  // localStorage'dan direkt oku - lock almadan
   try {
-    var sessionKey = Object.keys(localStorage).find(function(k){
-      return k.startsWith('sb-') && k.includes('auth-token');
-    });
-    if (sessionKey) {
-      var raw = JSON.parse(localStorage.getItem(sessionKey));
-      var accessToken  = raw && raw.access_token;
-      var refreshToken = raw && raw.refresh_token;
-      if (accessToken) {
-        // Token'ı direkt set et, getSession()'ı bekleme
-        var r = await sb.auth.setSession({ access_token: accessToken, refresh_token: refreshToken });
+    var raw = localStorage.getItem('pz_auth');
+    if (raw) {
+      var stored = JSON.parse(raw);
+      var at = stored && stored.access_token;
+      var rt = stored && stored.refresh_token;
+      if (at) {
+        var r = await sb.auth.setSession({ access_token: at, refresh_token: rt });
         if (r.data && r.data.session) user = r.data.session.user;
       }
     }
   } catch(e) {}
 
-  // Hâlâ user yoksa getSession dene
+  // Token yoksa getSession dene
   if (!user) {
     try {
       var r2 = await sb.auth.getSession();

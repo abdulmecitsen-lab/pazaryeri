@@ -400,7 +400,7 @@ const SKEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZ
 if (!window._sbClient) {
   window._sbClient = window.supabase.createClient(SURL, SKEY, {
     auth: {
-      storageKey: 'sb-pazaryeri-auth',
+      storageKey: 'pz_auth',
       autoRefreshToken: true,
       persistSession: true,
       detectSessionInUrl: false
