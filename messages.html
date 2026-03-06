@@ -739,28 +739,42 @@ function subscribeRealtime() {
 }
 
 /* ── AUTH STATE ── */
-sb.auth.onAuthStateChange(async function(ev, ses) {
-  if (ev !== 'SIGNED_IN' && ev !== 'SIGNED_OUT' && ev !== 'INITIAL_SESSION') return;
-  var prevId = user ? user.id : null;
-  user = ses ? ses.user : null;
-  renderAuth();
-
-  if (user) {
+// Önce mevcut session'ı kontrol et (lock sorununu önler)
+sb.auth.getSession().then(async function(r) {
+  if (r.data && r.data.session) {
+    user = r.data.session.user;
+    renderAuth();
     document.getElementById('loginGate').style.display  = 'none';
     document.getElementById('mainContent').style.display = 'block';
-    if (!_initialized || prevId !== user.id) {
-      _initialized = true;
-      _nameCache = {};
-      if (realtimeCh) { sb.removeChannel(realtimeCh); realtimeCh = null; }
-      await loadConvs();
-      subscribeRealtime();
-    }
+    _initialized = true;
+    _nameCache = {};
+    await loadConvs();
+    subscribeRealtime();
   } else {
+    document.getElementById('mainContent').style.display = 'none';
+    document.getElementById('loginGate').style.display  = 'block';
+    setTimeout(function(){ window.openModal('loginModal'); }, 400);
+  }
+});
+
+// Sonraki değişiklikleri dinle (giriş/çıkış)
+sb.auth.onAuthStateChange(async function(ev, ses) {
+  if (ev === 'SIGNED_IN' && !_initialized) {
+    user = ses.user;
+    renderAuth();
+    document.getElementById('loginGate').style.display  = 'none';
+    document.getElementById('mainContent').style.display = 'block';
+    _initialized = true;
+    _nameCache = {};
+    await loadConvs();
+    subscribeRealtime();
+  } else if (ev === 'SIGNED_OUT') {
     _initialized = false;
+    user = null;
+    renderAuth();
     document.getElementById('mainContent').style.display = 'none';
     document.getElementById('loginGate').style.display  = 'block';
     if (realtimeCh) { sb.removeChannel(realtimeCh); realtimeCh = null; }
-    setTimeout(function(){ window.openModal('loginModal'); }, 400);
   }
 });
 
