@@ -379,10 +379,22 @@ function showEmpty(){
   $('convItems').innerHTML='<div style="padding:40px;text-align:center;color:var(--text3);font-size:13px"><div style="font-size:2.5rem;opacity:.2;margin-bottom:10px">💬</div>Henüz mesajınız yok.<br><br><a href="index.html" style="color:var(--primary);font-weight:700">İlanlara göz atın →</a></div>';
 }
 
+function updateHeaderBadge(){
+  var total=convs.reduce(function(s,c){return s+c.unread;},0);
+  // messages.html'deki convBadge
+  var b=$('convBadge'); if(b) b.textContent=convs.length;
+  // Sayfa title
+  if(total>0) document.title='('+total+') Mesajlar — Pazaryeri';
+  else document.title='Mesajlar — Pazaryeri';
+}
+
 /* ── KONUŞMA LİSTESİ ── */
 function renderConvList(){
   var el=$('convItems');
+  var totalUnread=convs.reduce(function(s,c){return s+c.unread;},0);
   $('convBadge').textContent=convs.length;
+  if(totalUnread>0) document.title='('+totalUnread+') Mesajlar — Pazaryeri';
+  else document.title='Mesajlar — Pazaryeri';
   if(!convs.length){showEmpty();return;}
   el.innerHTML=convs.map(function(c){
     var last=c.msgs[c.msgs.length-1];
@@ -416,8 +428,33 @@ window.mobileBackToList=function(){document.querySelector('.conv-list').style.di
 
 /* ── KONUŞMAYI AÇ ── */
 function openConv(conv){
-  activeKey=conv.key; conv.unread=0; window._activeConv=conv;
-  renderConvList(); renderChat(conv);
+  activeKey=conv.key; 
+  conv.unread=0; 
+  window._activeConv=conv;
+  renderConvList(); 
+  renderChat(conv);
+  
+  // Supabase'de okundu=true yap
+  var unreadIds = conv.msgs
+    .filter(function(m){ return m.alici_id===user.id && !m.okundu && m.id; })
+    .map(function(m){ return m.id; });
+  if(unreadIds.length){
+    // Token al ve REST API ile güncelle
+    var token=null;
+    try{var raw=localStorage.getItem('pz_auth'); if(raw) token=JSON.parse(raw).access_token;}catch(e){}
+    if(token){
+      fetch(SURL+'/rest/v1/mesajlar?id=in.('+unreadIds.join(',')+')',{
+        method:'PATCH',
+        headers:{'apikey':SKEY,'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+        body:JSON.stringify({okundu:true})
+      }).then(function(){
+        // Local state güncelle
+        conv.msgs.forEach(function(m){ if(m.alici_id===user.id) m.okundu=true; });
+        updateHeaderBadge();
+      });
+    }
+  }
+  
   if(window.innerWidth<=768){document.querySelector('.conv-list').style.display='none'; $('chatWindow').style.display='flex';}
 }
 
