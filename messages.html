@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mesajlar — Pazaryeri</title>
   <link rel="stylesheet" href="css/style.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.38.4"></script>
   <style>
     /* ── MSG-ROW (eksikti, eklendi) ── */
     .msg-row { display:flex; margin-bottom:4px; }
@@ -206,18 +206,7 @@ const SURL = 'https://sbubvjeguxuqgiklrajk.supabase.co';
 const SKEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNidWJ2amVndXh1cWdpa2xyYWprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIzOTQxNTIsImV4cCI6MjA4Nzk3MDE1Mn0.dVwPmfxu2B0o9M-lMr5_k_Qy3YPDfiuk-TX2emDk9SQ';
 // Singleton: aynı sayfada birden fazla client oluşmasını önle
 if (!window._sbClient) {
-  window._sbClient = window.supabase.createClient(SURL, SKEY, {
-    auth: {
-      storageKey: 'sb-pazaryeri-auth',
-      autoRefreshToken: true,
-      persistSession: true,
-      detectSessionInUrl: false,
-      lock: function(name, acquireTimeout, fn) {
-        // Lock mekanizmasını bypass et
-        return fn();
-      }
-    }
-  });
+  window._sbClient = window.supabase.createClient(SURL, SKEY);
 }
 const sb = window._sbClient;
 
