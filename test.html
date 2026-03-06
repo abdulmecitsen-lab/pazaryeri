@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Supabase Test — Pazaryeri</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body{font-family:monospace;padding:24px;background:#0f0f0f;color:#e0e0e0;font-size:13px}
+    h2{color:#ff5a1f;margin-bottom:4px}
+    .box{background:#1a1a1a;border:1px solid #333;border-radius:8px;padding:16px;margin-bottom:14px}
+    .ok{color:#4ade80}.err{color:#f87171}.warn{color:#fbbf24}.info{color:#60a5fa}
+    .log{margin:3px 0;padding:4px 8px;border-radius:4px;background:#111}
+    button{padding:8px 18px;background:#ff5a1f;color:white;border:none;border-radius:6px;cursor:pointer;font-size:13px;margin:4px}
+    input{background:#111;border:1px solid #333;color:#e0e0e0;padding:6px 10px;border-radius:6px;font-size:13px;width:260px;margin:4px}
+    label{display:block;margin-bottom:4px;color:#999;font-size:11px}
+  </style>
+</head>
+<body>
+<h2>🔧 Pazaryeri — Supabase Diagnostic</h2>
+<p style="color:#666;margin-bottom:20px">Bu sayfa Supabase bağlantısını ve tablo yapısını test eder.</p>
+
+<div class="box">
+  <div style="color:#ff5a1f;font-weight:bold;margin-bottom:10px">1. Bağlantı & Tablo Testi</div>
+  <button onclick="runTests()">▶ Testleri Çalıştır</button>
+  <div id="testLog" style="margin-top:12px"></div>
+</div>
+
+<div class="box">
+  <div style="color:#ff5a1f;font-weight:bold;margin-bottom:10px">2. Giriş Testi</div>
+  <label>E-posta</label><input type="email" id="tEmail" placeholder="test@mail.com">
+  <label>Şifre</label><input type="password" id="tPass" placeholder="şifre">
+  <button onclick="testLogin()">Giriş Yap & Test Et</button>
+  <div id="loginLog" style="margin-top:12px"></div>
+</div>
+
+<div class="box">
+  <div style="color:#ff5a1f;font-weight:bold;margin-bottom:10px">3. İlan Ekleme Testi (giriş gerekli)</div>
+  <button onclick="testInsert()">Test İlanı Ekle</button>
+  <div id="insertLog" style="margin-top:12px"></div>
+</div>
+
+<div class="box">
+  <div style="color:#ff5a1f;font-weight:bold;margin-bottom:10px">4. Mesaj Testi (giriş gerekli)</div>
+  <button onclick="testMsg()">Test Mesajı Gönder (kendine)</button>
+  <div id="msgLog" style="margin-top:12px"></div>
+</div>
+
+<script>
+const SURL='https://sbubvjeguxuqgiklrajk.supabase.co';
+const SKEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNidWJ2amVndXh1cWdpa2xyYWprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIzOTQxNTIsImV4cCI6MjA4Nzk3MDE1Mn0.dVwPmfxu2B0o9M-lMr5_k_Qy3YPDfiuk-TX2emDk9SQ';
+const sb=window.supabase.createClient(SURL,SKEY);
+let currentUser=null;
+
+function log(containerId, msg, type='info'){
+  const el=document.getElementById(containerId);
+  const d=document.createElement('div');
+  d.className='log '+type;
+  d.innerHTML=`<span style="opacity:.5">${new Date().toLocaleTimeString('tr-TR')}</span>  ${msg}`;
+  el.appendChild(d);
+}
+
+async function runTests(){
+  const c='testLog';
+  document.getElementById(c).innerHTML='';
+  log(c,'🔌 Supabase bağlantısı test ediliyor...','info');
+
+  // Test 1: urunler table - SELECT (public read)
+  log(c,'📋 urunler tablosu SELECT testi...','info');
+  const{data:u,error:ue}=await sb.from('urunler').select('*').limit(3);
+  if(ue){
+    log(c,`❌ urunler SELECT hatası: <b>${ue.message}</b> (code: ${ue.code})`, 'err');
+    if(ue.code==='42P01') log(c,'⚠️  "urunler" tablosu YOK — Supabase\'de oluşturmanız gerekiyor','warn');
+    else if(ue.message?.includes('permission')) log(c,'⚠️  RLS aktif ve SELECT policy yok — aşağıdaki SQL\'i çalıştırın','warn');
+  } else {
+    log(c,`✅ urunler tablosu okundu. Kayıt sayısı: <b>${u?.length||0}</b>`, 'ok');
+    if(u?.length>0) log(c,'📄 İlk kayıt sütunları: '+Object.keys(u[0]).join(', '),'info');
+  }
+
+  // Test 2: mesajlar table
+  log(c,'💬 mesajlar tablosu SELECT testi...','info');
+  const{data:m,error:me}=await sb.from('mesajlar').select('*').limit(1);
+  if(me){
+    log(c,`❌ mesajlar SELECT hatası: <b>${me.message}</b> (code: ${me.code})`,'err');
+    if(me.code==='42P01') log(c,'⚠️  "mesajlar" tablosu YOK — oluşturmanız gerekiyor','warn');
+    else if(me.message?.includes('permission')) log(c,'⚠️  RLS aktif ve SELECT policy yok','warn');
+  } else {
+    log(c,`✅ mesajlar tablosu okundu. Kayıt sayısı: <b>${m?.length||0}</b>`,'ok');
+    if(m?.length>0) log(c,'📄 mesajlar sütunları: '+Object.keys(m[0]).join(', '),'info');
+  }
+
+  // Test 3: users table
+  log(c,'👤 users tablosu SELECT testi...','info');
+  const{data:us,error:uer}=await sb.from('users').select('*').limit(1);
+  if(uer){
+    log(c,`⚠️  users tablosu: ${uer.message} — Bu normal olabilir, auth.users kullanılıyor`,'warn');
+  } else {
+    log(c,`✅ users tablosu OK. Kayıt: ${us?.length||0}`,'ok');
+  }
+
+  // Test 4: Auth session
+  const{data:{session}}=await sb.auth.getSession();
+  if(session){
+    currentUser=session.user;
+    log(c,`✅ Oturum aktif: <b>${session.user.email}</b>`,'ok');
+  } else {
+    log(c,'ℹ️  Oturum yok (giriş yapılmamış)','info');
+  }
+
+  log(c,'─── Test tamamlandı ───','info');
+}
+
+async function testLogin(){
+  const c='loginLog';
+  document.getElementById(c).innerHTML='';
+  const email=document.getElementById('tEmail').value;
+  const pass=document.getElementById('tPass').value;
+  if(!email||!pass){log(c,'⚠️  E-posta ve şifre girin','warn');return;}
+
+  log(c,'🔐 Giriş deneniyor...','info');
+  const{data,error}=await sb.auth.signInWithPassword({email,password:pass});
+  if(error){
+    log(c,`❌ Giriş hatası: <b>${error.message}</b>`,'err');
+    return;
+  }
+  currentUser=data.user;
+  log(c,`✅ Giriş başarılı! User ID: <b>${data.user.id}</b>`,'ok');
+  log(c,`📧 E-posta: ${data.user.email}`,'info');
+
+  // Test urunler with auth
+  log(c,'📋 Auth sonrası urunler SELECT testi...','info');
+  const{data:u2,error:ue2}=await sb.from('urunler').select('*').eq('user_id',data.user.id).limit(5);
+  if(ue2) log(c,`❌ Kendi ilanlarım hatası: ${ue2.message}`,'err');
+  else log(c,`✅ Kendi ilanlarım: <b>${u2?.length||0}</b> ilan bulundu`,'ok');
+
+  // Test mesajlar with auth
+  log(c,'💬 Auth sonrası mesajlar SELECT testi...','info');
+  const{data:msgs,error:me2}=await sb.from('mesajlar').select('*').or(`gonderen_id.eq.${data.user.id},alici_id.eq.${data.user.id}`).limit(5);
+  if(me2) log(c,`❌ Mesajlarım hatası: ${me2.message}`,'err');
+  else log(c,`✅ Mesajlarım: <b>${msgs?.length||0}</b> mesaj bulundu`,'ok');
+}
+
+async function testInsert(){
+  const c='insertLog';
+  document.getElementById(c).innerHTML='';
+  const{data:{session}}=await sb.auth.getSession();
+  if(!session){log(c,'⚠️  Önce giriş yapın','warn');return;}
+  currentUser=session.user;
+
+  log(c,'➕ Test ilanı ekleniyor...','info');
+  const{data,error}=await sb.from('urunler').insert([{
+    isim:'TEST İLANI — Sil beni',
+    kategori:'diger',
+    fiyat:1,
+    durum:'ikinci-el',
+    user_id:currentUser.id,
+  }]).select().single();
+
+  if(error){
+    log(c,`❌ INSERT hatası: <b>${error.message}</b> (code: ${error.code})`,'err');
+    if(error.message?.includes('permission')||error.code==='42501')
+      log(c,'⚠️  INSERT policy yok — Supabase\'de RLS policy eklemeniz gerekiyor','warn');
+    else if(error.message?.includes('user_id'))
+      log(c,'⚠️  user_id sütunu yok veya foreign key hatası','warn');
+  } else {
+    log(c,`✅ İlan eklendi! ID: <b>${data.id}</b>`,'ok');
+    // Clean up
+    await sb.from('urunler').delete().eq('id',data.id);
+    log(c,'🗑️  Test ilanı silindi','info');
+  }
+}
+
+async function testMsg(){
+  const c='msgLog';
+  document.getElementById(c).innerHTML='';
+  const{data:{session}}=await sb.auth.getSession();
+  if(!session){log(c,'⚠️  Önce giriş yapın','warn');return;}
+  currentUser=session.user;
+
+  log(c,'💬 Test mesajı gönderiliyor...','info');
+  const{data,error}=await sb.from('mesajlar').insert([{
+    gonderen_id:currentUser.id,
+    alici_id:currentUser.id,
+    icerik:'TEST MESAJI — otomatik test',
+    okundu:false,
+  }]).select().single();
+
+  if(error){
+    log(c,`❌ INSERT hatası: <b>${error.message}</b> (code: ${error.code})`,'err');
+    if(error.code==='42P01') log(c,'⚠️  "mesajlar" tablosu yok','warn');
+    else if(error.message?.includes('permission')||error.code==='42501') log(c,'⚠️  INSERT policy yok','warn');
+    else if(error.message?.includes('gonderen_id')) log(c,'⚠️  Sütun adları farklı olabilir','warn');
+    log(c,'💡 Beklenen sütunlar: gonderen_id, alici_id, ilan_id, icerik, okundu','info');
+  } else {
+    log(c,`✅ Mesaj gönderildi! ID: <b>${data.id}</b>`,'ok');
+    log(c,'📄 Sütunlar: '+Object.keys(data).join(', '),'info');
+    await sb.from('mesajlar').delete().eq('id',data.id);
+    log(c,'🗑️  Test mesajı silindi','info');
+  }
+}
+
+// Auto run on load
+window.onload=()=>runTests();
+</script>
+</body>
+</html>

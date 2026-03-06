@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profilim — Pazaryeri</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    .tab-content{display:none}.tab-content.active{display:block}
+    .lr{display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid var(--border);transition:background .12s}
+    .lr:last-child{border-bottom:none}.lr:hover{background:var(--bg)}
+    .lr img{width:68px;height:54px;object-fit:cover;border-radius:8px;border:1px solid var(--border);flex-shrink:0}
+    .lr-info{flex:1;min-width:0}
+    .lr-title{font-size:13.5px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px}
+    .lr-price{font-size:13px;color:var(--primary);font-weight:800}
+    .lr-meta{font-size:11px;color:var(--text3);margin-top:2px}
+    .lr-actions{display:flex;gap:6px;flex-shrink:0}
+    .bsm{padding:5px 11px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--bg);color:var(--text2);transition:.12s;text-decoration:none;display:inline-flex;align-items:center}
+    .bsm:hover{border-color:var(--primary);color:var(--primary)}
+    .bsm-del{background:rgba(255,90,31,.08);border-color:transparent;color:var(--primary)}
+    .bsm-del:hover{background:rgba(255,90,31,.15)}
+    .es{text-align:center;padding:44px 20px;color:var(--text3)}
+    .es-i{font-size:2.8rem;opacity:.25;margin-bottom:10px}
+  </style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <a href="index.html" class="logo-wrap">
+      <div class="logo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+      <div><div class="logo-text">Pazar<span>yeri</span></div><div class="logo-tagline">İlan & Alım Satım</div></div>
+    </a>
+    <div style="flex:1"></div>
+    <div class="header-right">
+      <a href="index.html" class="btn-signin" style="text-decoration:none">← Geri</a>
+      <a href="messages.html" class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></a>
+      <div id="authArea"></div>
+    </div>
+  </div>
+</header>
+
+<!-- Login Gate -->
+<div id="loginGate" style="display:none;text-align:center;padding:100px 20px">
+  <div style="font-size:3rem;margin-bottom:14px">🔒</div>
+  <h3 style="font-size:21px;font-weight:800;color:var(--text);margin-bottom:8px">Giriş Yapmanız Gerekiyor</h3>
+  <p style="color:var(--text3);margin-bottom:24px">Profilinizi görmek için giriş yapın.</p>
+  <button onclick="openModal('loginModal')" style="padding:12px 28px;background:var(--primary);color:white;border:none;border-radius:var(--radius);font-size:15px;font-weight:700;cursor:pointer">Giriş Yap</button>
+</div>
+
+<!-- Main -->
+<div class="profile-page" id="mainContent" style="display:none">
+  <div class="profile-grid">
+    <div class="profile-sidebar">
+      <div class="ps-top">
+        <div class="ps-avatar" id="psAv">?</div>
+        <div class="ps-name" id="psName">...</div>
+        <div class="ps-email" id="psEmail"></div>
+      </div>
+      <div class="ps-nav">
+        <a href="#" id="nav-ilanlar" class="active" onclick="goTab('ilanlar',this);return false;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          İlanlarım <span id="ilanBadge" style="margin-left:auto;background:var(--primary);color:white;font-size:10px;padding:1px 7px;border-radius:20px">0</span>
+        </a>
+        <a href="#" id="nav-favoriler" onclick="goTab('favoriler',this);return false;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          Favorilerim <span id="favBadge" style="margin-left:auto;background:var(--border);color:var(--text3);font-size:10px;padding:1px 7px;border-radius:20px">0</span>
+        </a>
+        <a href="messages.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Mesajlarım
+        </a>
+        <a href="#" id="nav-ayarlar" onclick="goTab('ayarlar',this);return false;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          Ayarlar
+        </a>
+        <a href="#" onclick="doLogout();return false;" style="color:var(--primary)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Çıkış Yap
+        </a>
+      </div>
+    </div>
+
+    <div class="profile-content">
+      <div id="tab-ilanlar" class="tab-content active pc-card">
+        <div class="pcc-header">
+          <div class="pcc-title">📋 İlanlarım</div>
+          <a href="index.html" class="btn-add-listing" style="font-size:12px;padding:6px 14px;text-decoration:none">+ İlan Ver</a>
+        </div>
+        <div class="pcc-body" id="ilanlarBody"><div class="es"><div class="es-i">⏳</div><p>Yükleniyor...</p></div></div>
+      </div>
+
+      <div id="tab-favoriler" class="tab-content pc-card">
+        <div class="pcc-header"><div class="pcc-title">❤️ Favorilerim</div></div>
+        <div class="pcc-body" id="favorilerBody"><div class="es"><div class="es-i">⏳</div><p>Yükleniyor...</p></div></div>
+      </div>
+
+      <div id="tab-ayarlar" class="tab-content pc-card">
+        <div class="pcc-header"><div class="pcc-title">⚙️ Hesap Ayarları</div></div>
+        <div class="pcc-body">
+          <form onsubmit="saveProfile(event)">
+            <div class="form-group"><label class="form-label">Ad Soyad</label><input type="text" id="eName" class="form-input"></div>
+            <div class="form-group"><label class="form-label">Telefon</label><input type="tel" id="ePhone" class="form-input" placeholder="05XX XXX XXXX"></div>
+            <div class="form-group"><label class="form-label">Şehir</label><input type="text" id="eCity" class="form-input" placeholder="İstanbul"></div>
+            <div class="form-group"><label class="form-label">E-posta (değiştirilemez)</label><input type="email" id="eEmail" class="form-input" disabled style="opacity:.5"></div>
+            <button type="submit" class="btn-submit" id="saveBtn">Kaydet ✓</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modals -->
+<div class="modal-overlay" id="loginModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('loginModal')">✕</button>
+    <h2>Giriş Yap 👋</h2>
+    <form onsubmit="doLogin(event)">
+      <div class="form-group"><label class="form-label">E-posta</label><input type="email" id="lEmail" class="form-input" placeholder="ornek@mail.com" required></div>
+      <div class="form-group"><label class="form-label">Şifre</label><input type="password" id="lPass" class="form-input" required></div>
+      <button type="submit" class="btn-submit">Giriş Yap</button>
+    </form>
+    <div class="form-footer">Hesabınız yok mu? <a onclick="switchModal('loginModal','signupModal')">Kayıt Ol</a></div>
+  </div>
+</div>
+<div class="modal-overlay" id="signupModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('signupModal')">✕</button>
+    <h2>Hesap Oluştur 🎉</h2>
+    <form onsubmit="doSignup(event)">
+      <div class="form-group"><label class="form-label">Ad Soyad</label><input type="text" id="sName" class="form-input" required></div>
+      <div class="form-group"><label class="form-label">E-posta</label><input type="email" id="sEmail" class="form-input" required></div>
+      <div class="form-group"><label class="form-label">Şifre</label><input type="password" id="sPass" class="form-input" minlength="8" required></div>
+      <button type="submit" class="btn-submit">Kayıt Ol</button>
+    </form>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+(function(){
+'use strict';
+const SURL='https://sbubvjeguxuqgiklrajk.supabase.co';
+const SKEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNidWJ2amVndXh1cWdpa2xyYWprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIzOTQxNTIsImV4cCI6MjA4Nzk3MDE1Mn0.dVwPmfxu2B0o9M-lMr5_k_Qy3YPDfiuk-TX2emDk9SQ';
+const sb=window.supabase.createClient(SURL,SKEY);
+let user=null;
+
+const fmt=n=>(n&&n>0)?'₺'+Number(n).toLocaleString('tr-TR'):'Ücretsiz';
+const fmtDate=d=>new Date(d).toLocaleDateString('tr-TR',{day:'2-digit',month:'short',year:'numeric'});
+const ini=n=>(n||'?').split(' ').filter(Boolean).map(x=>x[0]).join('').slice(0,2).toUpperCase();
+
+function toast(m,t='success'){const ic={success:'✅',error:'❌',info:'ℹ️',warning:'⚠️'};const el=document.createElement('div');el.className='toast'+(t!=='success'?' '+t:'');el.innerHTML=`<span>${ic[t]}</span><span>${m}</span>`;document.getElementById('toastContainer').appendChild(el);setTimeout(()=>{el.style.opacity='0';el.style.transition='opacity .3s';setTimeout(()=>el.remove(),300)},3500);}
+
+window.openModal=id=>{document.getElementById(id).classList.add('open');document.body.style.overflow='hidden';};
+window.closeModal=id=>{document.getElementById(id).classList.remove('open');document.body.style.overflow='';};
+window.switchModal=(a,b)=>{closeModal(a);openModal(b);};
+document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)closeModal(o.id);}));
+
+window.doLogin=async e=>{e.preventDefault();const{error}=await sb.auth.signInWithPassword({email:document.getElementById('lEmail').value,password:document.getElementById('lPass').value});if(error){toast(error.message,'error');return;}toast('Hoş geldin! 🎉');closeModal('loginModal');};
+window.doSignup=async e=>{e.preventDefault();const{error}=await sb.auth.signUp({email:document.getElementById('sEmail').value,password:document.getElementById('sPass').value,options:{data:{full_name:document.getElementById('sName').value}}});if(error){toast(error.message,'error');return;}toast('Kayıt başarılı! 📧');closeModal('signupModal');};
+window.doLogout=async()=>{await sb.auth.signOut();toast('Çıkış yapıldı','info');setTimeout(()=>window.location.href='index.html',800);};
+
+window.goTab=(name,el)=>{
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  document.querySelectorAll('.ps-nav a').forEach(a=>a.classList.remove('active'));
+  if(el)el.classList.add('active');
+  if(name==='ilanlar')loadMyListings();
+  if(name==='favoriler')loadFavorites();
+};
+
+function renderAuth(){
+  const a=document.getElementById('authArea');if(!a)return;
+  if(user){const nm=user.user_metadata?.full_name||user.email;a.innerHTML=`<div class="user-avatar" style="background:var(--primary)">${ini(nm)}</div>`;}
+  else a.innerHTML=`<button class="btn-signin" onclick="openModal('loginModal')">Giriş Yap</button>`;
+}
+
+function populateSidebar(){
+  const name=user.user_metadata?.full_name||user.email.split('@')[0];
+  document.getElementById('psAv').textContent=ini(name);
+  document.getElementById('psName').textContent=name;
+  document.getElementById('psEmail').textContent=user.email;
+  document.getElementById('eName').value=user.user_metadata?.full_name||'';
+  document.getElementById('ePhone').value=user.user_metadata?.phone||'';
+  document.getElementById('eCity').value=user.user_metadata?.city||'';
+  document.getElementById('eEmail').value=user.email;
+  const favs=JSON.parse(localStorage.getItem('pm_favs')||'[]');
+  document.getElementById('favBadge').textContent=favs.length;
+}
+
+window.saveProfile=async e=>{
+  e.preventDefault();
+  const btn=document.getElementById('saveBtn');btn.textContent='Kaydediliyor...';btn.disabled=true;
+  const{error}=await sb.auth.updateUser({data:{full_name:document.getElementById('eName').value,phone:document.getElementById('ePhone').value,city:document.getElementById('eCity').value}});
+  btn.textContent='Kaydet ✓';btn.disabled=false;
+  if(error){toast(error.message,'error');return;}
+  toast('Profil güncellendi ✅');
+  populateSidebar();
+};
+
+async function loadMyListings(){
+  document.getElementById('ilanlarBody').innerHTML='<div class="es"><div class="es-i">⏳</div><p>Yükleniyor...</p></div>';
+  try{
+    const{data,error,count}=await sb.from('urunler').select('*',{count:'exact'}).eq('user_id',user.id).order('created_at',{ascending:false});
+    if(error)throw error;
+    document.getElementById('ilanBadge').textContent=data?.length||0;
+    if(!data||!data.length){
+      document.getElementById('ilanlarBody').innerHTML='<div class="es"><div class="es-i">📋</div><p>Henüz ilanınız yok.</p><br><a href="index.html" style="color:var(--primary);font-weight:700;text-decoration:none">İlk ilanınızı verin →</a></div>';
+      return;
+    }
+    document.getElementById('ilanlarBody').innerHTML=data.map(it=>`
+      <div class="lr">
+        <img src="${it.resim_url||'https://picsum.photos/seed/'+it.id+'/150/100'}" alt="" onerror="this.src='https://picsum.photos/seed/x/150/100'">
+        <div class="lr-info">
+          <div class="lr-title">${it.isim||'İsimsiz İlan'}</div>
+          <div class="lr-price">${fmt(it.fiyat)}</div>
+          <div class="lr-meta">${it.kategori||''} ${it.konum?'· 📍'+it.konum:''} · ${fmtDate(it.created_at)}</div>
+        </div>
+        <div class="lr-actions">
+          <a href="listing.html?id=${it.id}" class="bsm">Görüntüle</a>
+          <button class="bsm bsm-del" onclick="delListing('${it.id}')">Sil</button>
+        </div>
+      </div>`).join('');
+  }catch(err){
+    document.getElementById('ilanlarBody').innerHTML=`<div class="es"><div class="es-i">⚠️</div><p>Yüklenemedi: ${err.message}</p></div>`;
+  }
+}
+
+window.delListing=async id=>{
+  if(!confirm('Bu ilanı silmek istediğinizden emin misiniz?'))return;
+  const{error}=await sb.from('urunler').delete().eq('id',id).eq('user_id',user.id);
+  if(error){toast('Silinemedi: '+error.message,'error');return;}
+  toast('İlan silindi','info');loadMyListings();
+};
+
+async function loadFavorites(){
+  document.getElementById('favorilerBody').innerHTML='<div class="es"><div class="es-i">⏳</div><p>Yükleniyor...</p></div>';
+  const favIds=JSON.parse(localStorage.getItem('pm_favs')||'[]');
+  document.getElementById('favBadge').textContent=favIds.length;
+  if(!favIds.length){
+    document.getElementById('favorilerBody').innerHTML='<div class="es"><div class="es-i">❤️</div><p>Favori ilanınız yok.</p><br><a href="index.html" style="color:var(--primary);font-weight:700;text-decoration:none">İlanlara göz atın →</a></div>';
+    return;
+  }
+  try{
+    const{data,error}=await sb.from('urunler').select('*').in('id',favIds);
+    if(error)throw error;
+    if(!data||!data.length){
+      document.getElementById('favorilerBody').innerHTML='<div class="es"><div class="es-i">❤️</div><p>Favori ilanlar artık mevcut değil.</p></div>';
+      return;
+    }
+    document.getElementById('favorilerBody').innerHTML=data.map(it=>`
+      <div class="lr">
+        <img src="${it.resim_url||'https://picsum.photos/seed/'+it.id+'/150/100'}" alt="" onerror="this.src='https://picsum.photos/seed/x/150/100'">
+        <div class="lr-info">
+          <div class="lr-title">${it.isim||'İsimsiz İlan'}</div>
+          <div class="lr-price">${fmt(it.fiyat)}</div>
+          <div class="lr-meta">${it.kategori||''} ${it.konum?'· 📍'+it.konum:''}</div>
+        </div>
+        <div class="lr-actions">
+          <a href="listing.html?id=${it.id}" class="bsm">Görüntüle</a>
+          <button class="bsm bsm-del" onclick="removeFav('${it.id}')">Kaldır</button>
+        </div>
+      </div>`).join('');
+  }catch(err){
+    document.getElementById('favorilerBody').innerHTML=`<div class="es"><div class="es-i">⚠️</div><p>Yüklenemedi: ${err.message}</p></div>`;
+  }
+}
+
+window.removeFav=id=>{
+  let favs=JSON.parse(localStorage.getItem('pm_favs')||'[]');
+  favs=favs.filter(f=>f!==String(id));
+  localStorage.setItem('pm_favs',JSON.stringify(favs));
+  toast('Favorilerden kaldırıldı','info');loadFavorites();
+};
+
+// Handle URL tab
+const urlTab=new URLSearchParams(window.location.search).get('tab');
+
+sb.auth.onAuthStateChange((ev,ses)=>{
+  user=ses?.user||null;
+  renderAuth();
+  if(user){
+    document.getElementById('loginGate').style.display='none';
+    document.getElementById('mainContent').style.display='block';
+    populateSidebar();
+    if(urlTab==='favoriler') goTab('favoriler',document.getElementById('nav-favoriler'));
+    else if(urlTab==='ayarlar') goTab('ayarlar',document.getElementById('nav-ayarlar'));
+    else loadMyListings();
+  } else {
+    document.getElementById('mainContent').style.display='none';
+    document.getElementById('loginGate').style.display='block';
+  }
+});
+
+sb.auth.getSession().then(({data:{session}})=>{
+  if(!session){document.getElementById('loginGate').style.display='block';setTimeout(()=>openModal('loginModal'),400);}
+});
+})();
+</script>
+</body>
+</html>

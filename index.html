@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pazaryeri — Türkiye'nin İlan Platformu</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <a href="index.html" class="logo-wrap">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+      </div>
+      <div>
+        <div class="logo-text">Pazar<span>yeri</span></div>
+        <div class="logo-tagline">İlan & Alım Satım</div>
+      </div>
+    </a>
+
+    <nav class="main-nav">
+      <div class="nav-item">
+        <a href="#" class="nav-link" onclick="filterCat('vasita');return false;">🚗 Vasıta <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></a>
+        <div class="mega-dropdown"><div class="mega-inner cols-2">
+          <div>
+            <div class="mega-section-title">Kategoriler</div>
+            <div class="mega-links">
+              <div class="mega-link" onclick="filterCat('vasita')"><div class="ml-icon">🚗</div>Tüm Vasıta<span class="ml-arrow">›</span></div>
+              <div class="mega-link" onclick="filterCat2('vasita','otomobil')"><div class="ml-icon">🏎️</div>Otomobil<span class="ml-arrow">›</span></div>
+              <div class="mega-link" onclick="filterCat2('vasita','motosiklet')"><div class="ml-icon">🏍️</div>Motosiklet<span class="ml-arrow">›</span></div>
+              <div class="mega-link" onclick="filterCat2('vasita','ticari')"><div class="ml-icon">🚛</div>Ticari Araç<span class="ml-arrow">›</span></div>
+            </div>
+          </div>
+          <div>
+            <div class="mega-section-title">Markalar</div>
+            <div class="mega-sub-grid">
+              <span class="mega-sub-link" onclick="filterBrand('BMW')">BMW</span>
+              <span class="mega-sub-link" onclick="filterBrand('Mercedes')">Mercedes</span>
+              <span class="mega-sub-link" onclick="filterBrand('Audi')">Audi</span>
+              <span class="mega-sub-link" onclick="filterBrand('Toyota')">Toyota</span>
+              <span class="mega-sub-link" onclick="filterBrand('Honda')">Honda</span>
+              <span class="mega-sub-link" onclick="filterBrand('Ford')">Ford</span>
+              <span class="mega-sub-link" onclick="filterBrand('Renault')">Renault</span>
+              <span class="mega-sub-link" onclick="filterBrand('Fiat')">Fiat</span>
+              <span class="mega-sub-link" onclick="filterBrand('Hyundai')">Hyundai</span>
+              <span class="mega-sub-link" onclick="filterBrand('Tesla')">Tesla</span>
+            </div>
+          </div>
+        </div></div>
+      </div>
+
+      <div class="nav-item">
+        <a href="#" class="nav-link" onclick="filterCat('emlak');return false;">🏠 Emlak <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></a>
+        <div class="mega-dropdown"><div class="mega-inner cols-2">
+          <div>
+            <div class="mega-section-title">İşlem Türü</div>
+            <div class="mega-links">
+              <div class="mega-link" onclick="filterCat('emlak')"><div class="ml-icon">🏘️</div>Tüm Emlak<span class="ml-arrow">›</span></div>
+              <div class="mega-link" onclick="filterCat2('emlak','satilik')"><div class="ml-icon">🔑</div>Satılık<span class="ml-arrow">›</span></div>
+              <div class="mega-link" onclick="filterCat2('emlak','kiralik')"><div class="ml-icon">📋</div>Kiralık<span class="ml-arrow">›</span></div>
+              <div class="mega-link" onclick="filterCat2('emlak','gunluk')"><div class="ml-icon">🌅</div>Günlük Kiralık<span class="ml-arrow">›</span></div>
+            </div>
+          </div>
+          <div>
+            <div class="mega-section-title">Emlak Türü</div>
+            <div class="mega-sub-grid">
+              <span class="mega-sub-link" onclick="filterCat2('emlak','satilik')">Daire</span>
+              <span class="mega-sub-link" onclick="filterCat2('emlak','satilik')">Villa</span>
+              <span class="mega-sub-link" onclick="filterCat2('emlak','kiralik')">1+1</span>
+              <span class="mega-sub-link" onclick="filterCat2('emlak','kiralik')">2+1</span>
+              <span class="mega-sub-link" onclick="filterCat2('emlak','kiralik')">3+1</span>
+              <span class="mega-sub-link" onclick="filterCat2('emlak','satilik')">Arsa</span>
+              <span class="mega-sub-link" onclick="filterCat2('emlak','satilik')">İşyeri</span>
+            </div>
+          </div>
+        </div></div>
+      </div>
+
+      <div class="nav-item">
+        <a href="#" class="nav-link" onclick="filterCat('elektronik');return false;">📱 Elektronik <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></a>
+        <div class="mega-dropdown"><div class="mega-inner cols-2">
+          <div>
+            <div class="mega-section-title">Kategoriler</div>
+            <div class="mega-links">
+              <div class="mega-link" onclick="filterCat2('elektronik','telefon')"><div class="ml-icon">📱</div>Telefon<span class="ml-arrow">›</span></div>
+              <div class="mega-link" onclick="filterCat2('elektronik','bilgisayar')"><div class="ml-icon">💻</div>Bilgisayar<span class="ml-arrow">›</span></div>
+              <div class="mega-link" onclick="filterCat2('elektronik','tv')"><div class="ml-icon">📺</div>TV & Görüntü<span class="ml-arrow">›</span></div>
+              <div class="mega-link" onclick="filterCat2('elektronik','oyun')"><div class="ml-icon">🎮</div>Oyun & Konsol<span class="ml-arrow">›</span></div>
+            </div>
+          </div>
+          <div>
+            <div class="mega-section-title">Markalar</div>
+            <div class="mega-sub-grid">
+              <span class="mega-sub-link" onclick="filterBrand('Apple')">Apple</span>
+              <span class="mega-sub-link" onclick="filterBrand('Samsung')">Samsung</span>
+              <span class="mega-sub-link" onclick="filterBrand('Xiaomi')">Xiaomi</span>
+              <span class="mega-sub-link" onclick="filterBrand('Asus')">Asus</span>
+              <span class="mega-sub-link" onclick="filterBrand('Lenovo')">Lenovo</span>
+              <span class="mega-sub-link" onclick="filterBrand('Sony')">Sony</span>
+            </div>
+          </div>
+        </div></div>
+      </div>
+
+      <div class="nav-item">
+        <a href="#" class="nav-link">☰ Diğer <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></a>
+        <div class="mega-dropdown"><div class="mega-inner cols-2">
+          <div>
+            <div class="mega-section-title">Kategoriler</div>
+            <div class="mega-links">
+              <div class="mega-link" onclick="filterCat('ev-yasam')"><div class="ml-icon">🏡</div>Ev & Yaşam<span class="ml-arrow">›</span></div>
+              <div class="mega-link" onclick="filterCat('giyim')"><div class="ml-icon">👗</div>Giyim & Moda<span class="ml-arrow">›</span></div>
+              <div class="mega-link" onclick="filterCat('spor')"><div class="ml-icon">⚽</div>Spor<span class="ml-arrow">›</span></div>
+              <div class="mega-link" onclick="filterCat('hobi')"><div class="ml-icon">🎨</div>Hobi<span class="ml-arrow">›</span></div>
+              <div class="mega-link" onclick="filterCat('bebek')"><div class="ml-icon">👶</div>Bebek & Çocuk<span class="ml-arrow">›</span></div>
+              <div class="mega-link" onclick="filterCat('kitap')"><div class="ml-icon">📚</div>Kitap<span class="ml-arrow">›</span></div>
+              <div class="mega-link" onclick="filterCat('is-ilani')"><div class="ml-icon">💼</div>İş İlanları<span class="ml-arrow">›</span></div>
+            </div>
+          </div>
+        </div></div>
+      </div>
+    </nav>
+
+    <div class="search-wrap">
+      <div class="header-search">
+        <input type="text" id="searchInput" placeholder="Vasıta, emlak, elektronik ara..." autocomplete="off"
+          onkeydown="if(event.key==='Enter')doSearch()"
+          oninput="showSuggestions(this.value)"
+          onfocus="showSuggestions(this.value)"
+          onblur="setTimeout(()=>hideSuggestions(),200)">
+        <button onclick="doSearch()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+      </div>
+      <div class="search-suggestions" id="searchSugg"></div>
+    </div>
+
+    <div class="header-right">
+      <div id="authArea"><button class="btn-signin" onclick="openModal('loginModal')">Giriş Yap</button></div>
+      <a href="messages.html" class="icon-btn" title="Mesajlar" style="position:relative">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <span id="msgBadge" style="display:none;position:absolute;top:-4px;right:-4px;background:var(--primary);color:white;border-radius:50%;width:16px;height:16px;font-size:10px;font-weight:700;align-items:center;justify-content:center">0</span>
+      </a>
+      <button class="icon-btn" id="darkToggleBtn" onclick="toggleDark()" title="Karanlık Mod" style="font-size:17px;background:none;border:none;cursor:pointer">🌙</button>
+      <button class="btn-add-listing" onclick="openAddListing()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:14px;height:14px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        İlan Ver
+      </button>
+      <button class="mobile-menu-btn" onclick="toggleMobile()"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<!-- MOBILE SEARCH BAR -->
+<div class="mobile-search-bar">
+  <div class="msb-inner">
+    <input type="text" id="mobileSearchInput" placeholder="İlan ara..." onkeydown="if(event.key==='Enter'){document.getElementById('searchInput').value=this.value;doSearch()}">
+    <button onclick="document.getElementById('searchInput').value=document.getElementById('mobileSearchInput').value;doSearch()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-bar" id="filterBar" style="display:none">
+  <div class="filter-bar-inner" id="filterBarInner"></div>
+</div>
+
+<!-- MAIN -->
+<div class="main-wrap" id="listingsSection">
+  <div class="shop-toolbar">
+    <div class="toolbar-left" id="toolbarInfo">Yükleniyor...</div>
+    <div class="toolbar-right">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <div class="sort-tabs">
+          <button class="sort-tab active" data-sort="newest" onclick="setSort(this)">En Yeni</button>
+          <button class="sort-tab" data-sort="price_asc" onclick="setSort(this)">Fiyat ↑</button>
+          <button class="sort-tab" data-sort="price_desc" onclick="setSort(this)">Fiyat ↓</button>
+          <button class="sort-tab" data-sort="popular" onclick="setSort(this)">Popüler</button>
+        </div>
+        <div style="position:relative">
+          <button class="filter-chip" id="priceFilterBtn" onclick="togglePricePopup()">💰 Fiyat Aralığı</button>
+          <div class="price-range-popup" id="pricePopup">
+            <div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Fiyat Aralığı (₺)</div>
+            <div class="price-inputs">
+              <input type="number" id="priceMin" placeholder="Min" min="0">
+              <input type="number" id="priceMax" placeholder="Max" min="0">
+            </div>
+            <div style="display:flex;gap:6px">
+              <button onclick="applyPrice()" style="flex:1;padding:7px;background:var(--primary);color:white;border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer">Uygula</button>
+              <button onclick="clearPrice()" style="padding:7px 10px;background:var(--bg);border:1px solid var(--border);border-radius:7px;font-size:12px;cursor:pointer">Sıfırla</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="view-btns">
+        <button class="view-btn active" onclick="setView('grid',this)" title="Grid"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></button>
+        <button class="view-btn" onclick="setView('list',this)" title="Liste"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+      </div>
+    </div>
+  </div>
+  <div class="listing-grid" id="listingGrid"></div>
+  <div class="pagination" id="pagination"></div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="logo-text" style="font-size:22px;margin-bottom:10px">Pazar<span style="color:var(--primary)">yeri</span></div>
+        <p>Türkiye'nin güvenilir ilan platformu.</p>
+      </div>
+      <div class="footer-col"><h4>Kategoriler</h4><ul>
+        <li><a href="#" onclick="filterCat('vasita');return false;">Vasıta</a></li>
+        <li><a href="#" onclick="filterCat('emlak');return false;">Emlak</a></li>
+        <li><a href="#" onclick="filterCat('elektronik');return false;">Elektronik</a></li>
+        <li><a href="#" onclick="filterCat('ev-yasam');return false;">Ev & Yaşam</a></li>
+        <li><a href="#" onclick="filterCat('spor');return false;">Spor</a></li>
+      </ul></div>
+      <div class="footer-col"><h4>Hızlı Linkler</h4><ul>
+        <li><a href="profile.html">Profilim</a></li>
+        <li><a href="messages.html">Mesajlarım</a></li>
+        <li><a href="profile.html?tab=favoriler">Favorilerim</a></li>
+        <li><a href="contact.html">İletişim</a></li>
+        <li><a href="faq.html">SSS</a></li>
+      </ul></div>
+      <div class="footer-col"><h4>İlan Ver</h4><ul>
+        <li><a href="#" onclick="openAddListing();return false;">Ücretsiz İlan Ver</a></li>
+        <li><a href="terms.html">Kullanım Koşulları</a></li>
+        <li><a href="privacy.html">Gizlilik Politikası</a></li>
+      </ul></div>
+    </div>
+    <div class="footer-bottom"><div class="footer-copyright">© 2025 Pazaryeri. Tüm hakları saklıdır.</div></div>
+  </div>
+</footer>
+
+<!-- MOBILE DRAWER -->
+<div class="mobile-drawer-overlay" id="mobileOverlay" onclick="toggleMobile()"></div>
+<div class="mobile-drawer" id="mobileDrawer">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+    <div style="font-size:20px;font-weight:900;color:var(--text)">Pazar<span style="color:var(--primary)">yeri</span></div>
+    <button onclick="toggleMobile()" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;width:32px;height:32px;font-size:16px;color:var(--text3);cursor:pointer">✕</button>
+  </div>
+  <a onclick="filterCat('');toggleMobile()" class="mobile-nav-link">🛒 Tüm İlanlar</a>
+  <a onclick="filterCat('vasita');toggleMobile()" class="mobile-nav-link">🚗 Vasıta</a>
+  <a onclick="filterCat('emlak');toggleMobile()" class="mobile-nav-link">🏠 Emlak</a>
+  <a onclick="filterCat('elektronik');toggleMobile()" class="mobile-nav-link">📱 Elektronik</a>
+  <a onclick="filterCat('ev-yasam');toggleMobile()" class="mobile-nav-link">🏡 Ev & Yaşam</a>
+  <a onclick="filterCat('giyim');toggleMobile()" class="mobile-nav-link">👗 Giyim</a>
+  <a onclick="filterCat('spor');toggleMobile()" class="mobile-nav-link">⚽ Spor</a>
+  <div style="height:1px;background:var(--border);margin:12px 0"></div>
+  <a href="messages.html" class="mobile-nav-link">💬 Mesajlarım</a>
+  <a href="profile.html" class="mobile-nav-link">👤 Profilim</a>
+  <div style="margin-top:16px" id="mobileAuthBtns">
+    <button class="btn-submit" onclick="openModal('loginModal');toggleMobile()" style="width:100%;margin-bottom:8px">Giriş Yap</button>
+  </div>
+</div>
+
+<!-- MODAL: GİRİŞ -->
+<div class="modal-overlay" id="loginModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('loginModal')">✕</button>
+    <h2>Giriş Yap 👋</h2>
+    <form onsubmit="doLogin(event)">
+      <div class="form-group"><label class="form-label">E-posta</label><input type="email" id="lEmail" class="form-input" placeholder="ornek@mail.com" required></div>
+      <div class="form-group"><label class="form-label">Şifre</label><input type="password" id="lPass" class="form-input" placeholder="Şifreniz" required></div>
+      <button type="submit" class="btn-submit" id="loginBtn">Giriş Yap</button>
+    </form>
+    <div class="form-footer">Hesabınız yok mu? <a onclick="switchModal('loginModal','signupModal')">Kayıt Ol</a></div>
+  </div>
+</div>
+
+<!-- MODAL: KAYIT -->
+<div class="modal-overlay" id="signupModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('signupModal')">✕</button>
+    <h2>Hesap Oluştur 🎉</h2>
+    <form onsubmit="doSignup(event)">
+      <div class="form-group"><label class="form-label">Ad Soyad</label><input type="text" id="sName" class="form-input" placeholder="Adınız Soyadınız" required></div>
+      <div class="form-group"><label class="form-label">Telefon</label><input type="tel" id="sPhone" class="form-input" placeholder="05XX XXX XXXX"></div>
+      <div class="form-group"><label class="form-label">E-posta</label><input type="email" id="sEmail" class="form-input" placeholder="ornek@mail.com" required></div>
+      <div class="form-group"><label class="form-label">Şifre</label><input type="password" id="sPass" class="form-input" placeholder="En az 8 karakter" minlength="8" required></div>
+      <button type="submit" class="btn-submit" id="signupBtn">Kayıt Ol</button>
+    </form>
+    <div class="form-footer">Zaten üye misiniz? <a onclick="switchModal('signupModal','loginModal')">Giriş Yap</a></div>
+  </div>
+</div>
+
+<!-- MODAL: İLAN VER -->
+<div class="modal-overlay" id="addModal">
+  <div class="modal modal-lg">
+    <button class="modal-close" onclick="closeModal('addModal')">✕</button>
+    <h2>İlan Ver 📋</h2>
+    <form onsubmit="doAddListing(event)">
+      <div class="form-group">
+        <label class="form-label">Durum</label>
+        <div class="condition-btns">
+          <div class="cond-btn active" data-cond="ikinci-el" onclick="setCond(this)">📦 İkinci El</div>
+          <div class="cond-btn" data-cond="sifir" onclick="setCond(this)">✨ Sıfır</div>
+          <div class="cond-btn" data-cond="yeniye-yakin" onclick="setCond(this)">🌟 Yeniye Yakın</div>
+          <div class="cond-btn" data-cond="hasarli" onclick="setCond(this)">🔧 Hasarlı</div>
+          <div class="cond-btn" data-cond="yenilenmiş" onclick="setCond(this)">♻️ Yenilenmiş</div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Kategori *</label>
+          <select id="aKat" class="form-select" required onchange="updateSubKat()">
+            <option value="">Seçin</option>
+            <option value="vasita">🚗 Vasıta</option>
+            <option value="emlak">🏠 Emlak</option>
+            <option value="elektronik">📱 Elektronik</option>
+            <option value="ev-yasam">🏡 Ev & Yaşam</option>
+            <option value="giyim">👗 Giyim</option>
+            <option value="spor">⚽ Spor</option>
+            <option value="hobi">🎨 Hobi</option>
+            <option value="bebek">👶 Bebek</option>
+            <option value="kitap">📚 Kitap</option>
+            <option value="is-ilani">💼 İş İlanı</option>
+            <option value="diger">🔖 Diğer</option>
+          </select>
+        </div>
+        <div class="form-group" id="subKatWrap" style="display:none">
+          <label class="form-label">Alt Kategori</label>
+          <select id="aSubKat" class="form-select"></select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">İlan Başlığı *</label>
+        <input type="text" id="aBaslik" class="form-input" placeholder="Örn: 2020 BMW 320i, 50.000 km" required maxlength="120">
+        <div style="font-size:11px;color:var(--text3);margin-top:4px;text-align:right"><span id="baslikChar">0</span>/120</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Açıklama</label>
+        <textarea id="aAciklama" class="form-textarea" placeholder="Ürün hakkında detaylı bilgi..." rows="4"></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Fiyat (₺) *</label>
+          <div style="position:relative">
+            <input type="number" id="aFiyat" class="form-input" placeholder="0" min="0" required style="padding-right:100px">
+            <button type="button" onclick="suggestPrice()" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:var(--primary);color:white;border:none;border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer;font-weight:600">🤖 AI Öneri</button>
+          </div>
+          <div id="priceSuggestion" style="display:none;margin-top:8px;padding:10px;background:var(--bg2);border-radius:8px;border:1px dashed var(--primary);font-size:13px"></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Konum</label>
+          <input type="text" id="aKonum" class="form-input" placeholder="İstanbul / Beşiktaş">
+        </div>
+      </div>
+      <!-- Pazarlık / Takas / Taksit -->
+      <div class="form-group">
+        <label class="form-label">Seçenekler</label>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:14px"><input type="checkbox" id="aPazarlik"> 🤝 Pazarlık Var</label>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:14px"><input type="checkbox" id="aTakas"> 🔄 Takas Düşünülür</label>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:14px"><input type="checkbox" id="aTaksit"> 💳 Taksit Mümkün</label>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:14px"><input type="checkbox" id="aAcil"> 🔥 Acil Satılık</label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Telefon <span style="color:var(--text3);font-size:12px">(gizli tutmak için boş bırakın)</span></label>
+        <input type="tel" id="aTelefon" class="form-input" placeholder="05XX XXX XXXX">
+      </div>
+      <!-- Multiple Image Upload -->
+      <div class="form-group">
+        <label class="form-label">Görseller <span style="color:var(--text3);font-size:12px">(max 5 adet)</span></label>
+        <div class="upload-area" onclick="document.getElementById('aImgs').click()">
+          <div class="ua-icon">🖼️</div>
+          <p>Resim seçmek için tıklayın (birden fazla seçilebilir)</p>
+          <small>JPEG / PNG, her biri maks 5 MB</small>
+        </div>
+        <input type="file" id="aImgs" accept="image/*" multiple style="display:none" onchange="previewImgs(this)">
+        <div id="aImgPreview" class="upload-preview" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px"></div>
+      </div>
+      <button type="submit" class="btn-submit" id="addBtn">İlanı Yayınla 🚀</button>
+    </form>
+  </div>
+</div>
+
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Yukarı çık">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+(function(){
+'use strict';
+
+const SURL = 'https://sbubvjeguxuqgiklrajk.supabase.co';
+const SKEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNidWJ2amVndXh1cWdpa2xyYWprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIzOTQxNTIsImV4cCI6MjA4Nzk3MDE1Mn0.dVwPmfxu2B0o9M-lMr5_k_Qy3YPDfiuk-TX2emDk9SQ';
+const sb = window.supabase.createClient(SURL, SKEY);
+
+const S = { page:1, per:12, total:0, sort:'newest', view:'grid', cat:'', sub:'', brand:'', search:'', priceMin:null, priceMax:null, user:null, cond:'ikinci-el' };
+let items = [];
+
+// ── UTILS ──
+const fmt = n => (n && n > 0) ? '₺' + Number(n).toLocaleString('tr-TR') : 'Ücretsiz';
+const ago = d => { if(!d) return ''; const s = Math.floor((Date.now()-new Date(d))/1000); if(s<60) return 'Az önce'; if(s<3600) return ~~(s/60)+' dk önce'; if(s<86400) return ~~(s/3600)+' sa önce'; if(s<604800) return ~~(s/86400)+' gün önce'; return new Date(d).toLocaleDateString('tr-TR'); };
+const ini = n => (n||'?').split(' ').filter(Boolean).map(x=>x[0]).join('').slice(0,2).toUpperCase();
+
+function toast(msg, type='success') {
+  const ic = {success:'✅', error:'❌', warning:'⚠️', info:'ℹ️'};
+  const el = document.createElement('div');
+  el.className = 'toast' + (type !== 'success' ? ' ' + type : '');
+  el.innerHTML = `<span>${ic[type]||'ℹ️'}</span><span>${msg}</span>`;
+  document.getElementById('toastContainer').appendChild(el);
+  setTimeout(() => { el.style.opacity='0'; el.style.transition='opacity .3s'; setTimeout(()=>el.remove(),300); }, 3500);
+}
+
+// ── MODALS ──
+window.openModal = id => { document.getElementById(id).classList.add('open'); document.body.style.overflow='hidden'; };
+window.closeModal = id => { document.getElementById(id).classList.remove('open'); document.body.style.overflow=''; };
+window.switchModal = (a,b) => { closeModal(a); openModal(b); };
+document.querySelectorAll('.modal-overlay').forEach(o => o.addEventListener('click', e => { if(e.target===o) closeModal(o.id); }));
+document.addEventListener('keydown', e => { if(e.key==='Escape') document.querySelectorAll('.modal-overlay.open').forEach(o=>closeModal(o.id)); });
+
+// ── MOBILE ──
+window.toggleMobile = () => {
+  document.getElementById('mobileDrawer').classList.toggle('open');
+  document.getElementById('mobileOverlay').classList.toggle('open');
+  document.body.style.overflow = document.getElementById('mobileDrawer').classList.contains('open') ? 'hidden' : '';
+};
+
+// ── AUTH ──
+window.doLogin = async e => {
+  e.preventDefault();
+  const btn = document.getElementById('loginBtn'); btn.textContent='Giriş yapılıyor...'; btn.disabled=true;
+  const { error } = await sb.auth.signInWithPassword({ email: document.getElementById('lEmail').value, password: document.getElementById('lPass').value });
+  btn.textContent='Giriş Yap'; btn.disabled=false;
+  if(error) { toast(error.message, 'error'); return; }
+  toast('Hoş geldin! 🎉'); closeModal('loginModal');
+};
+
+window.doSignup = async e => {
+  e.preventDefault();
+  const btn = document.getElementById('signupBtn'); btn.textContent='Kaydediliyor...'; btn.disabled=true;
+  const { error } = await sb.auth.signUp({
+    email: document.getElementById('sEmail').value,
+    password: document.getElementById('sPass').value,
+    options: { data: { full_name: document.getElementById('sName').value, phone: document.getElementById('sPhone').value } }
+  });
+  btn.textContent='Kayıt Ol'; btn.disabled=false;
+  if(error) { toast(error.message, 'error'); return; }
+  toast('Kayıt başarılı! E-postanı doğrula 📧'); closeModal('signupModal');
+};
+
+window.doLogout = async () => { await sb.auth.signOut(); toast('Çıkış yapıldı', 'info'); };
+
+sb.auth.onAuthStateChange((ev, ses) => {
+  S.user = ses?.user || null;
+  renderAuth();
+  renderMobileAuth();
+  if(S.user) { checkUnreadMessages(); setInterval(checkUnreadMessages, 30000); }
+});
+
+function renderAuth() {
+  const el = document.getElementById('authArea'); if(!el) return;
+  if(S.user) {
+    const name = S.user.user_metadata?.full_name || S.user.email;
+    el.innerHTML = `<div class="user-menu-wrap">
+      <div class="user-avatar-btn"><div class="user-avatar">${ini(name)}</div><span>${name.split(' ')[0]}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px;opacity:.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+      <div class="user-menu-dropdown">
+        <div class="um-header"><div class="um-name">${name}</div><div class="um-email">${S.user.email}</div></div>
+        <a href="profile.html">👤 Profilim</a>
+        <a href="profile.html?tab=ilanlar">📋 İlanlarım</a>
+        <a href="messages.html">💬 Mesajlarım</a>
+        <a href="profile.html?tab=favoriler">❤️ Favorilerim</a>
+        <hr class="um-divider">
+        <a onclick="openAddListing()">➕ İlan Ver</a>
+        <hr class="um-divider">
+        <a onclick="doLogout()" style="color:var(--primary)">🚪 Çıkış Yap</a>
+      </div></div>`;
+  } else {
+    el.innerHTML = `<button class="btn-signin" onclick="openModal('loginModal')">Giriş Yap</button>`;
+  }
+}
+
+function renderMobileAuth() {
+  const el = document.getElementById('mobileAuthBtns'); if(!el) return;
+  if(S.user) {
+    const name = S.user.user_metadata?.full_name || S.user.email.split('@')[0];
+    el.innerHTML = `<a href="profile.html" class="btn-submit" style="display:block;text-align:center;text-decoration:none;padding:11px;border-radius:var(--radius)">👤 ${name}</a>
+    <button style="width:100%;margin-top:8px;padding:10px;border:1.5px solid var(--border);border-radius:var(--radius);color:var(--primary);font-weight:700;background:none;cursor:pointer" onclick="doLogout()">Çıkış Yap</button>`;
+  } else {
+    el.innerHTML = `<button class="btn-submit" onclick="openModal('loginModal');toggleMobile()" style="width:100%;margin-bottom:8px">Giriş Yap</button>
+    <button style="width:100%;padding:10px;border:1.5px solid var(--border);border-radius:var(--radius);font-weight:700;background:none;cursor:pointer" onclick="openModal('signupModal');toggleMobile()">Kayıt Ol</button>`;
+  }
+}
+
+// ── FILTERS ──
+window.filterCat   = c => { S.cat=c; S.sub=''; S.brand=''; S.page=1; loadListings(); scrollTo({top:0,behavior:'smooth'}); updateFilterBar(); };
+window.filterCat2  = (c,s) => { S.cat=c; S.sub=s; S.brand=''; S.page=1; loadListings(); scrollTo({top:0,behavior:'smooth'}); updateFilterBar(); };
+window.filterBrand = b => { S.brand=b; S.page=1; loadListings(); scrollTo({top:0,behavior:'smooth'}); updateFilterBar(); };
+window.doSearch    = () => {
+  const val = document.getElementById('searchInput').value.trim();
+  S.search = val;
+  if(document.getElementById('mobileSearchInput')) document.getElementById('mobileSearchInput').value = val;
+  S.page = 1;
+  hideSuggestions();
+  loadListings();
+  updateFilterBar();
+};
+window.setSort     = btn => { document.querySelectorAll('.sort-tab').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); S.sort=btn.dataset.sort; S.page=1; loadListings(); };
+window.setView     = (v,btn) => { S.view=v; document.querySelectorAll('.view-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); renderGrid(); };
+window.gotoPage    = p => { S.page=p; loadListings(); document.getElementById('listingsSection').scrollIntoView({behavior:'smooth'}); };
+
+// ── ADD LISTING ──
+window.openAddListing = () => {
+  if(!S.user) { toast('İlan vermek için giriş yapın', 'warning'); openModal('loginModal'); return; }
+  openModal('addModal');
+};
+window.setCond = el => { document.querySelectorAll('.cond-btn').forEach(b=>b.classList.remove('active')); el.classList.add('active'); S.cond=el.dataset.cond; };
+
+const SUBS = {
+  vasita: ['otomobil','motosiklet','ticari','caravan','tekne'],
+  emlak:  ['satilik','kiralik','gunluk-kiralik','arsa','isyeri'],
+  elektronik: ['telefon','bilgisayar','tablet','tv','kamera','oyun'],
+  'ev-yasam': ['mobilya','beyaz-esya','mutfak','dekorasyon'],
+  giyim: ['kadin','erkek','cocuk','ayakkabi','canta']
+};
+window.updateSubKat = () => {
+  const c = document.getElementById('aKat').value;
+  const w = document.getElementById('subKatWrap');
+  const s = document.getElementById('aSubKat');
+  const opts = SUBS[c] || [];
+  if(opts.length) {
+    w.style.display='block';
+    s.innerHTML='<option value="">Seçin</option>'+opts.map(o=>`<option value="${o}">${o.charAt(0).toUpperCase()+o.slice(1).replace(/-/g,' ')}</option>`).join('');
+  } else { w.style.display='none'; }
+};
+
+// Character counter for title
+document.getElementById('aBaslik')?.addEventListener('input', function(){
+  const cc = document.getElementById('baslikChar');
+  if(cc) cc.textContent = this.value.length;
+});
+
+// Multiple image preview
+window.previewImgs = el => {
+  const files = Array.from(el.files).slice(0,5);
+  const preview = document.getElementById('aImgPreview');
+  preview.innerHTML = '';
+  files.forEach((f,i) => {
+    const r = new FileReader();
+    r.onload = ev => {
+      const div = document.createElement('div');
+      div.style.cssText = 'position:relative;display:inline-block';
+      div.innerHTML = `<img src="${ev.target.result}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;border:2px solid var(--border)">
+        <button type="button" onclick="removeImg(${i})" style="position:absolute;top:-6px;right:-6px;background:#ef4444;color:white;border:none;border-radius:50%;width:18px;height:18px;font-size:11px;cursor:pointer;line-height:1">✕</button>`;
+      div.dataset.index = i;
+      preview.appendChild(div);
+    };
+    r.readAsDataURL(f);
+  });
+};
+// Legacy single image support
+window.previewImg = el => {
+  const f = el.files[0]; if(!f) return;
+  const r = new FileReader();
+  r.onload = ev => { document.getElementById('aImgPreview').innerHTML=`<img src="${ev.target.result}" style="max-height:120px;border-radius:8px;margin-top:8px">`; };
+  r.readAsDataURL(f);
+};
+window.removeImg = i => {
+  // Just visually remove - actual removal handled on submit
+  const preview = document.getElementById('aImgPreview');
+  const items = preview.querySelectorAll('[data-index]');
+  items.forEach(el => { if(parseInt(el.dataset.index)===i) el.remove(); });
+};
+
+// AI Price Suggestion
+window.suggestPrice = async () => {
+  const baslik = document.getElementById('aBaslik').value.trim();
+  const kat = document.getElementById('aKat').value;
+  const durum = S.cond;
+  if(!baslik) { toast('Önce ilan başlığı girin', 'warning'); return; }
+  const sugg = document.getElementById('priceSuggestion');
+  sugg.style.display='block';
+  sugg.innerHTML='🤖 <em>Benzer ilanlar analiz ediliyor...</em>';
+  try {
+    // Query similar listings for price range
+    const {data} = await sb.from('urunler').select('fiyat').ilike('isim',`%${baslik.split(' ')[0]}%`).eq('kategori',kat||'diger').gt('fiyat',0).limit(10);
+    if(data && data.length >= 2) {
+      const prices = data.map(d=>d.fiyat).sort((a,b)=>a-b);
+      const min = prices[0], max = prices[prices.length-1];
+      const avg = Math.round(prices.reduce((s,p)=>s+p,0)/prices.length);
+      sugg.innerHTML = `🤖 <strong>AI Fiyat Analizi:</strong> Benzer ilanlar <strong>${fmt(min)} – ${fmt(max)}</strong> arasında. Ortalama: <strong>${fmt(avg)}</strong> &nbsp; <button type="button" onclick="document.getElementById('aFiyat').value=${avg};document.getElementById('priceSuggestion').style.display='none'" style="background:var(--primary);color:white;border:none;border-radius:6px;padding:3px 10px;font-size:12px;cursor:pointer">Uygula</button>`;
+    } else {
+      sugg.innerHTML = '🤖 Yeterli benzer ilan bulunamadı. Kendi piyasa araştırmanızı yapın.';
+    }
+  } catch(e) {
+    sugg.innerHTML = '🤖 Fiyat analizi şu an kullanılamıyor.';
+  }
+};
+
+window.doAddListing = async e => {
+  e.preventDefault();
+  const btn = document.getElementById('addBtn'); btn.textContent='Yayınlanıyor...'; btn.disabled=true;
+
+  // Upload multiple images
+  let imgUrl = null;
+  const files = document.getElementById('aImgs') ? Array.from(document.getElementById('aImgs').files).slice(0,5) : [];
+  if(files.length > 0) {
+    try {
+      const ext = files[0].name.split('.').pop().toLowerCase();
+      const name = `${S.user.id}_${Date.now()}.${ext}`;
+      const { error: ue } = await sb.storage.from('urun-resimleri').upload(name, files[0], { upsert:true });
+      if(!ue) { const { data: { publicUrl } } = sb.storage.from('urun-resimleri').getPublicUrl(name); imgUrl = publicUrl; }
+    } catch(e2) { console.warn('Görsel yüklenemedi:', e2); }
+  }
+
+  const payload = {
+    isim:        document.getElementById('aBaslik').value.trim(),
+    kategori:    document.getElementById('aKat').value,
+    alt_kategori: document.getElementById('aSubKat').value || null,
+    fiyat:       parseFloat(document.getElementById('aFiyat').value) || 0,
+    aciklama:    document.getElementById('aAciklama').value.trim() || null,
+    konum:       document.getElementById('aKonum').value.trim() || null,
+    telefon:     document.getElementById('aTelefon').value.trim() || null,
+    durum:       S.cond,
+    resim_url:   imgUrl,
+    user_id:     S.user.id,
+    seller_name: S.user.user_metadata?.full_name || S.user.email?.split('@')[0] || 'Satıcı',
+    pazarlik:    document.getElementById('aPazarlik')?.checked || false,
+    takas:       document.getElementById('aTakas')?.checked || false,
+    acil:        document.getElementById('aAcil')?.checked || false,
+  };
+  const { error } = await sb.from('urunler').insert([payload]);
+  btn.textContent='İlanı Yayınla 🚀'; btn.disabled=false;
+  if(error) { toast('Hata: ' + error.message, 'error'); return; }
+  toast('İlan yayınlandı! 🎉'); closeModal('addModal'); e.target.reset();
+  document.getElementById('aImgPreview').innerHTML='';
+  document.getElementById('priceSuggestion').style.display='none';
+  loadListings();
+};
+
+// ── LOAD LISTINGS ──
+async function loadListings() {
+  renderSkeletons();
+  try {
+    let q = sb.from('urunler').select('*', { count: 'exact' });
+    if(S.cat)    q = q.eq('kategori', S.cat);
+    if(S.sub)    q = q.eq('alt_kategori', S.sub);
+    if(S.brand)  q = q.or(`isim.ilike.%${S.brand}%,aciklama.ilike.%${S.brand}%`);
+    if(S.search) q = q.or(`isim.ilike.%${S.search}%,aciklama.ilike.%${S.search}%,konum.ilike.%${S.search}%`);
+    if(S.priceMin != null) q = q.gte('fiyat', S.priceMin);
+    if(S.priceMax != null) q = q.lte('fiyat', S.priceMax);
+    const sc = {newest:{col:'created_at',asc:false}, price_asc:{col:'fiyat',asc:true}, price_desc:{col:'fiyat',asc:false}, popular:{col:'created_at',asc:false}};
+    const sort = sc[S.sort] || sc.newest;
+    q = q.order(sort.col, { ascending: sort.asc });
+    const from = (S.page-1)*S.per;
+    q = q.range(from, from+S.per-1);
+    const { data, error, count } = await q;
+    if(error) throw error;
+    items = data || [];
+    S.total = count || 0;
+    // Eğer hiç ilan yoksa ve filtre uygulanmamışsa demo göster
+    if(items.length === 0 && !S.cat && !S.sub && !S.brand && !S.search) {
+      loadDemo(); return;
+    }
+    renderGrid(); renderPagination(); updateToolbar();
+  } catch(err) {
+    console.warn('Supabase hatası:', err.message);
+    loadDemo();
+  }
+}
+
+function loadDemo() {
+  items = [
+    {id:'d1',isim:'2019 BMW 3 Serisi 320i M Sport',kategori:'vasita',fiyat:850000,resim_url:'https://picsum.photos/seed/bmw320i/600/400',durum:'ikinci-el',konum:'İstanbul',created_at:new Date(Date.now()-3600000).toISOString(),seller_name:'Ahmet K.'},
+    {id:'d2',isim:'3+1 Satılık Daire Kadıköy',kategori:'emlak',fiyat:4200000,resim_url:'https://picsum.photos/seed/kadikoy/600/400',durum:'satilik',konum:'İstanbul / Kadıköy',created_at:new Date(Date.now()-7200000).toISOString(),seller_name:'Fatma S.'},
+    {id:'d3',isim:'iPhone 15 Pro Max 256GB Titanium',kategori:'elektronik',fiyat:52000,resim_url:'https://picsum.photos/seed/iph15pro/600/400',durum:'sifir',konum:'Ankara',created_at:new Date(Date.now()-86400000).toISOString(),seller_name:'Mehmet T.'},
+    {id:'d4',isim:'Samsung 65" 4K QLED TV',kategori:'elektronik',fiyat:18500,resim_url:'https://picsum.photos/seed/samqled/600/400',durum:'ikinci-el',konum:'İzmir',created_at:new Date(Date.now()-172800000).toISOString(),seller_name:'Ayşe B.'},
+    {id:'d5',isim:'MacBook Pro M3 14" 16GB/512GB',kategori:'elektronik',fiyat:68000,resim_url:'https://picsum.photos/seed/m3macbook/600/400',durum:'yeniye-yakin',konum:'Bursa',created_at:new Date(Date.now()-259200000).toISOString(),seller_name:'Ali R.'},
+    {id:'d6',isim:'2021 Honda CB500F Motosiklet',kategori:'vasita',fiyat:195000,resim_url:'https://picsum.photos/seed/hondacb5/600/400',durum:'ikinci-el',konum:'Antalya',created_at:new Date(Date.now()-345600000).toISOString(),seller_name:'Can Y.'},
+    {id:'d7',isim:'Kiralık 1+1 Daire Beşiktaş',kategori:'emlak',fiyat:18000,resim_url:'https://picsum.photos/seed/bestasas/600/400',durum:'kiralik',konum:'İstanbul / Beşiktaş',created_at:new Date(Date.now()-432000000).toISOString(),seller_name:'Zeynep K.'},
+    {id:'d8',isim:'PlayStation 5 + 2 Kol + 5 Oyun',kategori:'elektronik',fiyat:15000,resim_url:'https://picsum.photos/seed/ps5console/600/400',durum:'ikinci-el',konum:'Konya',created_at:new Date(Date.now()-518400000).toISOString(),seller_name:'Emre D.'},
+    {id:'d9',isim:'Trek Marlin 5 Dağ Bisikleti 2023',kategori:'spor',fiyat:12500,resim_url:'https://picsum.photos/seed/trekm5/600/400',durum:'yeniye-yakin',konum:'İzmir',created_at:new Date(Date.now()-604800000).toISOString(),seller_name:'Selin A.'},
+    {id:'d10',isim:'L Köşe Koltuk Takımı Deri',kategori:'ev-yasam',fiyat:8500,resim_url:'https://picsum.photos/seed/lkose/600/400',durum:'ikinci-el',konum:'Ankara',created_at:new Date(Date.now()-691200000).toISOString(),seller_name:'Baran M.'},
+    {id:'d11',isim:'Adidas Ultraboost 22 Beden 43',kategori:'giyim',fiyat:2800,resim_url:'https://picsum.photos/seed/ultrab22/600/400',durum:'sifir',konum:'İstanbul',created_at:new Date(Date.now()-777600000).toISOString(),seller_name:'Ece S.'},
+    {id:'d12',isim:'2020 Ford Focus 1.5 Ecoboost ST Line',kategori:'vasita',fiyat:680000,resim_url:'https://picsum.photos/seed/focusst/600/400',durum:'ikinci-el',konum:'Bursa',created_at:new Date(Date.now()-864000000).toISOString(),seller_name:'Hakan O.'},
+  ];
+  S.total = items.length;
+  renderGrid(); renderPagination(); updateToolbar();
+}
+
+// ── RENDER ──
+function renderSkeletons() {
+  const g = document.getElementById('listingGrid');
+  g.className = 'listing-grid';
+  g.innerHTML = Array(8).fill('').map(()=>`
+    <div class="listing-skeleton">
+      <div class="skel" style="height:195px;border-radius:10px 10px 0 0"></div>
+      <div style="padding:14px">
+        <div class="skel" style="height:9px;width:45%;margin-bottom:8px;border-radius:4px"></div>
+        <div class="skel" style="height:14px;width:92%;margin-bottom:6px;border-radius:4px"></div>
+        <div class="skel" style="height:14px;width:70%;margin-bottom:12px;border-radius:4px"></div>
+        <div class="skel" style="height:20px;width:40%;border-radius:4px"></div>
+      </div>
+    </div>`).join('');
+}
+
+function renderGrid() {
+  const g = document.getElementById('listingGrid');
+  g.className = 'listing-grid' + (S.view==='list' ? ' list-view' : '');
+  if(!items.length) {
+    g.innerHTML = `<div class="empty-listings" style="grid-column:1/-1"><div class="el-icon">📭</div><h3>İlan bulunamadı</h3><p>Farklı kategori veya arama terimi deneyin</p><button onclick="filterCat('')" style="margin-top:16px;padding:10px 24px;background:var(--primary);color:white;border:none;border-radius:var(--radius);font-weight:700;cursor:pointer">Tüm İlanları Gör</button></div>`;
+    return;
+  }
+  const condMap = {'ikinci-el':['badge-used','İkinci El'], 'sifir':['badge-new','Sıfır'], 'yeniye-yakin':['badge-used','Yeniye Yakın'], 'satilik':['badge-featured','Satılık'], 'kiralik':['badge-featured','Kiralık']};
+  const favs = new Set(JSON.parse(localStorage.getItem('pm_favs')||'[]'));
+  g.innerHTML = items.map(it => {
+    const [bc,bl] = condMap[it.durum] || ['badge-used','İkinci El'];
+    const sellerName = it.seller_name || 'Satıcı';
+    const fav = favs.has(String(it.id));
+    return `<div class="listing-card">
+      <div class="lc-img-wrap">
+        <a href="listing.html?id=${it.id}">
+          <img src="${it.resim_url||'https://picsum.photos/seed/'+String(it.id).replace(/\D/g,'')+'/600/400'}" alt="${it.isim||''}" loading="lazy" onerror="this.src='https://picsum.photos/seed/default/600/400'">
+        </a>
+        <div class="lc-badges"><span class="badge ${bc}">${bl}</span></div>
+        <button class="lc-wish${fav?' active':''}" onclick="toggleFav('${it.id}',this)">
+          <svg viewBox="0 0 24 24" fill="${fav?'var(--primary)':'none'}" stroke="${fav?'var(--primary)':'currentColor'}" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </button>
+      </div>
+      <div style="display:flex;flex-direction:column;flex:1">
+        <div class="lc-body">
+          <div class="lc-cat">${it.kategori||''}</div>
+          <div class="lc-title"><a href="listing.html?id=${it.id}">${it.isim||'İlan'}</a></div>
+          <div class="lc-price">${fmt(it.fiyat)}</div>
+          <div class="lc-meta">
+            ${it.konum?`<span class="lc-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px;flex-shrink:0"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${it.konum}</span>`:''}
+            <span class="lc-meta-item">${ago(it.created_at)}</span>
+          </div>
+          ${(it.acil||it.pazarlik||it.takas)?`<div class="lc-options">${it.acil?'<span class="lc-opt-tag acil">🔥 Acil</span>':''}${it.pazarlik?'<span class="lc-opt-tag pazarlik">🤝 Pazarlık</span>':''}${it.takas?'<span class="lc-opt-tag takas">🔄 Takas</span>':''}</div>`:''}
+        </div>
+        <div class="lc-footer">
+          <div class="lc-seller"><div class="lc-seller-avatar">${ini(sellerName)}</div>${sellerName}</div>
+          <button class="btn-contact-seller" onclick="goMsg('${it.id}','${it.user_id||''}')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            Mesaj
+          </button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderPagination() {
+  const pages = Math.ceil(S.total/S.per);
+  const el = document.getElementById('pagination');
+  if(pages <= 1) { el.innerHTML=''; return; }
+  let h = `<button class="page-btn" ${S.page===1?'disabled':''} onclick="gotoPage(${S.page-1})">← Önceki</button>`;
+  for(let i=1; i<=pages; i++) {
+    if(i===1||i===pages||Math.abs(i-S.page)<=1) h += `<button class="page-btn${i===S.page?' active':''}" onclick="gotoPage(${i})">${i}</button>`;
+    else if(Math.abs(i-S.page)===2) h += `<span style="padding:0 6px;color:var(--text3)">…</span>`;
+  }
+  h += `<button class="page-btn" ${S.page===pages?'disabled':''} onclick="gotoPage(${S.page+1})">Sonraki →</button>`;
+  el.innerHTML = h;
+}
+
+function updateToolbar() {
+  const from = (S.page-1)*S.per+1, to = Math.min(S.page*S.per, S.total);
+  const label = S.cat || 'Tüm İlanlar';
+  document.getElementById('toolbarInfo').innerHTML = `<strong>${label}</strong> — ${S.total>0?`<strong>${from}–${to}</strong> / `:''}toplam <strong>${S.total}</strong> ilan`;
+}
+
+// ── FAVORITES ──
+window.toggleFav = (id, btn) => {
+  let favs = JSON.parse(localStorage.getItem('pm_favs')||'[]');
+  const sid = String(id);
+  const svg = btn.querySelector('svg');
+  if(favs.includes(sid)) {
+    favs = favs.filter(f=>f!==sid);
+    btn.classList.remove('active');
+    svg.setAttribute('fill','none'); svg.setAttribute('stroke','currentColor');
+    toast('Favorilerden çıkarıldı', 'info');
+  } else {
+    favs.push(sid);
+    btn.classList.add('active');
+    svg.setAttribute('fill','var(--primary)'); svg.setAttribute('stroke','var(--primary)');
+    toast('Favorilere eklendi ❤️');
+  }
+  localStorage.setItem('pm_favs', JSON.stringify(favs));
+};
+
+// ── MESSAGE ──
+window.goMsg = (listingId, sellerId) => {
+  if(!S.user) { toast('Mesaj göndermek için giriş yapın', 'warning'); openModal('loginModal'); return; }
+  if(!sellerId || sellerId === 'undefined' || sellerId === '') {
+    // sellerId yoksa listing sayfasına git — oradan daha güvenilir çekilir
+    window.location.href = `listing.html?id=${listingId}`;
+    return;
+  }
+  if(S.user.id === sellerId) { toast('Kendi ilanınıza mesaj gönderemezsiniz', 'warning'); return; }
+  window.location.href = `messages.html?listing=${listingId}&seller=${sellerId}`;
+};
+
+// ── SEARCH SUGGESTIONS ──
+const SUGGESTIONS = [
+  {icon:'🚗',label:'Vasıta',action:()=>filterCat('vasita')},
+  {icon:'🏠',label:'Emlak',action:()=>filterCat('emlak')},
+  {icon:'📱',label:'Elektronik',action:()=>filterCat('elektronik')},
+  {icon:'🏍️',label:'Motosiklet',action:()=>filterCat2('vasita','motosiklet')},
+  {icon:'💻',label:'Bilgisayar',action:()=>filterCat2('elektronik','bilgisayar')},
+  {icon:'📺',label:'TV',action:()=>filterCat2('elektronik','tv')},
+  {icon:'🎮',label:'Oyun Konsolu',action:()=>filterCat2('elektronik','oyun')},
+  {icon:'🏡',label:'Ev & Yaşam',action:()=>filterCat('ev-yasam')},
+  {icon:'👗',label:'Giyim',action:()=>filterCat('giyim')},
+  {icon:'⚽',label:'Spor',action:()=>filterCat('spor')},
+  {icon:'📚',label:'Kitap',action:()=>filterCat('kitap')},
+  {icon:'🏎️',label:'BMW',action:()=>filterBrand('BMW')},
+  {icon:'🏎️',label:'Mercedes',action:()=>filterBrand('Mercedes')},
+  {icon:'📱',label:'iPhone / Apple',action:()=>filterBrand('Apple')},
+  {icon:'📱',label:'Samsung',action:()=>filterBrand('Samsung')},
+];
+
+window.showSuggestions = async q => {
+  const el = document.getElementById('searchSugg'); if(!el) return;
+  q = q.trim();
+  let html = '';
+  if(!q) {
+    // Show popular categories
+    html = '<div class="ss-section-label">Popüler Kategoriler</div>';
+    html += SUGGESTIONS.slice(0,6).map(s=>`<div class="ss-item" onclick="applySugg(${SUGGESTIONS.indexOf(s)})"><span class="ss-icon">${s.icon}</span>${s.label}</div>`).join('');
+  } else {
+    // Filter suggestions by query
+    const ql = q.toLowerCase();
+    const matched = SUGGESTIONS.filter(s=>s.label.toLowerCase().includes(ql));
+    if(matched.length) {
+      html += '<div class="ss-section-label">Kategoriler</div>';
+      html += matched.slice(0,4).map(s=>`<div class="ss-item" onclick="applySugg(${SUGGESTIONS.indexOf(s)})"><span class="ss-icon">${s.icon}</span>${s.label}</div>`).join('');
+    }
+    // Also search in listings
+    try {
+      const{data}=await sb.from('urunler').select('id,isim,kategori,fiyat').ilike('isim',`%${q}%`).limit(4);
+      if(data&&data.length){
+        html += '<div class="ss-section-label">İlanlar</div>';
+        html += data.map(it=>`<div class="ss-item" onclick="window.location.href='listing.html?id=${it.id}'"><span class="ss-icon">📋</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${it.isim}</span><span style="color:var(--primary);font-weight:700;font-size:12px;flex-shrink:0">${it.fiyat>0?'₺'+Number(it.fiyat).toLocaleString('tr-TR'):''}</span></div>`).join('');
+      }
+    } catch(e) {}
+    if(!html) {
+      html = `<div class="ss-item" onclick="doSearch()"><span class="ss-icon">🔍</span>"${q}" için ara</div>`;
+    }
+  }
+  if(html) { el.innerHTML = html; el.classList.add('show'); }
+  else el.classList.remove('show');
+};
+window.hideSuggestions = () => { document.getElementById('searchSugg')?.classList.remove('show'); };
+window.applySugg = i => { SUGGESTIONS[i]?.action(); hideSuggestions(); document.getElementById('searchInput').value=''; };
+
+// ── FILTER BAR ──
+const catLabels2 = {vasita:'🚗 Vasıta',emlak:'🏠 Emlak',elektronik:'📱 Elektronik','ev-yasam':'🏡 Ev & Yaşam',giyim:'👗 Giyim',spor:'⚽ Spor',hobi:'🎨 Hobi',bebek:'👶 Bebek',kitap:'📚 Kitap','is-ilani':'💼 İş İlanı',diger:'Diğer'};
+function updateFilterBar(){
+  const bar = document.getElementById('filterBar');
+  const inner = document.getElementById('filterBarInner');
+  const chips = [];
+  if(S.cat) chips.push({label:catLabels2[S.cat]||S.cat, clear:()=>{S.cat='';S.sub='';updateAndLoad();}});
+  if(S.sub) chips.push({label:S.sub.replace('-',' '), clear:()=>{S.sub='';updateAndLoad();}});
+  if(S.brand) chips.push({label:'Marka: '+S.brand, clear:()=>{S.brand='';updateAndLoad();}});
+  if(S.search) chips.push({label:'Arama: "'+S.search+'"', clear:()=>{S.search='';document.getElementById('searchInput').value='';updateAndLoad();}});
+  if(!chips.length){ bar.style.display='none'; return; }
+  bar.style.display='block';
+  inner.innerHTML = chips.map((c,i)=>`<span class="filter-chip active">${c.label} <button onclick="clearFilter(${i})" class="fc-x">✕</button></span>`).join('');
+  if(chips.length>1) inner.innerHTML += `<span class="af-clear" onclick="clearAllFilters()">Tümünü Temizle</span>`;
+  window._filterChips = chips;
+}
+window.clearFilter = i => { window._filterChips[i]?.clear(); };
+window.clearAllFilters = () => { S.cat='';S.sub='';S.brand='';S.search='';document.getElementById('searchInput').value='';updateAndLoad(); };
+function updateAndLoad(){ updateFilterBar(); S.page=1; loadListings(); }
+
+// ── PRICE FILTER ──
+window.filterPrice = (min,max) => { S.priceMin=min; S.priceMax=max; S.page=1; loadListings(); };
+window.togglePricePopup = () => {
+  const p = document.getElementById('pricePopup'); if(!p) return;
+  p.classList.toggle('open');
+};
+window.applyPrice = () => {
+  const min = document.getElementById('priceMin').value;
+  const max = document.getElementById('priceMax').value;
+  S.priceMin = min ? parseFloat(min) : null;
+  S.priceMax = max ? parseFloat(max) : null;
+  S.page = 1;
+  document.getElementById('pricePopup').classList.remove('open');
+  const btn = document.getElementById('priceFilterBtn');
+  if(S.priceMin||S.priceMax) btn.classList.add('active');
+  else btn.classList.remove('active');
+  loadListings();
+};
+window.clearPrice = () => {
+  S.priceMin=null; S.priceMax=null;
+  document.getElementById('priceMin').value='';
+  document.getElementById('priceMax').value='';
+  document.getElementById('pricePopup').classList.remove('open');
+  document.getElementById('priceFilterBtn').classList.remove('active');
+  S.page=1; loadListings();
+};
+// Close price popup on outside click
+document.addEventListener('click', e => {
+  const popup = document.getElementById('pricePopup');
+  const btn = document.getElementById('priceFilterBtn');
+  if(popup && !popup.contains(e.target) && e.target !== btn) popup.classList.remove('open');
+});
+
+// ── BACK TO TOP ──
+window.addEventListener('scroll', () => {
+  const btn = document.getElementById('backToTop');
+  if(btn) btn.classList.toggle('visible', window.scrollY > 400);
+});
+
+// ── DARK MODE ──
+window.toggleDark = () => {
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  localStorage.setItem('pm_theme', isDark ? 'light' : 'dark');
+  const btn = document.getElementById('darkToggleBtn');
+  if(btn) btn.textContent = isDark ? '🌙' : '☀️';
+};
+// Apply saved theme
+(function(){
+  const t = localStorage.getItem('pm_theme') || 'light';
+  document.documentElement.setAttribute('data-theme', t);
+  const btn = document.getElementById('darkToggleBtn');
+  if(btn) btn.textContent = t === 'dark' ? '☀️' : '🌙';
+})();
+
+// ── SAVED SEARCHES ──
+window.saveSearch = () => {
+  const term = S.search || S.cat || S.brand;
+  if(!term) { toast('Kaydetmek için önce arama yapın', 'warning'); return; }
+  const saved = JSON.parse(localStorage.getItem('pm_saved_searches') || '[]');
+  const entry = { term, cat: S.cat, search: S.search, brand: S.brand, date: new Date().toISOString() };
+  if(!saved.find(s => s.term === term)) {
+    saved.unshift(entry);
+    localStorage.setItem('pm_saved_searches', JSON.stringify(saved.slice(0,10)));
+    toast('Arama kaydedildi ✅ Yeni ilanlar için bildirim alacaksınız');
+  } else {
+    toast('Bu arama zaten kaydedilmiş', 'info');
+  }
+};
+
+// ── MESSAGE BADGE (unread count) ──
+async function checkUnreadMessages() {
+  if(!S.user) return;
+  try {
+    const { count } = await sb.from('mesajlar').select('id', {count:'exact',head:true}).eq('alici_id', S.user.id).eq('okundu', false);
+    const badge = document.getElementById('msgBadge');
+    if(badge) {
+      if(count > 0) { badge.style.display='flex'; badge.textContent=count; }
+      else badge.style.display='none';
+    }
+  } catch(e) {}
+}
+
+// ── INIT ──
+loadListings();
+
+
+})();
+</script>
+</body>
+</html>
