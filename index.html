@@ -242,10 +242,11 @@
 <!-- MOBILE DRAWER -->
 <div class="mobile-drawer-overlay" id="mobileOverlay" onclick="toggleMobile()"></div>
 <div class="mobile-drawer" id="mobileDrawer">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
     <div style="font-size:20px;font-weight:900;color:var(--text)">Pazar<span style="color:var(--primary)">yeri</span></div>
-    <button onclick="toggleMobile()" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;width:32px;height:32px;font-size:16px;color:var(--text3);cursor:pointer">✕</button>
+    <button onclick="toggleMobile()" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;width:34px;height:34px;font-size:18px;color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
   </div>
+  <div style="font-size:10px;font-weight:800;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;padding-bottom:6px;border-bottom:2px solid var(--primary)">📂 KATEGORİLER</div>
   <a onclick="filterCat('');toggleMobile()" class="mobile-nav-link">🛒 Tüm İlanlar</a>
   <a onclick="filterCat('vasita');toggleMobile()" class="mobile-nav-link">🚗 Vasıta</a>
   <a onclick="filterCat('emlak');toggleMobile()" class="mobile-nav-link">🏠 Emlak</a>
@@ -253,9 +254,11 @@
   <a onclick="filterCat('ev-yasam');toggleMobile()" class="mobile-nav-link">🏡 Ev & Yaşam</a>
   <a onclick="filterCat('giyim');toggleMobile()" class="mobile-nav-link">👗 Giyim</a>
   <a onclick="filterCat('spor');toggleMobile()" class="mobile-nav-link">⚽ Spor</a>
-  <div style="height:1px;background:var(--border);margin:12px 0"></div>
+  <div style="height:1px;background:var(--border);margin:14px 0"></div>
+  <div style="font-size:10px;font-weight:800;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">👤 HESABIM</div>
   <a href="messages.html" class="mobile-nav-link">💬 Mesajlarım</a>
   <a href="profile.html" class="mobile-nav-link">👤 Profilim</a>
+  <a onclick="openAddListing();toggleMobile()" class="mobile-nav-link" style="color:var(--primary);font-weight:800">➕ İlan Ver</a>
   <div style="margin-top:16px" id="mobileAuthBtns">
     <button class="btn-submit" onclick="openModal('loginModal');toggleMobile()" style="width:100%;margin-bottom:8px">Giriş Yap</button>
   </div>
