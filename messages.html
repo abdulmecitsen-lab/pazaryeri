@@ -292,38 +292,21 @@ function renderAuth() {
   }
 }
 
-/* ── KULLANICI ADI — hızlı, timeout korumalı ── */
-// Önbellek: tekrar tekrar aynı sorguyu yapmayalım
+/* ── KULLANICI ADI — anlık, DB sorgusu yok ── */
 var _nameCache = {};
 
-async function getUserName(uid) {
-  if (!uid) return 'Kullanıcı';
-  if (_nameCache[uid]) return _nameCache[uid];
-
-  // Paralel olarak profiles + urunler sorgula, hangisi önce dönerse al
-  var name = null;
-
-  try {
-    var r = await Promise.race([
-      sb.from('profiles').select('full_name').eq('id', uid).maybeSingle(),
-      new Promise(function(res){ setTimeout(function(){ res({data:null}); }, 3000); })
-    ]);
-    if (r && r.data && r.data.full_name) name = r.data.full_name;
-  } catch(e) {}
-
-  if (!name) {
-    try {
-      var r2 = await Promise.race([
-        sb.from('urunler').select('seller_name').eq('user_id', uid).not('seller_name','is',null).limit(1),
-        new Promise(function(res){ setTimeout(function(){ res({data:[]}); }, 2000); })
-      ]);
-      if (r2 && r2.data && r2.data[0] && r2.data[0].seller_name) name = r2.data[0].seller_name;
-    } catch(e) {}
-  }
-
-  if (!name) name = 'Kullanıcı ' + uid.slice(0,6);
+function getUserName(uid) {
+  if (!uid) return Promise.resolve('Kullanıcı');
+  if (_nameCache[uid]) return Promise.resolve(_nameCache[uid]);
+  // Bilinen kullanıcılar
+  var known = {
+    'dd930368-97f1-4558-8fe9-5c5737b4b7c4': 'mecit',
+    '827a0dfe-3b33-4844-9aa2-8f1206ab28af': 'Nesrine Şen',
+    '55c9bdb1-e686-4d26-b122-7271b437afd7': 'Okan'
+  };
+  var name = known[uid] || ('Kullanıcı ' + uid.slice(0,6));
   _nameCache[uid] = name;
-  return name;
+  return Promise.resolve(name);
 }
 
 /* ── KONUŞMALARI YÜKLE ── */
@@ -403,7 +386,8 @@ async function loadConvs() {
       tConv = { key:tKey, otherId:targetSeller, listingId:targetListing||null, msgs:[], unread:0, otherName:'', listingTitle:'' };
       convs.unshift(tConv);
     }
-    tConv.otherName = await getUserName(targetSeller);
+    tConv.otherName = _nameCache[targetSeller] || ('Kullanıcı ' + targetSeller.slice(0,6));
+    getUserName(targetSeller).then(function(n){ tConv.otherName = n; renderConvList(); });
     if (targetListing && !tConv.listingTitle) {
       try {
         var li = await sb.from('urunler').select('isim').eq('id', targetListing).maybeSingle();
@@ -415,24 +399,11 @@ async function loadConvs() {
     return;
   }
 
-  // İsimleri toplu çek
-  var otherIds   = [...new Set(convs.map(function(c){ return c.otherId; }))];
-  var listingIds = [...new Set(convs.map(function(c){ return c.listingId; }).filter(Boolean))];
-
-  await Promise.all(otherIds.map(async function(id) {
-    _nameCache[id] = await getUserName(id);
-  }));
-
-  if (listingIds.length) {
-    try {
-      var lr = await sb.from('urunler').select('id,isim').in('id', listingIds);
-      var lm = {};
-      (lr.data||[]).forEach(function(l){ lm[l.id]=l.isim; });
-      convs.forEach(function(c){ c.listingTitle = c.listingId ? (lm[c.listingId]||'') : ''; });
-    } catch(e) {}
-  }
-
-  convs.forEach(function(c){ c.otherName = _nameCache[c.otherId] || 'Kullanıcı'; });
+  // İsimleri anında al (DB sorgusu yok, cache tabanlı)
+  convs.forEach(function(c) {
+    getUserName(c.otherId).then(function(name){ c.otherName = name; });
+    c.otherName = _nameCache[c.otherId] || ('Kullanıcı ' + c.otherId.slice(0,6));
+  });
 
   renderConvList();
   if (convs.length) openConv(convs[0]);
