@@ -335,10 +335,13 @@
       '<div style="font-size:2rem;opacity:.2;margin-bottom:8px">⏳</div>Yükleniyor...</div>';
 
     // Mesajları çek
+    console.log('🔄 Mesajlar yükleniyor, kullanıcı:', user.id);
     var res = await sb.from('mesajlar')
       .select('*')
       .or('gonderen_id.eq.' + user.id + ',alici_id.eq.' + user.id)
       .order('created_at', { ascending: true });
+
+    console.log('📋 loadConvs yanıtı:', res.data?.length, 'mesaj,', res.error || 'hata yok');
 
     if (res.error) {
       document.getElementById('convItems').innerHTML =
@@ -690,7 +693,14 @@
     };
     if (imgUrl) payload.resim_url = imgUrl;
 
+    console.log('📤 Mesaj gönderiliyor:', payload);
+    console.log('👤 Giriş yapan kullanıcı:', user.id);
+    console.log('👥 Alıcı:', conv.otherId);
+
     var ins = await sb.from('mesajlar').insert([payload]).select().single();
+
+    console.log('📬 Supabase yanıtı:', ins);
+    if (ins.error) console.error('❌ Hata detayı:', ins.error.code, ins.error.message, ins.error.details, ins.error.hint);
 
     // 7. UI kilidi kaldır
     if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
