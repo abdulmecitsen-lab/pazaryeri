@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Profilim — Pazaryeri</title>
   <link rel="stylesheet" href="css/style.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.38.4"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0"></script>
   <style>
     .tab-content{display:none}.tab-content.active{display:block}
     .lr{display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid var(--border);transition:background .12s}
@@ -145,7 +145,7 @@
 'use strict';
 const SURL='https://sbubvjeguxuqgiklrajk.supabase.co';
 const SKEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNidWJ2amVndXh1cWdpa2xyYWprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIzOTQxNTIsImV4cCI6MjA4Nzk3MDE1Mn0.dVwPmfxu2B0o9M-lMr5_k_Qy3YPDfiuk-TX2emDk9SQ';
-const sb=window.supabase.createClient(SURL,SKEY);
+if(!window._sbClient){window._sbClient=window.supabase.createClient(SURL,SKEY,{auth:{storageKey:'pz_auth',autoRefreshToken:true,persistSession:true,detectSessionInUrl:false}});}const sb=window._sbClient;
 let user=null;
 
 const fmt=n=>(n&&n>0)?'₺'+Number(n).toLocaleString('tr-TR'):'Ücretsiz';

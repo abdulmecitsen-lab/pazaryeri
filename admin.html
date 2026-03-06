@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Panel — Pazaryeri</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0"></script>
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
     :root{--bg:#0f1117;--surface:#1a1d27;--surface2:#22263a;--border:#2e3348;--primary:#ff5a1f;--primary2:#ff7a45;--text:#e8eaf0;--text2:#9ca3b0;--text3:#5a6070;--green:#22c55e;--red:#ef4444;--yellow:#f59e0b;--blue:#3b82f6;--radius:10px;--sidebar:240px}
@@ -431,7 +431,7 @@
 'use strict';
 const SURL='https://sbubvjeguxuqgiklrajk.supabase.co';
 const SKEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNidWJ2amVndXh1cWdpa2xyYWprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIzOTQxNTIsImV4cCI6MjA4Nzk3MDE1Mn0.dVwPmfxu2B0o9M-lMr5_k_Qy3YPDfiuk-TX2emDk9SQ';
-const sb=window.supabase.createClient(SURL,SKEY);
+if(!window._sbClient){window._sbClient=window.supabase.createClient(SURL,SKEY,{auth:{storageKey:'pz_auth',autoRefreshToken:true,persistSession:true,detectSessionInUrl:false}});}const sb=window._sbClient;
 
 let adminUser=null;
 // Pagination state

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>İlan Detay — Pazaryeri</title>
   <link rel="stylesheet" href="css/style.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.38.4"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0"></script>
   <style>
     .det-page{max-width:1080px;margin:28px auto;padding:0 20px;display:grid;grid-template-columns:1fr 320px;gap:24px;align-items:start}
     .det-img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:12px;border:1px solid var(--border)}
@@ -82,7 +82,7 @@
 'use strict';
 const SURL='https://sbubvjeguxuqgiklrajk.supabase.co';
 const SKEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNidWJ2amVndXh1cWdpa2xyYWprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIzOTQxNTIsImV4cCI6MjA4Nzk3MDE1Mn0.dVwPmfxu2B0o9M-lMr5_k_Qy3YPDfiuk-TX2emDk9SQ';
-const sb=window.supabase.createClient(SURL,SKEY);
+if(!window._sbClient){window._sbClient=window.supabase.createClient(SURL,SKEY,{auth:{storageKey:'pz_auth',autoRefreshToken:true,persistSession:true,detectSessionInUrl:false}});}const sb=window._sbClient;
 let user=null;
 const id=new URLSearchParams(window.location.search).get('id');
 

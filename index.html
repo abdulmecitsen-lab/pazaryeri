@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pazaryeri — Türkiye'nin İlan Platformu</title>
   <link rel="stylesheet" href="css/style.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.38.4"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0"></script>
 </head>
 <body>
 
@@ -400,7 +400,7 @@ const SKEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZ
 if (!window._sbClient) {
   window._sbClient = window.supabase.createClient(SURL, SKEY, {
     auth: {
-      storageKey: 'pz_auth',
+      storageKey: 'sb-pazaryeri-auth',
       autoRefreshToken: true,
       persistSession: true,
       detectSessionInUrl: false
