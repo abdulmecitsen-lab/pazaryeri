@@ -397,7 +397,17 @@
 
 const SURL = 'https://sbubvjeguxuqgiklrajk.supabase.co';
 const SKEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNidWJ2amVndXh1cWdpa2xyYWprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIzOTQxNTIsImV4cCI6MjA4Nzk3MDE1Mn0.dVwPmfxu2B0o9M-lMr5_k_Qy3YPDfiuk-TX2emDk9SQ';
-const sb = window.supabase.createClient(SURL, SKEY);
+if (!window._sbClient) {
+  window._sbClient = window.supabase.createClient(SURL, SKEY, {
+    auth: {
+      storageKey: 'sb-pazaryeri-auth',
+      autoRefreshToken: true,
+      persistSession: true,
+      detectSessionInUrl: false
+    }
+  });
+}
+const sb = window._sbClient;
 
 const S = { page:1, per:12, total:0, sort:'newest', view:'grid', cat:'', sub:'', brand:'', search:'', priceMin:null, priceMax:null, user:null, cond:'ikinci-el' };
 let items = [];
