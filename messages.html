@@ -336,14 +336,16 @@ async function loadConvs(){
     return;
   }
 
-  // Gruplama
+  // Gruplama - ilan_id'yi key'den çıkar, aynı iki kişi = tek konuşma
   var map = {};
   msgs.forEach(function(m){
     var otherId = m.gonderen_id===user.id ? m.alici_id : m.gonderen_id;
-    if(otherId===user.id) return; // kendinize gönderilenleri atla
-    var key = [user.id,otherId].sort().join('_')+'__'+(m.ilan_id||'x');
+    if(otherId===user.id) return;
+    var key = [user.id,otherId].sort().join('_');
     if(!map[key]) map[key]={key:key,otherId:otherId,listingId:m.ilan_id||null,msgs:[],unread:0,otherName:getName(otherId),listingTitle:''};
     map[key].msgs.push(m);
+    // En son ilan_id'yi sakla
+    if(m.ilan_id) map[key].listingId=m.ilan_id;
     if(m.alici_id===user.id&&!m.okundu) map[key].unread++;
   });
 
@@ -355,11 +357,13 @@ async function loadConvs(){
 
   // URL parametresi ile konuşma aç
   if(paramSeller && paramSeller!==user.id){
-    var tKey=[user.id,paramSeller].sort().join('_')+'__'+(paramListing||'x');
+    var tKey=[user.id,paramSeller].sort().join('_');
     var tConv=convs.find(function(c){return c.key===tKey;});
     if(!tConv){
       tConv={key:tKey,otherId:paramSeller,listingId:paramListing||null,msgs:[],unread:0,otherName:getName(paramSeller),listingTitle:''};
       convs.unshift(tConv);
+    } else if(paramListing) {
+      tConv.listingId=paramListing;
     }
     renderConvList();
     openConv(tConv);
@@ -521,7 +525,7 @@ function subscribeRealtime(){
     .on('postgres_changes',{event:'INSERT',schema:'public',table:'mesajlar',filter:'alici_id=eq.'+user.id},function(payload){
       var m=payload.new;
       if(m.gonderen_id===user.id) return;
-      var key=[user.id,m.gonderen_id].sort().join('_')+'__'+(m.ilan_id||'x');
+      var key=[user.id,m.gonderen_id].sort().join('_');
       var conv=convs.find(function(c){return c.key===key;});
       if(!conv){conv={key:key,otherId:m.gonderen_id,listingId:m.ilan_id||null,msgs:[],unread:0,otherName:getName(m.gonderen_id),listingTitle:''};convs.unshift(conv);}
       conv.msgs.push(m);
