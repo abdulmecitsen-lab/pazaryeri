@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mesajlar — Pazaryeri</title>
   <link rel="stylesheet" href="css/style.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0"></script>
   <style>
     /* ── MSG-ROW (eksikti, eklendi) ── */
     .msg-row { display:flex; margin-bottom:4px; }
@@ -547,14 +547,14 @@ async function startApp(){
     var raw=localStorage.getItem('pz_auth');
     if(raw){
       var parsed=JSON.parse(raw);
-      if(parsed&&parsed.access_token){
-        var exp=parsed.expires_at||0;
-        if(exp*1000>Date.now()){
-          // Token geçerli, direkt kullan
-          user={id:parsed.user.id,email:parsed.user.email,user_metadata:parsed.user.user_metadata||{}};
-          await startApp();
-          return;
-        }
+      // Supabase token yapısı: {access_token, refresh_token, expires_at, user: {...}}
+      var userData = parsed && (parsed.user || (parsed.currentSession && parsed.currentSession.user));
+      var accessToken = parsed && (parsed.access_token || (parsed.currentSession && parsed.currentSession.access_token));
+      var expiresAt = parsed && (parsed.expires_at || (parsed.currentSession && parsed.currentSession.expires_at) || 9999999999);
+      if(accessToken && userData && expiresAt*1000>Date.now()){
+        user={id:userData.id,email:userData.email,user_metadata:userData.user_metadata||{}};
+        await startApp();
+        return;
       }
     }
   }catch(e){}
@@ -564,14 +564,22 @@ async function startApp(){
     var raw2=localStorage.getItem('pz_auth');
     if(raw2){
       var p2=JSON.parse(raw2);
-      if(p2&&p2.access_token){
-        var r=await sb.auth.setSession({access_token:p2.access_token,refresh_token:p2.refresh_token});
+      var at=p2&&(p2.access_token||(p2.currentSession&&p2.currentSession.access_token));
+      var rt=p2&&(p2.refresh_token||(p2.currentSession&&p2.currentSession.refresh_token));
+      if(at){
+        var r=await sb.auth.setSession({access_token:at,refresh_token:rt});
         if(r.data&&r.data.session){user=r.data.session.user;await startApp();return;}
       }
     }
   }catch(e){}
 
-  // 3. Giriş ekranı göster
+  // 3. getSession dene
+  try{
+    var r2=await sb.auth.getSession();
+    if(r2.data&&r2.data.session){user=r2.data.session.user;await startApp();return;}
+  }catch(e){}
+
+  // 4. Giriş ekranı göster
   $('mainContent').style.display='none';
   $('loginGate').style.display='block';
   setTimeout(function(){window.openModal('loginModal');},300);
