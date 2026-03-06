@@ -3,50 +3,72 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mesaj Test v2</title>
+  <title>Mesaj Test v3</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    *{box-sizing:border-box}
-    body{font-family:monospace;padding:20px;background:#0f0f0f;color:#eee;max-width:800px;margin:0 auto}
-    h2{color:#fff}
-    .section{background:#1a1a1a;border:1px solid #333;border-radius:8px;padding:16px;margin-bottom:16px}
-    .section h3{margin:0 0 12px;color:#ffaa00;font-size:14px}
-    button{background:#222;color:#00ff00;border:1px solid #00ff00;padding:9px 16px;cursor:pointer;margin:4px;border-radius:4px;font-family:monospace;font-size:13px}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:monospace;padding:20px;background:#0f0f0f;color:#eee;max-width:700px;margin:0 auto}
+    h2{color:#fff;margin-bottom:16px}
+    .box{background:#1a1a1a;border:1px solid #333;border-radius:8px;padding:16px;margin-bottom:14px}
+    .box h3{color:#ffaa00;font-size:13px;margin-bottom:10px;text-transform:uppercase;letter-spacing:1px}
+    button{background:#222;color:#00cc00;border:1px solid #00cc00;padding:9px 14px;cursor:pointer;margin:3px;border-radius:5px;font-size:12px}
     button:hover{background:#003300}
-    button.red{color:#ff4444;border-color:#ff4444}
-    button.red:hover{background:#330000}
-    input{background:#111;border:1px solid #444;color:white;padding:8px 10px;border-radius:4px;width:100%;margin:4px 0;font-size:13px}
-    label{color:#888;font-size:11px;display:block;margin-top:8px}
-    #log{background:#111;border:1px solid #222;padding:14px;border-radius:8px;white-space:pre-wrap;font-size:12px;line-height:1.6;min-height:160px;max-height:400px;overflow-y:auto}
-    .ok{color:#00dd00}.err{color:#ff4444}.warn{color:#ffaa00}.inf{color:#88aaff}
-    .uid{background:#222;padding:6px 10px;border-radius:4px;font-size:12px;color:#aaa;margin-top:8px;word-break:break-all}
+    button.warn{color:#ffaa00;border-color:#ffaa00}
+    input{background:#111;border:1px solid #444;color:white;padding:8px;border-radius:4px;width:100%;margin:3px 0;font-size:12px}
+    label{color:#888;font-size:11px;display:block;margin-top:6px}
+    #log{background:#111;border:1px solid #1a1a1a;padding:12px;border-radius:6px;white-space:pre-wrap;font-size:11px;line-height:1.7;min-height:120px;max-height:350px;overflow-y:auto;margin-top:8px}
+    .ok{color:#00cc00}.err{color:#ff4444}.warn{color:#ffaa00}.inf{color:#6699ff}
+    .status{padding:8px 10px;border-radius:5px;font-size:12px;margin-top:8px;background:#111;border:1px solid #333}
+    .users{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px}
+    .user-card{background:#111;border:1px solid #333;border-radius:6px;padding:10px;cursor:pointer;transition:.2s;font-size:11px}
+    .user-card:hover{border-color:#ffaa00}
+    .user-card.selected{border-color:#00cc00;background:#001a00}
+    .user-card .name{font-weight:bold;color:#fff;margin-bottom:4px}
+    .user-card .email{color:#888;word-break:break-all}
+    .user-card .uid{color:#555;font-size:10px;margin-top:4px;word-break:break-all}
   </style>
 </head>
 <body>
-<h2>🔧 Pazaryeri Mesaj Test v2</h2>
+<h2>🔧 Pazaryeri — Mesaj Test v3</h2>
 
-<div class="section">
-  <h3>1. GİRİŞ</h3>
+<div class="box">
+  <h3>1. Giriş Yap</h3>
   <label>E-posta</label><input id="email" type="email" placeholder="mail@ornek.com">
   <label>Şifre</label><input id="pass" type="password">
   <button onclick="doLogin()">Giriş Yap</button>
-  <div class="uid" id="userInfo">Giriş yapılmadı</div>
+  <div class="status" id="loginStatus">Giriş yapılmadı</div>
 </div>
 
-<div class="section">
-  <h3>2. MESAJ GÖNDER (başka kullanıcıya)</h3>
-  <label>Alıcı User ID — Supabase Dashboard → Authentication → Users'dan kopyalayın</label>
-  <input id="aliciId" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx">
+<div class="box">
+  <h3>2. Alıcı Seç (tıklayın)</h3>
+  <div class="users">
+    <div class="user-card" onclick="selectUser('dd930368-97f1-4558-8fe9-5c5737b4b7c4','mecit','abdulmecitsen@gmail.com',this)">
+      <div class="name">mecit</div>
+      <div class="email">abdulmecitsen@gmail.com</div>
+      <div class="uid">dd930368...</div>
+    </div>
+    <div class="user-card" onclick="selectUser('827a0dfe-3b33-4844-9aa2-8f1206ab28af','Nesrine Şen','nesrinesen2012@gmail.com',this)">
+      <div class="name">Nesrine Şen</div>
+      <div class="email">nesrinesen2012@gmail.com</div>
+      <div class="uid">827a0dfe...</div>
+    </div>
+    <div class="user-card" onclick="selectUser('55c9bdb1-e686-4d26-b122-7271b437afd7','Okan','senfield1625@hotmail.com',this)">
+      <div class="name">Okan</div>
+      <div class="email">senfield1625@hotmail.com</div>
+      <div class="uid">55c9bdb1...</div>
+    </div>
+  </div>
+  <div class="status" id="aliciStatus">Alıcı seçilmedi</div>
+</div>
+
+<div class="box">
+  <h3>3. Test</h3>
   <label>Mesaj metni</label>
-  <input id="msgText" value="Merhaba, test mesajı!">
-  <button onclick="sendTest()">Mesaj Gönder</button>
-  <button onclick="listMsgs()">Mesajları Listele</button>
-  <button onclick="checkRLS()">RLS & Tablo Kontrol</button>
-</div>
-
-<div class="section">
-  <h3>3. LOG</h3>
-  <button onclick="clearLog()" class="red">Temizle</button>
+  <input id="msgText" value="Merhaba! Test mesajı.">
+  <button onclick="sendTest()">📤 Mesaj Gönder</button>
+  <button onclick="listMsgs()">📋 Mesajları Listele</button>
+  <button onclick="checkInsert()">🔍 INSERT İzni Test Et</button>
+  <button onclick="clearLog()" class="warn">Log Temizle</button>
   <div id="log">Loglar burada görünecek...\n</div>
 </div>
 
@@ -54,7 +76,7 @@
 const SURL='https://sbubvjeguxuqgiklrajk.supabase.co';
 const SKEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNidWJ2amVndXh1cWdpa2xyYWprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIzOTQxNTIsImV4cCI6MjA4Nzk3MDE1Mn0.dVwPmfxu2B0o9M-lMr5_k_Qy3YPDfiuk-TX2emDk9SQ';
 const sb=window.supabase.createClient(SURL,SKEY);
-let user=null;
+let user=null, aliciId=null, aliciName=null;
 
 function log(msg,cls='inf'){
   const el=document.getElementById('log');
@@ -64,90 +86,75 @@ function log(msg,cls='inf'){
 }
 function clearLog(){document.getElementById('log').innerHTML='';}
 
+function selectUser(id,name,email,el){
+  document.querySelectorAll('.user-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  aliciId=id; aliciName=name;
+  document.getElementById('aliciStatus').textContent=`✅ Seçilen alıcı: ${name} (${email})`;
+  log(`👤 Alıcı seçildi: ${name} — ${id}`,'ok');
+}
+
 async function doLogin(){
   const email=document.getElementById('email').value;
   const pass=document.getElementById('pass').value;
   if(!email||!pass){log('Email ve şifre gerekli','err');return;}
-  log(`Giriş yapılıyor: ${email}...`);
+  log(`🔐 Giriş: ${email}...`);
   const{data,error}=await sb.auth.signInWithPassword({email,password:pass});
-  if(error){log(`❌ Giriş hatası: ${error.message}`,'err');return;}
+  if(error){log(`❌ ${error.message}`,'err');document.getElementById('loginStatus').textContent='❌ Giriş başarısız: '+error.message;return;}
   user=data.user;
-  document.getElementById('userInfo').textContent=`✅ Giriş yapıldı\nUser ID: ${user.id}\nEmail: ${user.email}`;
-  log(`✅ Giriş başarılı — ID: ${user.id}`,'ok');
+  document.getElementById('loginStatus').textContent=`✅ Giriş yapıldı: ${user.email} (${user.id})`;
+  log(`✅ Giriş başarılı — ${user.email}`,'ok');
+  log(`   User ID: ${user.id}`,'inf');
 }
 
-async function checkRLS(){
+async function checkInsert(){
   if(!user){log('Önce giriş yapın','err');return;}
-  log('--- RLS & Tablo Kontrolü ---');
-  
-  // 1. Basit select
-  const s1=await sb.from('mesajlar').select('count',{count:'exact',head:true});
-  log(s1.error ? `❌ SELECT hatası: ${s1.error.code} ${s1.error.message}` : `✅ SELECT çalışıyor. Toplam: ${s1.count}`
-    , s1.error?'err':'ok');
-
-  // 2. Kolonlar var mı?
-  const s2=await sb.from('mesajlar').select('id,gonderen_id,alici_id,icerik,resim_url,okundu,created_at').limit(1);
-  log(s2.error ? `❌ Kolon hatası: ${s2.error.message}` : `✅ Tüm kolonlar mevcut`
-    , s2.error?'err':'ok');
-
-  // 3. Insert yetkisi
-  const testPayload={gonderen_id:user.id,alici_id:user.id,icerik:'__rls_test__',okundu:false};
-  const s3=await sb.from('mesajlar').insert([testPayload]).select().single();
-  if(s3.error){
-    log(`❌ INSERT hatası: ${s3.error.code}\n   Mesaj: ${s3.error.message}\n   Detay: ${s3.error.details||'-'}\n   İpucu: ${s3.error.hint||'-'}`,'err');
+  log('--- INSERT İzni Kontrol ---');
+  const payload={gonderen_id:user.id,alici_id:user.id,icerik:'__test__',okundu:false};
+  const{data,error}=await sb.from('mesajlar').insert([payload]).select().single();
+  if(error){
+    log(`❌ INSERT HATASI:\n   Kod: ${error.code}\n   Mesaj: ${error.message}\n   Detay: ${error.details||'-'}\n   İpucu: ${error.hint||'-'}`,'err');
   } else {
-    log(`✅ INSERT çalışıyor. ID: ${s3.data.id}`,'ok');
-    // Temizle
-    await sb.from('mesajlar').delete().eq('id',s3.data.id);
+    log(`✅ INSERT çalışıyor! ID: ${data.id}`,'ok');
+    await sb.from('mesajlar').delete().eq('id',data.id);
     log(`🗑️ Test mesajı silindi`);
   }
 }
 
 async function sendTest(){
   if(!user){log('Önce giriş yapın','err');return;}
-  const alici=document.getElementById('aliciId').value.trim();
-  const text=document.getElementById('msgText').value.trim();
-  if(!alici){log('Alıcı ID gerekli!','err');return;}
-  if(alici===user.id){log('Kendinize değil, BAŞKA bir kullanıcının ID\'sini girin!','warn');return;}
-  
-  log(`📤 Gönderiliyor → alici: ${alici}`);
-  const payload={gonderen_id:user.id,alici_id:alici,icerik:text||'test',okundu:false};
+  if(!aliciId){log('Önce alıcı seçin (yukarıdaki kartlardan)','err');return;}
+  if(aliciId===user.id){log('⚠️ Kendinize mesaj gönderiyorsunuz! Başka biriyle giriş yapın.','warn');return;}
+  const text=document.getElementById('msgText').value.trim()||'test';
+  const payload={gonderen_id:user.id,alici_id:aliciId,icerik:text,okundu:false};
+  log(`📤 Gönderiliyor: "${text}"\n   Gönderen: ${user.email}\n   Alıcı: ${aliciName}`);
   const{data,error}=await sb.from('mesajlar').insert([payload]).select().single();
-  
   if(error){
-    log(`❌ HATA: ${error.code}\n   ${error.message}\n   Detay: ${error.details||'-'}\n   İpucu: ${error.hint||'-'}`,'err');
-    log(`\n⚠️ Hata kodu açıklaması:
-  42501 = RLS politikası engelledi (en yaygın sorun)
-  23503 = Foreign key hatası (alici_id auth.users'da yok)
-  23502 = NOT NULL ihlali
-  PGRST301 = JWT/auth sorunu`,'warn');
+    log(`❌ HATA: ${error.code} — ${error.message}\n   ${error.hint||''}`,'err');
   } else {
-    log(`✅ Başarılı! Mesaj ID: ${data.id}`,'ok');
+    log(`✅ MESAJ GÖNDERİLDİ!\n   ID: ${data.id}\n   Zaman: ${new Date(data.created_at).toLocaleString('tr-TR')}`,'ok');
   }
 }
 
 async function listMsgs(){
   if(!user){log('Önce giriş yapın','err');return;}
-  log('--- Son 10 Mesaj ---');
+  log('--- Mesajlar ---');
   const{data,error}=await sb.from('mesajlar')
-    .select('*')
-    .or(`gonderen_id.eq.${user.id},alici_id.eq.${user.id}`)
-    .order('created_at',{ascending:false})
-    .limit(10);
+    .select('*').or(`gonderen_id.eq.${user.id},alici_id.eq.${user.id}`)
+    .order('created_at',{ascending:false}).limit(10);
   if(error){log(`❌ ${error.code}: ${error.message}`,'err');return;}
   if(!data.length){log('Hiç mesaj yok','warn');return;}
   data.forEach((m,i)=>{
     const dir=m.gonderen_id===user.id?'→ GÖNDERİLEN':'← ALINAN';
-    const kendi=m.alici_id===m.gonderen_id?' ⚠️(kendinize!)':'';
-    log(`[${i+1}] ${dir}${kendi}\n    icerik: "${m.icerik||'(görsel)'}"\n    alici: ${m.alici_id}\n    zaman: ${new Date(m.created_at).toLocaleString('tr-TR')}`,'inf');
+    const kendi=m.alici_id===m.gonderen_id?' ⚠️ (kendinize!)':'';
+    log(`[${i+1}] ${dir}${kendi} | "${m.icerik||'📷'}" | ${new Date(m.created_at).toLocaleString('tr-TR')}`,'inf');
   });
 }
 
-// Sayfa açılınca mevcut session kontrol et
 sb.auth.getSession().then(({data})=>{
   if(data.session){
     user=data.session.user;
-    document.getElementById('userInfo').textContent=`✅ Oturum açık\nUser ID: ${user.id}\nEmail: ${user.email}`;
+    document.getElementById('loginStatus').textContent=`✅ Oturum açık: ${user.email} (${user.id})`;
     log(`🔑 Mevcut oturum: ${user.email}`,'ok');
   }
 });
