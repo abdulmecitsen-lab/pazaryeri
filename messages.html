@@ -384,13 +384,13 @@
         conv = { key:key, otherId:targetSeller, listingId:targetListing||null, msgs:[], unread:0, otherName:'', listingTitle:'' };
         convs.unshift(conv);
       }
-      await enrichConv(conv);
+      try { await enrichConv(conv); } catch(e) { conv.otherName = conv.otherName || 'Kullanıcı'; }
       renderConvList();
       openConv(conv);
       return;
     }
 
-    await enrichAll();
+    try { await enrichAll(); } catch(e) { console.warn('enrichAll hatası:', e); }
     renderConvList();
     if (convs.length) openConv(convs[0]);
     else showEmpty();
@@ -473,6 +473,13 @@
     }).join('');
   }
 
+  window.mobileBackToList = function () {
+    document.querySelector('.conv-list').style.display = '';
+    document.getElementById('chatWindow').style.display = '';
+    activeKey = null;
+    window._activeConv = null;
+  };
+
   window.filterConvs = function (val) {
     var v = val.toLowerCase();
     var items = document.querySelectorAll('.conv-item');
@@ -498,6 +505,13 @@
     window._activeConv = conv;   // sendMsg için referans
     renderConvList();
     renderChat(conv);
+
+    // Mobilde: liste gizle, chat göster
+    var isMobile = window.innerWidth <= 768;
+    if (isMobile) {
+      document.querySelector('.conv-list').style.display = 'none';
+      document.getElementById('chatWindow').style.display = 'flex';
+    }
     // Okundu işaretle
     if (conv.msgs.some(function (m) { return m.alici_id === user.id && !m.okundu; })) {
       sb.from('mesajlar').update({ okundu: true })
@@ -512,8 +526,13 @@
   ───────────────────────────────────────── */
   function renderChat(conv) {
     var win = document.getElementById('chatWindow');
+    var isMobile = window.innerWidth <= 768;
+    var backBtn = isMobile
+      ? '<button onclick="mobileBackToList()" style="background:none;border:none;font-size:20px;cursor:pointer;padding:0 8px 0 0;color:var(--text)">←</button>'
+      : '';
     win.innerHTML =
       '<div class="chat-header">' +
+        backBtn +
         '<div class="conv-avatar">' + initials(conv.otherName) + '</div>' +
         '<div class="chat-header-info">' +
           '<div class="chat-header-name">' + esc(conv.otherName) + '</div>' +
@@ -748,24 +767,33 @@
   /* ─────────────────────────────────────────
      AUTH STATE
   ───────────────────────────────────────── */
+  // Çift tetiklenmeyi önlemek için flag
+  var _initialized = false;
+
   sb.auth.onAuthStateChange(async function (ev, ses) {
+    // Sadece gerçek değişikliklerde tetikle
+    if (ev !== 'SIGNED_IN' && ev !== 'SIGNED_OUT' && ev !== 'INITIAL_SESSION') return;
+
+    var prevUserId = user ? user.id : null;
     user = ses ? ses.user : null;
     renderAuth();
+
     if (user) {
       document.getElementById('loginGate').style.display  = 'none';
       document.getElementById('mainContent').style.display = 'block';
-      await loadConvs();
-      subscribeRealtime();
+      // Aynı kullanıcı için tekrar yükleme yapma
+      if (!_initialized || prevUserId !== user.id) {
+        _initialized = true;
+        if (realtimeCh) { sb.removeChannel(realtimeCh); realtimeCh = null; }
+        await loadConvs();
+        subscribeRealtime();
+      }
     } else {
+      _initialized = false;
       document.getElementById('mainContent').style.display = 'none';
       document.getElementById('loginGate').style.display  = 'block';
       if (realtimeCh) { sb.removeChannel(realtimeCh); realtimeCh = null; }
-    }
-  });
-
-  sb.auth.getSession().then(function (r) {
-    if (!r.data.session) {
-      document.getElementById('loginGate').style.display = 'block';
+      // Oturum yoksa login modal aç
       setTimeout(function () { window.openModal('loginModal'); }, 400);
     }
   });
