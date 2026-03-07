@@ -9,15 +9,11 @@
 </head>
 <body>
 
+<div style="position:sticky;top:0;z-index:500;width:100%">
 <header class="header">
   <div class="header-inner">
+    <!-- Logo — sadece yazı, tıklayınca ana sayfa -->
     <a href="index.html" class="logo-wrap">
-      <div class="logo-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-          <polyline points="9 22 9 12 15 12 15 22"/>
-        </svg>
-      </div>
       <div class="logo-text">Pazar<span>yeri</span></div>
     </a>
 
@@ -42,13 +38,25 @@
       </div>
       <a href="messages.html" class="icon-btn-top" title="Mesajlar" style="position:relative">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        <span id="msgBadge" style="display:none;position:absolute;top:-4px;right:-4px;background:var(--primary);color:white;border-radius:50%;width:16px;height:16px;font-size:10px;font-weight:800;display:none;align-items:center;justify-content:center;">0</span>
+        <span id="msgBadge" style="display:none;position:absolute;top:-4px;right:-4px;background:var(--primary);color:white;border-radius:50%;width:16px;height:16px;font-size:10px;font-weight:800;align-items:center;justify-content:center;">0</span>
       </a>
-      <button class="icon-btn-top" id="darkToggleBtn" onclick="toggleDark()" title="Karanlık Mod" style="font-size:16px;">🌙</button>
       <button class="btn-add-listing" onclick="openAddListing()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         İlan Ver
       </button>
+      <!-- Mobil: 3 ikon grubu (sadece mobilde görünür) -->
+      <div class="mob-icons-wrap">
+        <button class="mob-top-btn" onclick="openMobSearch()" aria-label="Ara">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="17" height="17"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </button>
+        <button class="mob-top-btn" onclick="openMobProfile()" aria-label="Profil">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="17" height="17"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </button>
+        <button class="mob-top-btn" onclick="toggleMobile()" aria-label="Menü">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="17" height="17"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+      </div>
+      <!-- Eski hamburger — sadece desktop'ta (mobilde üstteki grup var) -->
       <button class="mobile-menu-btn" onclick="toggleMobile()"><span></span><span></span><span></span></button>
     </div>
   </div>
@@ -226,18 +234,7 @@
     </div>
   </div>
 </nav>
-
-<!-- MOBILE SEARCH BAR -->
-<div class="mobile-search-bar">
-  <div class="msb-inner">
-    <input type="text" id="mobileSearchInput" placeholder="İlan ara..." onkeydown="if(event.key==='Enter'){document.getElementById('searchInput').value=this.value;doSearch()}">
-    <button onclick="document.getElementById('searchInput').value=document.getElementById('mobileSearchInput').value;doSearch()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-    </button>
-  </div>
-</div>
-
-<!-- FILTER BAR -->
+</div><!-- /sticky-wrap -->
 <div class="filter-bar" id="filterBar" style="display:none">
   <div class="filter-bar-inner" id="filterBarInner"></div>
 </div>
@@ -311,28 +308,93 @@
   </div>
 </footer>
 
+<!-- MOBİL ARAMA OVERLAY -->
+<div class="mob-overlay" id="mobSearchOverlay">
+  <div class="mob-overlay-header">
+    <span class="mob-overlay-title">Ara</span>
+    <button class="mob-overlay-close" onclick="closeMobSearch()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="mob-overlay-body">
+    <div class="mob-search-row">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18" style="color:#9ca3af;flex-shrink:0"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="mobSearchInput" placeholder="Ne arıyorsunuz?..." autocomplete="off"
+        onkeydown="if(event.key==='Enter')doMobSearch()">
+    </div>
+    <div class="mob-search-row">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18" style="color:#9ca3af;flex-shrink:0"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      <input type="text" id="mobLocationInput" placeholder="Konum (ör: İstanbul, Bursa...)" autocomplete="off">
+    </div>
+    <button class="mob-search-go" onclick="doMobSearch()">Ara</button>
+  </div>
+</div>
+
+<!-- MOBİL PROFİL OVERLAY -->
+<div class="mob-overlay" id="mobProfileOverlay">
+  <div class="mob-overlay-header">
+    <span class="mob-overlay-title" id="mobProfileTitle">Hesabım</span>
+    <button class="mob-overlay-close" onclick="closeMobProfile()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="mob-overlay-body p0" id="mobProfileBody"></div>
+</div>
+
 <!-- MOBILE DRAWER -->
 <div class="mobile-drawer-overlay" id="mobileOverlay" onclick="toggleMobile()"></div>
 <div class="mobile-drawer" id="mobileDrawer">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-    <div style="font-size:20px;font-weight:900;color:var(--text)">Pazar<span style="color:var(--primary)">yeri</span></div>
-    <button onclick="toggleMobile()" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;width:34px;height:34px;font-size:18px;color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
+  <!-- Turuncu header -->
+  <div class="mob-drawer-top">
+    <span class="mob-drawer-logo">Pazar<span>yeri</span></span>
+    <button class="mob-drawer-x" onclick="toggleMobile()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
   </div>
-  <div style="font-size:10px;font-weight:800;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;padding-bottom:6px;border-bottom:2px solid var(--primary)">📂 KATEGORİLER</div>
-  <a onclick="filterCat('');toggleMobile()" class="mobile-nav-link">🛒 Tüm İlanlar</a>
-  <a onclick="filterCat('vasita');toggleMobile()" class="mobile-nav-link">🚗 Vasıta</a>
-  <a onclick="filterCat('emlak');toggleMobile()" class="mobile-nav-link">🏠 Emlak</a>
-  <a onclick="filterCat('elektronik');toggleMobile()" class="mobile-nav-link">📱 Elektronik</a>
-  <a onclick="filterCat('ev-yasam');toggleMobile()" class="mobile-nav-link">🏡 Ev & Yaşam</a>
-  <a onclick="filterCat('giyim');toggleMobile()" class="mobile-nav-link">👗 Giyim</a>
-  <a onclick="filterCat('spor');toggleMobile()" class="mobile-nav-link">⚽ Spor</a>
-  <div style="height:1px;background:var(--border);margin:14px 0"></div>
-  <div style="font-size:10px;font-weight:800;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">👤 HESABIM</div>
-  <a href="messages.html" class="mobile-nav-link">💬 Mesajlarım</a>
-  <a href="profile.html" class="mobile-nav-link">👤 Profilim</a>
-  <a onclick="openAddListing();toggleMobile()" class="mobile-nav-link" style="color:var(--primary);font-weight:800">➕ İlan Ver</a>
-  <div style="margin-top:16px" id="mobileAuthBtns">
-    <button class="btn-submit" onclick="openModal('loginModal');toggleMobile()" style="width:100%;margin-bottom:8px">Giriş Yap</button>
+  <!-- Kategori listesi -->
+  <div class="mob-drawer-body">
+    <a onclick="filterCat('');toggleMobile()" class="mob-drawer-row">
+      <span class="mob-drawer-icon">🛒</span><span class="mob-drawer-label">Tüm İlanlar</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+    <a onclick="filterCat('vasita');toggleMobile()" class="mob-drawer-row">
+      <span class="mob-drawer-icon">🚗</span><span class="mob-drawer-label">Vasıta</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+    <a onclick="filterCat('emlak');toggleMobile()" class="mob-drawer-row">
+      <span class="mob-drawer-icon">🏠</span><span class="mob-drawer-label">Emlak</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+    <a onclick="filterCat('elektronik');toggleMobile()" class="mob-drawer-row">
+      <span class="mob-drawer-icon">📱</span><span class="mob-drawer-label">Elektronik</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+    <a onclick="filterCat('ev-yasam');toggleMobile()" class="mob-drawer-row">
+      <span class="mob-drawer-icon">🏡</span><span class="mob-drawer-label">Ev & Yaşam</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+    <a onclick="filterCat('giyim');toggleMobile()" class="mob-drawer-row">
+      <span class="mob-drawer-icon">👗</span><span class="mob-drawer-label">Giyim & Moda</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+    <a onclick="filterCat('spor');toggleMobile()" class="mob-drawer-row">
+      <span class="mob-drawer-icon">⚽</span><span class="mob-drawer-label">Spor & Hobi</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+    <div class="mob-drawer-sep"></div>
+    <a href="messages.html" class="mob-drawer-row">
+      <span class="mob-drawer-icon">💬</span><span class="mob-drawer-label">Mesajlarım</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+    <a href="profile.html" class="mob-drawer-row">
+      <span class="mob-drawer-icon">👤</span><span class="mob-drawer-label">Profilim</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+  </div>
+  <!-- Alt butonlar -->
+  <div class="mob-drawer-footer" id="mobileAuthBtns">
+    <button onclick="openAddListing();toggleMobile()" class="mob-drawer-cta">İlan Ver</button>
+    <button onclick="openModal('loginModal');toggleMobile()" class="mob-drawer-login">Giriş Yap</button>
   </div>
 </div>
 
@@ -894,6 +956,10 @@ function renderGrid() {
       </div>
     </div>`;
   }).join('');
+  // Mobilde filtre yoksa kategorili scroll göster
+  if(window.innerWidth <= 768 && !S.cat && !S.sub && !S.brand && !S.search) {
+    buildMobileCatScroll();
+  }
 }
 
 function renderPagination() {
@@ -1100,6 +1166,151 @@ async function checkUnreadMessages() {
       else badge.style.display='none';
     }
   } catch(e) {}
+}
+
+// ── MOBİL ARAMA OVERLAY ──
+window.openMobSearch = () => {
+  document.getElementById('mobSearchOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => { const el = document.getElementById('mobSearchInput'); if(el) el.focus(); }, 150);
+};
+window.closeMobSearch = () => {
+  document.getElementById('mobSearchOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+};
+window.doMobSearch = () => {
+  const val = (document.getElementById('mobSearchInput').value || '').trim();
+  if(val) {
+    document.getElementById('searchInput').value = val;
+    S.search = val; S.page = 1;
+    loadListings();
+    updateFilterBar();
+  }
+  closeMobSearch();
+};
+
+// ── MOBİL PROFİL OVERLAY ──
+window.openMobProfile = () => {
+  const body = document.getElementById('mobProfileBody');
+  const title = document.getElementById('mobProfileTitle');
+  if(S.user) {
+    const name = S.user.user_metadata?.full_name || S.user.email.split('@')[0];
+    title.textContent = name.split(' ')[0];
+    body.innerHTML = `
+      <a href="profile.html" class="mob-prof-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="19" height="19"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Profilim</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="9 18 15 12 9 6"/></svg></a>
+      <a href="messages.html" class="mob-prof-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="19" height="19"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Mesajlarım</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="9 18 15 12 9 6"/></svg></a>
+      <a href="profile.html?tab=ilanlar" class="mob-prof-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="19" height="19"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg><span>İlanlarım</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="9 18 15 12 9 6"/></svg></a>
+      <a href="profile.html?tab=favoriler" class="mob-prof-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="19" height="19"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><span>Favorilerim</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="9 18 15 12 9 6"/></svg></a>
+      <div style="height:1px;background:#f0f0f0;margin:4px 0"></div>
+      <a onclick="openAddListing();closeMobProfile()" class="mob-prof-row" style="color:var(--primary);font-weight:700"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="19" height="19"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span>İlan Ver</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="9 18 15 12 9 6"/></svg></a>
+      <div style="height:1px;background:#f0f0f0;margin:4px 0"></div>
+      <button onclick="doLogout();closeMobProfile()" class="mob-prof-logout">Çıkış Yap</button>`;
+  } else {
+    title.textContent = 'Hesabım';
+    body.innerHTML = `<p style="padding:20px;color:#6b7280;font-size:14px">Hesabınıza giriş yapın.</p>
+      <div style="padding:0 16px;display:flex;flex-direction:column;gap:10px">
+        <button onclick="openModal('loginModal');closeMobProfile()" class="mob-prof-cta">Giriş Yap</button>
+        <button onclick="openModal('signupModal');closeMobProfile()" class="mob-prof-cta-out">Üye Ol</button>
+      </div>`;
+  }
+  document.getElementById('mobProfileOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+};
+window.closeMobProfile = () => {
+  document.getElementById('mobProfileOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+};
+
+// ── MOBİL KATEGORİLİ SCROLL ──
+function buildMobileCatScroll() {
+  const g = document.getElementById('listingGrid');
+  if(!g) return;
+  // Kategorilere göre grupla
+  const cats = [
+    { key: 'vasita',    label: '🚗 Vasıta' },
+    { key: 'emlak',     label: '🏠 Emlak' },
+    { key: 'elektronik',label: '📱 Elektronik' },
+    { key: 'ev-yasam',  label: '🏡 Ev & Yaşam' },
+    { key: 'giyim',     label: '👗 Giyim & Moda' },
+    { key: 'spor',      label: '⚽ Spor & Hobi' },
+  ];
+  // Tüm ilanları kategori -> items map yap
+  const map = {};
+  items.forEach(it => {
+    const k = it.kategori || 'diger';
+    if(!map[k]) map[k] = [];
+    map[k].push(it);
+  });
+  // Eğer hiç kategori ayrımı yoksa (hepsi tek kategoride) normal grid bırak
+  const catCount = Object.keys(map).length;
+  if(catCount <= 1) return;
+  // Kategorili scroll HTML oluştur
+  const condMap = {'ikinci-el':['badge-used','İkinci El'],'sifir':['badge-new','Sıfır'],'yeniye-yakin':['badge-used','Yeniye Yakın'],'satilik':['badge-featured','Satılık'],'kiralik':['badge-featured','Kiralık']};
+  const favs = new Set(JSON.parse(localStorage.getItem('pm_favs')||'[]'));
+  let html = '';
+  cats.forEach(({key, label}) => {
+    const catItems = map[key] || [];
+    if(!catItems.length) return;
+    html += `<div class="mob-cat-section">
+      <div class="mob-cat-header">
+        <span class="mob-cat-title">${label}</span>
+        <button class="mob-cat-all" onclick="filterCat('${key}')">Tümünü Gör →</button>
+      </div>
+      <div class="mob-cat-scroll" id="mcs-${key}">
+        ${catItems.slice(0, 10).map(it => {
+          const [bc,bl] = condMap[it.durum] || ['badge-used','İkinci El'];
+          const fav = favs.has(String(it.id));
+          return `<div class="mob-cat-card listing-card">
+            <div class="lc-img-wrap">
+              <a href="listing.html?id=${it.id}">
+                <img src="${it.resim_url||'https://picsum.photos/seed/'+String(it.id).replace(/\D/g,'')+'/400/300'}" alt="${it.isim||''}" loading="lazy" onerror="this.src='https://picsum.photos/seed/fallback/400/300'">
+              </a>
+              <div class="lc-badges"><span class="badge ${bc}">${bl}</span></div>
+              <button class="lc-wish${fav?' active':''}" onclick="toggleFav('${it.id}',this)">
+                <svg viewBox="0 0 24 24" fill="${fav?'var(--primary)':'none'}" stroke="${fav?'var(--primary)':'currentColor'}" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              </button>
+            </div>
+            <div class="lc-body">
+              <div class="lc-title"><a href="listing.html?id=${it.id}">${it.isim||'İlan'}</a></div>
+              <div class="lc-price">${fmt(it.fiyat)}</div>
+              <div class="lc-meta">
+                ${it.konum?`<span class="lc-meta-item">${it.konum}</span>`:''}
+                <span class="lc-meta-item">${ago(it.created_at)}</span>
+              </div>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  });
+  // Kategorisiz ilanlar
+  const others = items.filter(it => !cats.find(c => c.key === it.kategori));
+  if(others.length) {
+    html += `<div class="mob-cat-section">
+      <div class="mob-cat-header"><span class="mob-cat-title">📦 Diğer</span></div>
+      <div class="mob-cat-scroll">
+        ${others.slice(0,10).map(it => {
+          const [bc,bl] = condMap[it.durum] || ['badge-used','İkinci El'];
+          const fav = favs.has(String(it.id));
+          return `<div class="mob-cat-card listing-card"><div class="lc-img-wrap"><a href="listing.html?id=${it.id}"><img src="${it.resim_url||'https://picsum.photos/seed/'+String(it.id).replace(/\D/g,'')+'/400/300'}" alt="${it.isim||''}" loading="lazy"></a><div class="lc-badges"><span class="badge ${bc}">${bl}</span></div><button class="lc-wish${fav?' active':''}" onclick="toggleFav('${it.id}',this)"><svg viewBox="0 0 24 24" fill="${fav?'var(--primary)':'none'}" stroke="${fav?'var(--primary)':'currentColor'}" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button></div><div class="lc-body"><div class="lc-title"><a href="listing.html?id=${it.id}">${it.isim||'İlan'}</a></div><div class="lc-price">${fmt(it.fiyat)}</div></div></div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }
+  if(html) {
+    g.className = 'mob-cat-wrap';
+    g.innerHTML = html;
+    // Touch/mouse yatay sürükleme
+    document.querySelectorAll('.mob-cat-scroll').forEach(el => enableDrag(el));
+  }
+}
+
+function enableDrag(el) {
+  let isDown = false, startX, scrollLeft;
+  el.addEventListener('mousedown', e => { isDown=true; startX=e.pageX-el.offsetLeft; scrollLeft=el.scrollLeft; el.style.cursor='grabbing'; });
+  document.addEventListener('mouseup', () => { isDown=false; el.style.cursor=''; });
+  el.addEventListener('mousemove', e => { if(!isDown) return; e.preventDefault(); el.scrollLeft = scrollLeft-(e.pageX-el.offsetLeft-startX)*1.2; });
+  // Touch: CSS scroll yeterli, ek kod gereksiz
 }
 
 // ── INIT ──
