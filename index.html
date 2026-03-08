@@ -3,13 +3,804 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pazaryeri — Türkiye'nin İlan Platformu</title>
+  <title>Pazaryeri — Türkiye'nin Ücretsiz İlan Platformu</title>
+  <meta name="description" content="Pazaryeri'nde ücretsiz ilan ver, ikinci el eşya, vasıta, emlak ve daha fazlasını al ya da sat. Türkiye'nin en kolay ilan sitesi.">
+  <meta name="keywords" content="ilan, ikinci el, satılık, kiralık, vasıta, emlak, elektronik, ücretsiz ilan, türkiye ilan">
+  <meta name="author" content="Pazaryeri">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://pazaryeri.com/">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://pazaryeri.com/">
+  <meta property="og:title" content="Pazaryeri — Türkiye'nin Ücretsiz İlan Platformu">
+  <meta property="og:description" content="Ücretsiz ilan ver, ikinci el eşya, vasıta, emlak ve daha fazlasını al ya da sat.">
+  <meta property="og:image" content="https://pazaryeri.com/og-image.jpg">
+  <meta property="og:locale" content="tr_TR">
+  <meta property="og:site_name" content="Pazaryeri">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Pazaryeri — Türkiye'nin Ücretsiz İlan Platformu">
+  <meta name="twitter:description" content="Ücretsiz ilan ver, ikinci el eşya, vasıta, emlak al ya da sat.">
+  <meta name="twitter:image" content="https://pazaryeri.com/og-image.jpg">
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Pazaryeri",
+    "url": "https://pazaryeri.com",
+    "description": "Türkiye'nin ücretsiz ilan platformu",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://pazaryeri.com/category.html?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+
   <link rel="stylesheet" href="css/style.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0"></script>
+  <script src="js/car_models.js"></script>
+  <script>
+// ── CATEGORIES ──
+/**
+ * PAZARYERI — Kapsamlı Kategori Sistemi v3
+ * Tüm sayfalar bu dosyayı kullanır
+ */
+const CAT = {
+
+  vasita: { label:'Vasıta', icon:'🚗', color:'#e74c3c',
+    groups:[
+      { g:'Otomobil', items:[
+        {v:'otomobil',l:'Tüm Otomobil'},{v:'sedan',l:'Sedan'},{v:'hatchback',l:'Hatchback'},
+        {v:'station-wagon',l:'Station Wagon'},{v:'coupe',l:'Coupe / Cabrio'},
+        {v:'suv',l:'SUV'},{v:'crossover',l:'Crossover'},{v:'pick-up',l:'Pick-up'},
+        {v:'minivan',l:'Minivan & MPV'},{v:'elektrikli-araba',l:'Elektrikli Araç'},
+        {v:'hibrit',l:'Hibrit Araç'},{v:'klasik-araba',l:'Klasik & Koleksiyon Araç'}
+      ]},
+      { g:'Ticari Araç', items:[
+        {v:'hafif-ticari',l:'Hafif Ticari'},{v:'kamyonet',l:'Kamyonet'},
+        {v:'kamyon',l:'Kamyon'},{v:'minibus',l:'Minibüs'},{v:'otobus',l:'Otobüs'},
+        {v:'cekici-tir',l:'Çekici & Tır'},{v:'is-makinesi',l:'İş Makinesi & Forklift'},
+        {v:'tarim-arac',l:'Tarım Aracı & Traktör'}
+      ]},
+      { g:'Motosiklet', items:[
+        {v:'motosiklet',l:'Tüm Motosiklet'},{v:'motosiklet-sport',l:'Sport'},
+        {v:'motosiklet-naked',l:'Naked'},{v:'motosiklet-touring',l:'Touring & Adventure'},
+        {v:'motosiklet-enduro',l:'Enduro & Cross'},{v:'motosiklet-scooter',l:'Scooter & Moped'},
+        {v:'motosiklet-chopper',l:'Chopper & Custom'},{v:'atv-utv',l:'ATV & UTV'},
+        {v:'elektrikli-motor',l:'Elektrikli Motor'}
+      ]},
+      { g:'Deniz & Hava', items:[
+        {v:'tekne',l:'Tekne & Motor Bot'},{v:'yat',l:'Yat & Yelkenli'},
+        {v:'jet-ski',l:'Jet-ski & Su Aracı'},{v:'karavela',l:'Karavan & Römork'},
+        {v:'kucuk-hava',l:'Ultralight & Paramotor'}
+      ]},
+      { g:'Bisiklet & Elektrikli', items:[
+        {v:'bisiklet-dag',l:'Dağ Bisikleti'},{v:'bisiklet-yol',l:'Yol Bisikleti'},
+        {v:'bisiklet-sehir',l:'Şehir Bisikleti'},{v:'bisiklet-bmx',l:'BMX'},
+        {v:'bisiklet-elektrik',l:'Elektrikli Bisiklet'},{v:'elektrikli-scooter',l:'Elektrikli Scooter'},
+        {v:'monopalet',l:'Monowheel & Hoverboard'}
+      ]},
+      { g:'Otomobil Markaları', brands:[
+        'Alfa Romeo','Aston Martin','Audi','Bentley','BMW','Bugatti','Citroen',
+        'Dacia','Ferrari','Fiat','Ford','Honda','Hyundai','Infiniti','Jaguar',
+        'Jeep','Kia','Lamborghini','Land Rover','Lexus','Maserati','Mazda',
+        'Mercedes-Benz','Mini','Mitsubishi','Nissan','Opel','Peugeot','Porsche',
+        'Renault','Rolls-Royce','Seat','Skoda','Smart','Subaru','Suzuki',
+        'Tesla','Togg','Toyota','Volkswagen','Volvo'
+      ]},
+      { g:'Motosiklet Markaları', brands:[
+        'Aprilia','BMW Motorrad','Ducati','Harley-Davidson','Honda','Husqvarna',
+        'Indian','Kawasaki','KTM','Moto Guzzi','Royal Enfield','Suzuki','Triumph','Yamaha'
+      ]}
+    ]
+  },
+
+  emlak: { label:'Emlak', icon:'🏠', color:'#27ae60',
+    groups:[
+      { g:'Konut — Satılık', items:[
+        {v:'satilik-daire',l:'Satılık Daire'},{v:'satilik-villa',l:'Satılık Villa'},
+        {v:'satilik-mustak',l:'Satılık Müstakil Ev'},{v:'satilik-residence',l:'Satılık Residence'},
+        {v:'satilik-yali',l:'Satılık Yalı / Köşk'},{v:'satilik-bina',l:'Satılık Bina'},
+        {v:'satilik-prefabrik',l:'Satılık Prefabrik Ev'}
+      ]},
+      { g:'Konut — Kiralık', items:[
+        {v:'kiralik-daire',l:'Kiralık Daire'},{v:'kiralik-villa',l:'Kiralık Villa'},
+        {v:'kiralik-mustak',l:'Kiralık Müstakil Ev'},{v:'gunluk-kiralik',l:'Günlük Kiralık'},
+        {v:'kiralik-devremulk',l:'Devre Mülk'},{v:'kiralik-odasi',l:'Oda Kiralık'}
+      ]},
+      { g:'Oda Sayısı', items:[
+        {v:'studio',l:'Stüdyo / 1+0'},{v:'1+1',l:'1+1'},{v:'2+1',l:'2+1'},
+        {v:'3+1',l:'3+1'},{v:'4+1',l:'4+1'},{v:'5-ustu',l:'5+ Oda'}
+      ]},
+      { g:'Arazi & Arsa', items:[
+        {v:'arsa',l:'Arsa'},{v:'tarla',l:'Tarla'},{v:'bag-bahce',l:'Bağ & Bahçe'},
+        {v:'zeytinlik',l:'Zeytinlik / Meyvelik'},{v:'orman',l:'Ormanlık Alan'},
+        {v:'sanayi-arsasi',l:'Sanayi Arsası'},{v:'turizm-arsasi',l:'Turizm Arsası'}
+      ]},
+      { g:'Ticari Emlak', items:[
+        {v:'isyeri-ofis',l:'İşyeri & Ofis'},{v:'dukkan-magaza',l:'Dükkan & Mağaza'},
+        {v:'depo-antrepo',l:'Depo & Antrepo'},{v:'fabrika-atolye',l:'Fabrika & Atölye'},
+        {v:'otel-pansiyon',l:'Otel & Pansiyon'},{v:'akaryakit',l:'Akaryakıt İstasyonu'},
+        {v:'yemekhane',l:'Restoran & Kafe Binası'},{v:'devren',l:'Devren Satılık / Kiralık'},
+        {v:'arazi-ticari',l:'Ticari Alan & Arazi'}
+      ]}
+    ]
+  },
+
+  elektronik: { label:'Elektronik', icon:'📱', color:'#2980b9',
+    groups:[
+      { g:'Telefon', items:[
+        {v:'akilli-telefon',l:'Akıllı Telefon'},{v:'iphone-16',l:'iPhone 16 Serisi'},
+        {v:'iphone-15',l:'iPhone 15 Serisi'},{v:'iphone-14',l:'iPhone 14 Serisi'},
+        {v:'iphone-13',l:'iPhone 13 Serisi'},{v:'iphone-12-oncesi',l:'iPhone 12 ve Öncesi'},
+        {v:'samsung-s',l:'Samsung Galaxy S Serisi'},{v:'samsung-a',l:'Samsung Galaxy A Serisi'},
+        {v:'xiaomi-redmi',l:'Xiaomi / Redmi'},{v:'huawei-p',l:'Huawei P/Mate Serisi'},
+        {v:'oppo-realme',l:'Oppo / Realme / OnePlus'},{v:'tuslu-telefon',l:'Tuşlu Telefon'},
+        {v:'telefon-kilif',l:'Kılıf & Aksesuar'},{v:'sarj-kablo',l:'Şarj & Kablo'},
+        {v:'powerbank',l:'Powerbank'}
+      ]},
+      { g:'Bilgisayar', items:[
+        {v:'laptop',l:'Laptop & Notebook'},{v:'gaming-laptop',l:'Gaming Laptop'},
+        {v:'masaustu-pc',l:'Masaüstü Bilgisayar'},{v:'gaming-pc',l:'Gaming PC'},
+        {v:'apple-mac',l:'Apple Mac / MacBook'},{v:'all-in-one',l:'All-in-One PC'},
+        {v:'mini-pc',l:'Mini PC & NUC'},{v:'workstation',l:'İş İstasyonu'},
+        {v:'monitor',l:'Monitör'},{v:'gaming-monitor',l:'Gaming Monitör'},
+        {v:'klavye',l:'Klavye'},{v:'mouse',l:'Mouse'},{v:'mouse-pad',l:'Mousepad'},
+        {v:'yazici',l:'Yazıcı & Tarayıcı'},{v:'harddisk-ssd',l:'Hard Disk & SSD'},
+        {v:'ram-bellek',l:'RAM & Bellek'},{v:'ekran-karti',l:'Ekran Kartı (GPU)'},
+        {v:'islemci-cpu',l:'İşlemci (CPU)'},{v:'anakart',l:'Anakart'},
+        {v:'guc-kaynagi',l:'Güç Kaynağı (PSU)'},{v:'bilgisayar-kasa',l:'Bilgisayar Kasası'},
+        {v:'sogutma-fan',l:'Soğutma & Fan & Termal Pasta'},
+        {v:'ag-router',l:'Modem & Router & Switch'},{v:'webcam-mikrofon',l:'Webcam & Mikrofon'}
+      ]},
+      { g:'Tablet & Okuyucu', items:[
+        {v:'ipad',l:'iPad'},{v:'android-tablet',l:'Android Tablet'},
+        {v:'windows-tablet',l:'Windows Tablet'},{v:'e-kitap-okuyucu',l:'E-Kitap Okuyucu'},
+        {v:'grafik-tablet',l:'Grafik Tablet (Wacom vb.)'},{v:'tablet-aksesuar',l:'Tablet Aksesuar & Klavye'}
+      ]},
+      { g:'Kulaklık & Ses', items:[
+        {v:'bluetooth-kulaklik',l:'Bluetooth Kulaklık (TWS)'},{v:'kulak-ustu',l:'Kulak Üstü Kulaklık'},
+        {v:'kablolu-kulaklik',l:'Kablolu Kulaklık'},{v:'gaming-kulaklik',l:'Gaming Kulaklık'},
+        {v:'bluetooth-hoparlor',l:'Bluetooth Hoparlör'},{v:'ev-ses-sistemi',l:'Ev Ses Sistemi'},
+        {v:'soundbar',l:'Soundbar'},{v:'amplifikator',l:'Amplifikatör & Receiver'},
+        {v:'plak-calar',l:'Plak Çalar (Pikap)'}
+      ]},
+      { g:'TV & Görüntü', items:[
+        {v:'televizyon',l:'Televizyon'},{v:'smart-tv',l:'Smart TV'},
+        {v:'oled-qled-tv',l:'OLED & QLED TV'},{v:'projektor',l:'Projektör & Ekran'},
+        {v:'tv-aksesuar',l:'TV Aksesuar & Uzaktan Kumanda'},{v:'uydu-alici',l:'Uydu Alıcı & Anten'},
+        {v:'apple-tv-chromecast',l:'Apple TV & Chromecast & Fire Stick'}
+      ]},
+      { g:'Oyun & Konsol', items:[
+        {v:'ps5',l:'PlayStation 5'},{v:'ps4',l:'PlayStation 4'},{v:'ps3-oncesi',l:'PS3 ve Öncesi'},
+        {v:'xbox-series',l:'Xbox Series X/S'},{v:'xbox-one',l:'Xbox One'},
+        {v:'nintendo-switch',l:'Nintendo Switch'},{v:'nintendo-3ds',l:'Nintendo 3DS & DS'},
+        {v:'retro-konsol',l:'Retro Konsol (SNES, Mega Drive vb.)'},
+        {v:'gaming-kol',l:'Oyun Kolu & Joystick'},{v:'vr-gozluk',l:'VR Gözlük'},
+        {v:'gaming-sandalye',l:'Gaming Sandalye'},{v:'gaming-masa-pc',l:'Gaming Masa'},
+        {v:'oyun-cd-karti',l:'Oyun CD & Kartı'}
+      ]},
+      { g:'Akıllı Saat & Giyilebilir', items:[
+        {v:'apple-watch',l:'Apple Watch'},{v:'samsung-watch',l:'Samsung Galaxy Watch'},
+        {v:'garmin',l:'Garmin & Spor Saati'},{v:'android-wear',l:'Diğer Akıllı Saat'},
+        {v:'akilli-bileklik',l:'Akıllı Bileklik & Fitness Tracker'},
+        {v:'akilli-gozluk',l:'Akıllı Gözlük'}
+      ]},
+      { g:'Fotoğraf & Video', items:[
+        {v:'dslr-aynasiz',l:'DSLR & Aynasız Kamera'},{v:'kompakt-kamera',l:'Kompakt Kamera'},
+        {v:'analog-kamera',l:'Analog / Film Kamera'},{v:'objektif',l:'Objektif & Lens'},
+        {v:'aksiyon-kamera',l:'Aksiyon Kamera (GoPro)'},{v:'drone-foto',l:'Drone & Kamera İnsansız'},
+        {v:'video-kamera',l:'Video Kamera'},{v:'flas-stüdyo',l:'Flaş & Stüdyo Ekipmanı'},
+        {v:'foto-tripod',l:'Tripod & Gimbal'},{v:'foto-aksesuar',l:'Fotoğraf Aksesuar'}
+      ]},
+      { g:'Akıllı Ev & Güvenlik', items:[
+        {v:'akilli-ev-sistemi',l:'Akıllı Ev (SmartHome)'},{v:'robot-supurge-el',l:'Robot Süpürge'},
+        {v:'ip-kamera',l:'Güvenlik Kamerası & IP Kamera'},{v:'alarm-sistemi',l:'Alarm Sistemi'},
+        {v:'hava-purifier',l:'Hava Temizleyici & Nemlendirici'},
+        {v:'akilli-ampul',l:'Akıllı Ampul & Aydınlatma'},{v:'smart-priz',l:'Akıllı Priz & Switch'}
+      ]},
+      { g:'Telefon Markaları', brands:[
+        'Apple (iPhone)','Samsung','Xiaomi','Huawei','Oppo','OnePlus','Realme',
+        'Vivo','Nothing','Motorola','Nokia','Sony Xperia','Google Pixel','Honor'
+      ]},
+      { g:'Bilgisayar Markaları', brands:[
+        'Apple','Asus','Lenovo','Dell','HP','MSI','Acer','Toshiba','Razer',
+        'Microsoft Surface','Samsung','Huawei MateBook','Monster','Casper','Turkcell T'
+      ]}
+    ]
+  },
+
+  'is-ilani': { label:'İş & Hizmet İlanı', icon:'💼', color:'#9c27b0',
+    groups:[
+      { g:'İş İlanı', items:[
+        {v:'tam-zamanli',l:'Tam Zamanlı'},{v:'yari-zamanli',l:'Yarı Zamanlı'},
+        {v:'freelance',l:'Freelance & Proje Bazlı'},{v:'uzaktan-is',l:'Uzaktan Çalışma (Remote)'},
+        {v:'staj',l:'Staj & Part-time'},{v:'gecici-sezonluk',l:'Geçici & Sezonluk'}
+      ]},
+      { g:'Mesleki Hizmet', items:[
+        {v:'tamirat-servis',l:'Tamirat & Teknik Servis (Elektronik, Beyaz Eşya)'},
+        {v:'nakliye-tasima',l:'Nakliye & Taşıma & Depolama'},{v:'insaat-tadilat',l:'İnşaat & Tadilat & Dekorasyon'},
+        {v:'boya-badana-hiz',l:'Boyacı & Badanacı'},{v:'tesisatci-elektrik',l:'Tesisatçı & Elektrikçi'},
+        {v:'temizlik-hizmet',l:'Ev & Ofis Temizliği'},{v:'otokar-arac',l:'Oto Tamir & Kaporta'}
+      ]},
+      { g:'Eğitim & Danışmanlık', items:[
+        {v:'ozel-ders-hiz',l:'Özel Ders (Matematik, Fen, TYT...)'},{v:'dil-kursu-hiz',l:'Dil Kursu & Tercüme'},
+        {v:'muzik-dersi',l:'Müzik Dersi'},{v:'bilgisayar-egitim',l:'Bilgisayar & Yazılım Eğitimi'},
+        {v:'is-danismanlik',l:'İş & Kariyer Danışmanlığı'},{v:'hukuki-muhasebe-hiz',l:'Hukuki & Mali Müşavirlik'}
+      ]},
+      { g:'Yaratıcı & Dijital', items:[
+        {v:'grafik-tasarim',l:'Grafik Tasarım'},{v:'web-yazilim-hiz',l:'Web & Yazılım Geliştirme'},
+        {v:'seo-dijital-hiz',l:'SEO & Dijital Pazarlama'},{v:'foto-video-cekimi',l:'Fotoğraf & Video Çekimi'},
+        {v:'sosyal-medya-hiz',l:'Sosyal Medya Yönetimi'},{v:'icerik-uretimi',l:'İçerik Üretimi & Metin Yazarlığı'}
+      ]},
+      { g:'Kişisel Hizmet', items:[
+        {v:'dugun-organiz',l:'Düğün & Organizasyon'},{v:'catering-yemek',l:'Catering & Ev Yemeği'},
+        {v:'saglik-guzel-hiz',l:'Sağlık & Güzellik Hizmeti'},{v:'cocuk-bakimi-hiz',l:'Çocuk Bakımı'},
+        {v:'yasli-bakimi',l:'Yaşlı & Engelli Bakımı'},{v:'veteriner-pet-hiz',l:'Veteriner & Pet Bakım Hizmeti'}
+      ]}
+    ]
+  },
+
+
+  'ev-yasam': { label:'Ev & Yaşam', icon:'🏡', color:'#8e44ad',
+    groups:[
+      { g:'Mobilya — Oturma', items:[
+        {v:'koltuk-kanape',l:'Koltuk & Kanepe'},{v:'l-kose',l:'L Köşe Takımı'},
+        {v:'tv-unitesi',l:'TV Ünitesi & Televizyon Sehpası'},{v:'sehpa',l:'Sehpa & Orta Masa'},
+        {v:'raf-kitaplik',l:'Raf & Kitaplık'},{v:'dolap-vitrin',l:'Vitrin & Dolap'},
+        {v:'puf-berjer',l:'Puf & Berjer'}
+      ]},
+      { g:'Mobilya — Yatak Odası', items:[
+        {v:'yatak-baza',l:'Yatak & Baza'},{v:'bas-lik',l:'Başlık & Karyola'},
+        {v:'gardrop-dolap',l:'Gardrop & Dolap'},{v:'komadin',l:'Komodin & Şifonyer'},
+        {v:'ayna-mobilya',l:'Ayna'},{v:'cocuk-yatagi',l:'Çocuk Yatağı & Ranza'},
+        {v:'bebek-karyola',l:'Bebek Beşiği & Karyola'}
+      ]},
+      { g:'Mobilya — Mutfak & Yemek', items:[
+        {v:'yemek-masa',l:'Yemek Masası & Sandalye'},{v:'mutfak-dolabi',l:'Mutfak Dolabı & Tezgah'},
+        {v:'bar-tabure',l:'Bar Sandalyesi & Tabure'},{v:'calisma-masa',l:'Çalışma Masası & Sandalye'}
+      ]},
+      { g:'Mobilya — Bahçe & Balkon', items:[
+        {v:'bahce-mobilya',l:'Bahçe Mobilya Takımı'},{v:'bahce-sandalye',l:'Bahçe Sandalyesi & Koltuk'},
+        {v:'salincak-hamak',l:'Salıncak & Hamak'},{v:'sezlong',l:'Şezlong'},
+        {v:'bahce-sans',l:'Bahçe Şemsiyesi'},{v:'bahce-bank',l:'Bank & Oturma Grubu'}
+      ]},
+      { g:'Beyaz Eşya', items:[
+        {v:'buzdolabi',l:'Buzdolabı'},{v:'derin-dondurucu',l:'Derin Dondurucu'},
+        {v:'camasir-makinesi',l:'Çamaşır Makinesi'},{v:'kurutma-makinesi',l:'Kurutma Makinesi'},
+        {v:'camasir-kurutma-set',l:'Çamaşır Kurutma Seti (2\'li)'},{v:'bulasik-makinesi',l:'Bulaşık Makinesi'},
+        {v:'ankastre-firin',l:'Ankastre Fırın & Set'},{v:'ocak-firin',l:'Ocak & Fırın (Ayrık)'},
+        {v:'aspirator',l:'Aspiratör'},{v:'klima',l:'Klima'},{v:'kombi-kalorifer',l:'Kombi & Kalorifer'}
+      ]},
+      { g:'Küçük Ev Aletleri', items:[
+        {v:'elektrikli-supurge',l:'Elektrikli Süpürge'},{v:'robot-supurge-ev',l:'Robot Süpürge'},
+        {v:'buharvapor',l:'Buharlı Temizleyici'},{v:'kahve-makinesi',l:'Kahve Makinesi'},
+        {v:'kapsul-kahve',l:'Kapsül Kahve Makinesi'},{v:'blender-mikser',l:'Blender & Mikser'},
+        {v:'tost-ekmek',l:'Tost Makinesi & Ekmek Kızartıcı'},
+        {v:'cay-semaver',l:'Çay Makinesi & Demlik & Semaver'},
+        {v:'mutfak-robotu',l:'Mutfak Robotu & Food Processor'},
+        {v:'waffle-izgara',l:'Waffle & Izgara & Çok Pişirici'},
+        {v:'su-aritma',l:'Su Arıtma & Sebil'},{v:'utu-buhar',l:'Ütü & Buharlı Ütü'},
+        {v:'sac-bakim-aleti',l:'Saç Kurutma & Düzleştirici & Maşa'},
+        {v:'electrikli-tras',l:'Elektrikli Tıraş Makinesi & Epilasyon'},
+        {v:'diger-kucuk-alet',l:'Diğer Küçük Ev Aleti'}
+      ]},
+      { g:'Dekorasyon', items:[
+        {v:'tablo-resim',l:'Tablo & Resim'},{v:'avize-lamba',l:'Avize & Lamba & Abajur'},
+        {v:'duvar-saati',l:'Duvar Saati'},{v:'hali-kilim',l:'Halı & Kilim & Yolluk'},
+        {v:'perde-stor',l:'Perde & Stor Perde & Tül'},{v:'yastik-kirlent',l:'Yastık & Kirlent'},
+        {v:'vazo-obje',l:'Vazo & Dekoratif Obje'},{v:'mum-koku',l:'Mum & Oda Kokusu & Difüzör'},
+        {v:'duvar-kagidi',l:'Duvar Kağıdı & Sticker'},{v:'heykel-figur',l:'Heykel & Figür'}
+      ]},
+      { g:'Mutfak Gereçleri', items:[
+        {v:'tencere-tava',l:'Tencere & Tava Takımı'},{v:'bicak-tahta',l:'Bıçak & Kesim Tahtası'},
+        {v:'yemek-takimi',l:'Yemek Takımı (Tabak & Çanak)'},{v:'cam-bardak',l:'Cam & Bardak Seti'},
+        {v:'cay-kahve-seti',l:'Çay & Kahve Seti'},{v:'servis-tepsi',l:'Servis & Tepsi'},
+        {v:'sakla-kap',l:'Saklama Kabı & Termos'},{v:'pismez-tencere',l:'Pişmez Tencere & Teflon'}
+      ]},
+      { g:'Banyo', items:[
+        {v:'banyo-aksesuar',l:'Banyo Aksesuar (Havluluk, Dispenser)'},{v:'dus-kabini',l:'Duş Kabini & Küvet'},
+        {v:'havlu-bornoz',l:'Havlu & Bornoz'},{v:'ayna-banyo',l:'Banyo Aynası'},
+        {v:'klozet-lavabo',l:'Klozet & Lavabo'}
+      ]},
+      { g:'Tekstil & Yatak', items:[
+        {v:'nevresim',l:'Nevresim & Çarşaf'},{v:'yorgan-battaniye',l:'Yorgan & Battaniye & Pike'},
+        {v:'uyku-yastigı',l:'Uyku Yastığı'},{v:'havlu',l:'Havlu & Banyo Seti'},
+        {v:'masa-ortusu',l:'Masa Örtüsü & Kılavuz'}
+      ]},
+      { g:'Bahçe & Tamirat', items:[
+        {v:'cim-bicme',l:'Çim Biçme Makinesi'},{v:'tohum-fide',l:'Tohum & Fide & Toprak'},
+        {v:'saksı-saksılık',l:'Saksı & Saksılık'},{v:'hortum-sulama',l:'Hortum & Sulama Ekipmanı'},
+        {v:'el-aleti',l:'El Aletleri (Çekiç, Tornavida...)'},{v:'elektrikli-alet',l:'Elektrikli Aletler (Matkap, Testere)'},
+        {v:'boya-badana-mal',l:'Boya & Badana Malzemesi'},{v:'yapi-malzeme',l:'Yapı Malzemesi'},
+        {v:'kaynak-kompresör',l:'Kaynak & Kompresör'}
+      ]}
+    ]
+  },
+
+  giyim: { label:'Giyim & Moda', icon:'👗', color:'#e91e8c',
+    groups:[
+      { g:'Kadın Giyim', items:[
+        {v:'kadin-elbise-etek',l:'Elbise & Etek'},{v:'kadin-bluz-gomlek',l:'Bluz & Gömlek'},
+        {v:'kadin-tisort',l:'T-shirt & Atlet'},{v:'kadin-kazak-triko',l:'Kazak & Triko & Hırka'},
+        {v:'kadin-pantolon-jean',l:'Pantolon & Jean & Tayt'},{v:'kadin-sort',l:'Şort & Bermuda'},
+        {v:'kadin-ceket',l:'Ceket & Blazer'},{v:'kadin-mont',l:'Mont & Kaban'},
+        {v:'kadin-yelekli',l:'Yelek'},{v:'kadin-ic-camasir',l:'İç Çamaşırı & Sütyen'},
+        {v:'kadin-pijama',l:'Pijama & Gecelik'},{v:'kadin-mayo-bikini',l:'Mayo & Bikini'},
+        {v:'kadin-spor',l:'Kadın Spor Giyim'},{v:'abiye-abaya',l:'Abiye & Gece Elbise'},
+        {v:'gelinlik',l:'Gelinlik & Nişanlık'},{v:'tesettür',l:'Tesettür Giyim'}
+      ]},
+      { g:'Erkek Giyim', items:[
+        {v:'erkek-gomlek',l:'Gömlek'},{v:'erkek-tisort-polo',l:'T-shirt & Polo'},
+        {v:'erkek-kazak',l:'Kazak & Hoodie & Hırka'},{v:'erkek-pantolon',l:'Pantolon'},
+        {v:'erkek-jean',l:'Jean & Kargo'},{v:'erkek-sort',l:'Şort & Bermuda'},
+        {v:'erkek-ceket-blazer',l:'Ceket & Blazer'},{v:'erkek-mont-kaban',l:'Mont & Kaban'},
+        {v:'erkek-takim',l:'Takım Elbise & Smoking'},{v:'erkek-yelek',l:'Yelek'},
+        {v:'erkek-ic-camasir',l:'İç Çamaşırı & Boxer'},{v:'erkek-corap',l:'Çorap'},
+        {v:'erkek-spor',l:'Erkek Spor Giyim'},{v:'erkek-eşofman',l:'Eşofman Altı & Üstü'}
+      ]},
+      { g:'Çocuk & Bebek Giyim', items:[
+        {v:'kiz-cocuk-giyim',l:'Kız Çocuk Giyim (2–14 yaş)'},{v:'erkek-cocuk-giyim',l:'Erkek Çocuk Giyim (2–14 yaş)'},
+        {v:'bebek-kiyafet',l:'Bebek Kıyafeti (0–2 yaş)'},{v:'cocuk-mont-kaban',l:'Çocuk Mont & Kaban'},
+        {v:'okul-kiyafeti',l:'Okul Kıyafeti & Önlük'},{v:'cocuk-pijama',l:'Çocuk Pijama & İç Giyim'}
+      ]},
+      { g:'Kadın Ayakkabı', items:[
+        {v:'kadin-topuklu',l:'Topuklu Ayakkabı'},{v:'kadin-sandalet',l:'Sandalet & Terlik'},
+        {v:'kadin-bot-cizme',l:'Bot & Çizme'},{v:'kadin-sneaker',l:'Sneaker & Spor Ayakkabı'},
+        {v:'kadin-babet-loafer',l:'Babet & Loafer'},{v:'kadin-dolgu-topuk',l:'Dolgu Topuk & Wedge'}
+      ]},
+      { g:'Erkek Ayakkabı', items:[
+        {v:'erkek-klasik',l:'Klasik & Oxford'},{v:'erkek-bot',l:'Bot & Çizme'},
+        {v:'erkek-sneaker',l:'Sneaker & Spor Ayakkabı'},{v:'erkek-sandalet',l:'Sandalet & Terlik'},
+        {v:'erkek-loafer',l:'Loafer & Mokasen'},{v:'erkek-ayakkabi-spor',l:'Spor Ayakkabı'}
+      ]},
+      { g:'Çocuk Ayakkabı', items:[
+        {v:'cocuk-ayakkabi',l:'Çocuk Ayakkabısı'},{v:'bebek-patiği',l:'Bebek Patiği'},
+        {v:'cocuk-spor-ayak',l:'Çocuk Spor Ayakkabı'}
+      ]},
+      { g:'Çanta & Aksesuar', items:[
+        {v:'kadin-el-cantasi',l:'Kadın El Çantası'},{v:'kadin-omuz-canta',l:'Omuz Çantası'},
+        {v:'sirt-cantasi',l:'Sırt Çantası'},{v:'erkek-canta',l:'Erkek Çantası & Evrak'},
+        {v:'valiz-bavul',l:'Valiz & Bavul'},{v:'cuzdan-kartlik',l:'Cüzdan & Kartlık'},
+        {v:'kemer',l:'Kemer'},{v:'sapka-bere-atki',l:'Şapka & Bere & Atkı'},
+        {v:'eldiven-kol',l:'Eldiven'},{v:'kravat-papyon',l:'Kravat & Papyon & Mendil'}
+      ]},
+      { g:'Saat', items:[
+        {v:'erkek-saat',l:'Erkek Saati'},{v:'kadin-saat',l:'Kadın Saati'},
+        {v:'akilli-saat-mod',l:'Akıllı Saat (Moda)'},{v:'antika-saat-mod',l:'Antika & Koleksiyon Saati'}
+      ]},
+      { g:'Mücevher & Takı', items:[
+        {v:'altin-bilezik',l:'Altın Bilezik & Künye'},{v:'altin-kolye',l:'Altın Kolye'},
+        {v:'pırlanta-yuzuk',l:'Pırlanta & Taşlı Yüzük'},{v:'nisan-alyans',l:'Nişan & Alyans'},
+        {v:'gumus-taki',l:'Gümüş Takı'},{v:'fantezi-taki',l:'Fantezi & Bijuteri Takı'},
+        {v:'kupe',l:'Küpe'},{v:'bileklik-taki',l:'Bileklik'}
+      ]},
+      { g:'Gözlük', items:[
+        {v:'gunes-gozlugu',l:'Güneş Gözlüğü'},{v:'optik-gozluk',l:'Optik Çerçeve & Lens'}
+      ]},
+      { g:'Markalar', brands:[
+        'Adidas','Bershka','Calvin Klein','Columbia','Diesel','Gucci','H&M',
+        'Kiabi','Lacoste',"Levi's",'Louis Vuitton','Mango','Michael Kors','Moncler',
+        'New Balance','Nike','North Face','Puma','Pull&Bear','Ralph Lauren',
+        'Stradivarius','Timberland','Tommy Hilfiger','Versace','Zara','Koton','Defacto','LC Waikiki'
+      ]}
+    ]
+  },
+
+  spor: { label:'Spor & Outdoor', icon:'⚽', color:'#f39c12',
+    groups:[
+      { g:'Fitness & Gym', items:[
+        {v:'agirlik-dumbbell',l:'Dumbbell & Halter & Disk'},{v:'barbell-rack',l:'Barbell & Squat Rack'},
+        {v:'bench-press-fit',l:'Bench Press'},{v:'kos-bandi',l:'Koşu Bandı'},
+        {v:'eliptik-bisiklet',l:'Eliptik Bisiklet & Kondisyon Bisikleti'},{v:'kupe-kettlebell',l:'Kettlebell'},
+        {v:'yoga-mat',l:'Yoga Matı & Pilates Aleti'},{v:'pull-up-bar',l:'Barfiks & Paralel'},
+        {v:'atlama-ipi',l:'Atlama İpi & Egzersiz Ekipmanı'},{v:'protein-supleman',l:'Protein & Sporcu Takviyesi'}
+      ]},
+      { g:'Bisiklet', items:[
+        {v:'mtb',l:'Dağ Bisikleti (MTB)'},{v:'road-bike',l:'Yol Bisikleti (Road)'},
+        {v:'gravel-bike',l:'Gravel Bisiklet'},{v:'sehir-hibrit-bike',l:'Şehir & Hibrit Bisiklet'},
+        {v:'bmx',l:'BMX'},{v:'e-bike',l:'Elektrikli Bisiklet (E-Bike)'},
+        {v:'cocuk-bike',l:'Çocuk Bisikleti'},{v:'bisiklet-parca-aks',l:'Bisiklet Parça & Aksesuar'},
+        {v:'kask-koruyucu',l:'Kask & Koruyucu'}
+      ]},
+      { g:'Takım Sporları', items:[
+        {v:'futbol-top',l:'Futbol'},{v:'basketbol',l:'Basketbol'},{v:'voleybol',l:'Voleybol'},
+        {v:'hentbol',l:'Hentbol'},{v:'ragbi',l:'Ragbi & Amerikan Futbolu'},
+        {v:'beyzbol-softbol',l:'Beyzbol & Softbol'}
+      ]},
+      { g:'Raket & Kort Sporları', items:[
+        {v:'tenis-raket',l:'Tenis'},{v:'padel',l:'Padel'},{v:'badminton',l:'Badminton'},
+        {v:'masa-tenisi',l:'Masa Tenisi'},{v:'squash',l:'Squash'}
+      ]},
+      { g:'Su & Dalış Sporları', items:[
+        {v:'yuzme-malzeme',l:'Yüzme Ekipmanı'},{v:'surf-wakeboard',l:'Sörf & Wakeboard'},
+        {v:'dalis-ekipman',l:'Dalış Ekipmanı (Tüp, Maske...)'},{v:'kano-kayak-su',l:'Kano & Kayak'},
+        {v:'jet-ski-yelken',l:'Jet-ski & Yelken Sporları'},{v:'balık-olta',l:'Balıkçılık & Olta'}
+      ]},
+      { g:'Kış Sporları', items:[
+        {v:'kayak-tahtası',l:'Kayak'},{v:'snowboard',l:'Snowboard'},{v:'kayak-bot',l:'Kayak Botu & Bağlama'},
+        {v:'paten',l:'Buz Pateni & Rulo Paten'},{v:'kayak-mont',l:'Kayak Montu & Pantolonu'}
+      ]},
+      { g:'Outdoor & Kamp', items:[
+        {v:'cadır-kamp',l:'Çadır & Kamp Malzemesi'},{v:'uyku-tulumu',l:'Uyku Tulumu'},
+        {v:'kamp-ocak',l:'Kamp Ocağı & Taşımalı Gaz'},{v:'sirt-cantasi-outdoor',l:'Sırt Çantası (Hiking)'},
+        {v:'tirmanma',l:'Tırmanma & Dağcılık'},{v:'pusula-gps',l:'Pusula & GPS & Telsiz'}
+      ]},
+      { g:'Dövüş & Savunma', items:[
+        {v:'boks-muay',l:'Boks & Muay Thai'},{v:'gures-judo-bjj',l:'Güreş & Judo & BJJ'},
+        {v:'karate-tkd',l:'Karate & Taekwondo'},{v:'kılıç-eskrim',l:'Eskrim & Kılıç Sanatı'},
+        {v:'koruyucu-dov',l:'Koruyucu Ekipman & Eldiven'}
+      ]},
+      { g:'Av & Atıcılık', items:[
+        {v:'olta-av',l:'Avcılık Ekipmanı'},{v:'ok-yay',l:'Ok & Yay & Havalı Silah'},
+        {v:'av-kiyafet',l:'Av Kıyafeti & Bot'}
+      ]},
+      { g:'Markalar', brands:[
+        'Adidas','Asics','Brooks','Columbia','Decathlon','Giant','Head','Mammut',
+        'New Balance','Nike','Puma','Reebok','Salomon','Scott','Trek','Under Armour','Wilson'
+      ]}
+    ]
+  },
+
+  hobi: { label:'Hobi & Koleksiyon', icon:'🎨', color:'#16a085',
+    groups:[
+      { g:'Müzik Aletleri', items:[
+        {v:'akustik-gitar',l:'Akustik Gitar'},{v:'klasik-gitar',l:'Klasik Gitar'},
+        {v:'elektro-gitar',l:'Elektro Gitar & Amplifikatör'},{v:'bas-gitar',l:'Bas Gitar'},
+        {v:'akustik-piyano',l:'Akustik Piyano'},{v:'dijital-piyano',l:'Dijital Piyano & Keyboard'},
+        {v:'davul-perküsyon',l:'Davul & Perküsyon & Ritim'},{v:'keman',l:'Keman & Viyola & Çello'},
+        {v:'nefesli-saksofon',l:'Saksofon & Klarnet'},{v:'nefesli-flut',l:'Flüt & Blokflüt'},
+        {v:'nefesli-trompet',l:'Trompet & Trombon'},{v:'akordeon',l:'Akordeon & Mızıka'},
+        {v:'baglama-saz',l:'Bağlama & Saz'},{v:'ud-kanun',l:'Ud & Kanun & Türk Çalgıları'},
+        {v:'darbuka-def',l:'Darbuka & Def & Davul'},{v:'studio-ekipman',l:'Stüdyo Ekipmanı & Ses Kartı'},
+        {v:'nota-muzik-kitap',l:'Nota & Müzik Kitabı'}
+      ]},
+      { g:'Sanat & El İşi', items:[
+        {v:'tuval-boyama',l:'Tuval & Boyama Malzemesi'},{v:'suluboya',l:'Suluboya & Pastel'},
+        {v:'heykel-seramik',l:'Heykel & Seramik & Çömlek'},{v:'el-sanatlari',l:'El Sanatları & Takı Yapımı'},
+        {v:'nakis-orgu',l:'Nakış & Örgü & Dikiş'},{v:'quilling-origami',l:'Quilling & Origami'},
+        {v:'agac-islemeciligi',l:'Ahşap İşlemeciliği'},{v:'kaligraf-hat',l:'Kaligrafi & Hat Sanatı'}
+      ]},
+      { g:'Koleksiyon', items:[
+        {v:'pul-filatelya',l:'Pul & Filatelya'},{v:'sikke-para',l:'Sikke & Madeni Para'},
+        {v:'banknot-kagit',l:'Banknot & Kağıt Para'},{v:'eski-kitap-koleksiyon',l:'Eski Kitap & Dergi'},
+        {v:'koleksiyon-sanat',l:'Tablo & Sanat Eseri'},{v:'oyuncak-figur',l:'Koleksiyon Oyuncak & Figür'},
+        {v:'spor-karti',l:'Spor Kartı (Futbol, NBA...)'},{v:'vinyl-koleksiyon',l:'Plak & Vinyl Koleksiyon'},
+        {v:'rozet-insignia',l:'Rozet & Yaka İğnesi'},{v:'porselen-kristal',l:'Porselen & Kristal'},
+        {v:'antika-saat-kol',l:'Antika & Mekanik Saat'},{v:'lego-seti',l:'LEGO Seti (Koleksiyon)'}
+      ]},
+      { g:'Model & Maket', items:[
+        {v:'model-araba-diecast',l:'Model Araba & Die-cast'},{v:'maket-gemi-ucak',l:'Maket Gemi & Uçak & Tank'},
+        {v:'warhammer-minyatur',l:'Warhammer & Minyatür'},{v:'rc-araba',l:'RC Araba & Bot & Drone'},
+        {v:'model-tren',l:'Model Tren & Demiryolu'}
+      ]},
+      { g:'Oyun & Eğlence', items:[
+        {v:'kutu-oyunu',l:'Kutu Oyunu'},{v:'kart-oyunu-pokemon',l:'Kart Oyunu (Pokémon, MTG, Yu-Gi-Oh)'},
+        {v:'puzzle-yapboz',l:'Puzzle & Yapboz'},{v:'satranc-zeka',l:'Satranç & Zeka Oyunları'},
+        {v:'dart-bilardo',l:'Dart & Bilardo'},{v:'langirt',l:'Langırt & Masa Futbolu'},
+        {v:'dama-tavla',l:'Dama & Tavla'},{v:'rol-oyun',l:'Rol Yapma & RPG Kitap'}
+      ]},
+      { g:'Antika', items:[
+        {v:'antika-mobilya-tur',l:'Antika Mobilya'},{v:'antika-porselen-tur',l:'Antika Porselen & Kristal'},
+        {v:'antika-saat-antika',l:'Antika Saat'},{v:'antika-silah',l:'Antika Silah & Kılıç'},
+        {v:'antika-kumas-kilim',l:'Antika Kumaş & Kilim'},{v:'antika-diger',l:'Diğer Antika'}
+      ]}
+    ]
+  },
+
+  bebek: { label:'Bebek & Çocuk', icon:'👶', color:'#ff9800',
+    groups:[
+      { g:'Bebek (0–2 Yaş)', items:[
+        {v:'bebek-arabasi',l:'Bebek Arabası & Travel Sistem'},{v:'oto-koltuğu',l:'Oto Koltuğu (Bebek)'},
+        {v:'besik-karyola',l:'Beşik & Karyola'},{v:'mama-sandalyesi',l:'Mama Sandalyesi'},
+        {v:'bebek-banyo',l:'Bebek Küveti & Banyo'},{v:'biberon-emzirme',l:'Biberon & Emzirme & Mama'},
+        {v:'bebek-monitor-tels',l:'Bebek Telsizi & Monitör'},{v:'bebek-bakım-mat',l:'Bebek Bakım Matı & Alt Açma'},
+        {v:'bebek-salıncak',l:'Bebek Salıncağı & Hamak'},{v:'bebek-portbebe',l:'Portbebé & Kanguru'}
+      ]},
+      { g:'Çocuk (2–14 Yaş)', items:[
+        {v:'oyuncak-bebek',l:'Oyuncak Bebek & Barbie'},{v:'araba-oyuncak',l:'Araba & Araç Oyuncak'},
+        {v:'lego-yapboz-coc',l:'LEGO & Yapboz & Blok Oyuncak'},{v:'egitici-oyuncak',l:'Eğitici & Yaratıcı Oyuncak'},
+        {v:'plaj-havuz-oyuncak',l:'Plaj & Havuz Oyuncağı'},{v:'kaydırak-salıncak',l:'Kaydırak & Salıncak & Park Seti'},
+        {v:'bisiklet-coc',l:'Çocuk Bisikleti & Scooter'},{v:'cocuk-kitabi-tur',l:'Çocuk Kitabı & Boyama'},
+        {v:'okul-cantasi-mat',l:'Okul Çantası & Malzeme'},{v:'kostum-cosplay',l:'Kostüm & Kıyafet'},
+        {v:'cocuk-odasi-mol',l:'Çocuk Odası Mobilyası'},{v:'oyun-konsol-coc',l:'Çocuk Oyun Konsolu & Tablet'}
+      ]},
+      { g:'Bebek Markaları', brands:[
+        'BabyBjörn','Chicco','Graco','Joie','Maxi-Cosi','Mamas & Papas','Quinny',
+        'LEGO','Fisher-Price','Barbie','Hot Wheels','Playmobil','Vtech'
+      ]}
+    ]
+  },
+
+  kitap: { label:'Kitap, Film & Müzik', icon:'📚', color:'#795548',
+    groups:[
+      { g:'Kitap Türleri', items:[
+        {v:'roman-hikaye',l:'Roman & Hikaye'},{v:'bilim-kurgu-fantastik',l:'Bilim Kurgu & Fantastik'},
+        {v:'tarihi-roman',l:'Tarihi Roman'},{v:'polisiye-gerilim',l:'Polisiye & Gerilim'},
+        {v:'biyografi-anı',l:'Biyografi & Anı'},{v:'kisisel-gelisim-kit',l:'Kişisel Gelişim & Motivasyon'},
+        {v:'bilim-populer-kit',l:'Bilim & Popüler Bilim'},{v:'tarih-cografya-kit',l:'Tarih & Coğrafya'},
+        {v:'felsefe-psikoloji-kit',l:'Felsefe & Psikoloji'},{v:'din-maneviyat-kit',l:'Din & Maneviyat'},
+        {v:'seyahat-rehberi-kit',l:'Seyahat Rehberi'},{v:'yemek-tarif-kit',l:'Yemek & Tarif Kitabı'},
+        {v:'sanat-tasarim-kit',l:'Sanat & Tasarım Kitabı'},{v:'cocuk-kitabi-tur2',l:'Çocuk & Gençlik Kitabı'}
+      ]},
+      { g:'Ders & Eğitim', items:[
+        {v:'ilk-orta-ders',l:'İlkokul & Ortaokul Ders Kitabı'},{v:'lise-ders',l:'Lise Ders Kitabı'},
+        {v:'universite-ders',l:'Üniversite Ders Kitabı'},{v:'sinav-yks',l:'YKS & LGS Sınav Kitabı'},
+        {v:'kpss-ales',l:'KPSS & ALES & DGS Kitabı'},{v:'dil-egitim',l:'Yabancı Dil Kitabı'},
+        {v:'ansiklopedi',l:'Ansiklopedi & Sözlük'}
+      ]},
+      { g:'Film, Müzik & Medya', items:[
+        {v:'cd-album',l:'CD & Albüm'},{v:'vinyl-plak-mat',l:'Vinyl Plak'},
+        {v:'kaset-materyal',l:'Kaset'},{v:'dvd-bluray',l:'DVD & Blu-ray'},
+        {v:'vhs-mat',l:'VHS'},{v:'dergi-gazete',l:'Dergi & Gazete'}
+      ]}
+    ]
+  },
+
+  hayvan: { label:'Hayvanlar & Evcil', icon:'🐾', color:'#4caf50',
+    groups:[
+      { g:'Köpek', items:[
+        {v:'kopek-sahiplendirme',l:'Köpek Sahiplendirme'},{v:'kopek-satilik',l:'Satılık Köpek Yavrusu'},
+        {v:'kopek-mama',l:'Köpek Maması & Ödül'},{v:'kopek-yatak-kafes',l:'Yatak & Kafes & Köpek Evi'},
+        {v:'kopek-tasma-gezdirme',l:'Tasma & Gezdirme Halatı'},{v:'kopek-oyuncak',l:'Köpek Oyuncağı'},
+        {v:'kopek-giyim',l:'Köpek Kıyafeti & Aksesuar'},{v:'kopek-saglik',l:'Köpek Sağlık & Bakım'}
+      ]},
+      { g:'Kedi', items:[
+        {v:'kedi-sahiplendirme',l:'Kedi Sahiplendirme'},{v:'kedi-satilik',l:'Satılık Kedi'},
+        {v:'kedi-mama',l:'Kedi Maması & Ödül'},{v:'kedi-kumu-tuvalet',l:'Kedi Kumu & Tuvalet'},
+        {v:'kedi-tirmalam-kule',l:'Tırmalama Tahtası & Kule'},{v:'kedi-oyuncak',l:'Kedi Oyuncağı'},
+        {v:'kedi-saglik',l:'Kedi Sağlık & Bakım'},{v:'kedi-tasima',l:'Kedi Taşıma Çantası'}
+      ]},
+      { g:'Kuş & Kümes', items:[
+        {v:'muhabbet-kus',l:'Muhabbet Kuşu'},{v:'papagan',l:'Papağan (Jako, Kakadu...)'},
+        {v:'cennet-kus',l:'Cennet Papağanı & İspinozu'},{v:'kus-kafes',l:'Kafes & Kuş Aksesuar'},
+        {v:'tavuk-kumes',l:'Tavuk & Kümes Hayvanı'}
+      ]},
+      { g:'Akvaryum & Su Canlıları', items:[
+        {v:'akvaryum-balik',l:'Akvaryum Balığı'},{v:'akvaryum-malzeme',l:'Akvaryum & Filtre & Pompa'},
+        {v:'kaplumbaga',l:'Kaplumbağa'}
+      ]},
+      { g:'Küçük Evcil & Diğer', items:[
+        {v:'hamster-kobay',l:'Hamster & Kobay & Fare'},{v:'tavsan',l:'Tavşan'},
+        {v:'surungenler',l:'Sürüngen & Egzotik (Yılan, Kertenkele)'},{v:'at-ekipman',l:'At & At Ekipmanı'},
+        {v:'ciftlik-hayvan',l:'Çiftlik Hayvanı'},{v:'hayvan-saglik-urun',l:'Veteriner & Sağlık Ürünü'}
+      ]}
+    ]
+  },
+
+  saglik: { label:'Sağlık & Güzellik', icon:'💊', color:'#00bcd4',
+    groups:[
+      { g:'Kişisel Bakım', items:[
+        {v:'cilt-bakim',l:'Cilt Bakım & Serum'},{v:'sac-bakim-urun',l:'Saç Bakım Ürünleri & Şampuan'},
+        {v:'parfum',l:'Parfüm'},{v:'deodorant',l:'Deodorant & Roll-on'},
+        {v:'makyaj-fondoten',l:'Makyaj (Fondöten, Pudra, Far)'},{v:'dudak-ruju',l:'Dudak Ürünleri (Ruj, Parlatıcı)'},
+        {v:'tirnak-oje',l:'Tırnak & Oje'},{v:'agda-epilasyon-alt',l:'Agda & Epilasyon Cihazı'}
+      ]},
+      { g:'Sağlık Cihazları', items:[
+        {v:'tansiyon-aleti',l:'Tansiyon Aleti'},{v:'sekermetre',l:'Şeker Ölçer (Glükometre)'},
+        {v:'oksimetre',l:'Oksimetre & Nabız Ölçer'},{v:'nebulizator',l:'Nebülizatör'},
+        {v:'terapi-cihazi',l:'Tens & Lazer Terapi Cihazı'},{v:'tekerlekli-sandalye',l:'Tekerlekli Sandalye & Koltuk Değneği'},
+        {v:'ortopedik-ürün',l:'Ortopedik Yastık & Korse'}
+      ]},
+      { g:'Masaj & Rahatlama', items:[
+        {v:'masaj-cihazi',l:'Masaj Aleti & Masaj Koltuğu'},
+        {v:'hamam-sauna',l:'Sauna & Buhar Odası'},{v:'aromaterapi',l:'Aromaterapi & Uçucu Yağ'}
+      ]},
+      { g:'Spor Sağlık', items:[
+        {v:'protein-supleman-sag',l:'Protein & Sporcu Takviyesi'},{v:'vitamin-mineral',l:'Vitamin & Mineral'}
+      ]}
+    ]
+  },
+
+  ofis: { label:'Ofis & Kırtasiye', icon:'🖊️', color:'#607d8b',
+    groups:[
+      { g:'Ofis Mobilyası', items:[
+        {v:'ofis-masasi',l:'Ofis Masası'},{v:'ofis-sandalye',l:'Ofis Sandalyesi & Koltuk'},
+        {v:'dosya-dolabi',l:'Dosya Dolabı'},{v:'toplanti-masasi',l:'Toplantı Masası'},
+        {v:'bekleme-koltuk',l:'Bekleme Koltuğu'},{v:'para-kasasi',l:'Para Kasası'}
+      ]},
+      { g:'Ofis Ekipmanı', items:[
+        {v:'fotokopi-baski',l:'Fotokopi & Baskı Makinesi'},{v:'projektor-sunu',l:'Projektör & Sunum Ekranı'},
+        {v:'yazarkasa-pos',l:'Yazarkasa & POS Cihazı'},{v:'telefon-santral',l:'Telefon & Santral'},
+        {v:'laminasyon-cilt',l:'Laminasyon & Ciltleme Makinesi'}
+      ]},
+      { g:'Kırtasiye & Okul', items:[
+        {v:'kirtasiye-genel',l:'Genel Kırtasiye Malzemesi'},{v:'defter-blok',l:'Defter & Bloknot'},
+        {v:'kalem-kalemlik',l:'Kalem & Kalemlik & Silgi'},{v:'canta-evrak',l:'Evrak Çantası'},
+        {v:'planlayici-ajanda',l:'Planlayıcı & Ajanda'}
+      ]}
+    ]
+  },
+
+  insaat: { label:'İnşaat & Sanayi', icon:'🏗️', color:'#ff5722',
+    groups:[
+      { g:'Yapı Malzemesi', items:[
+        {v:'cimento-kum',l:'Çimento & Kum & Agrega'},{v:'beton-blok',l:'Beton Blok & Tuğla'},
+        {v:'demir-celik',l:'Demir & Çelik Profil'},{v:'ahsap-kereste',l:'Ahşap & Kereste'},
+        {v:'cam-profil',l:'Cam & PVC Profil & Doğrama'},{v:'boru-tesisat',l:'Boru & Tesisat Malzemesi'},
+        {v:'yalitim',l:'Yalıtım Malzemesi'},{v:'çatı-malzeme',l:'Çatı & Kiremit Malzemesi'}
+      ]},
+      { g:'İş Makineleri & Alet', items:[
+        {v:'kompresör',l:'Kompresör'},{v:'kaynak-makinesi-san',l:'Kaynak Makinesi'},
+        {v:'forklift',l:'Forklift & İstifleyici'},{v:'jenerator-san',l:'Jeneratör'},
+        {v:'pompa-motor',l:'Pompa & Motor'},{v:'uretim-makinesi',l:'Üretim & Fabrika Makinesi'},
+        {v:'vinc-telfer',l:'Vinç & Telfer'}
+      ]},
+      { g:'Elektrik & Güneş', items:[
+        {v:'kablo-priz',l:'Kablo & Priz & Sigorta'},{v:'sanayi-aydinlatma',l:'Endüstriyel Aydınlatma'},
+        {v:'pano-otomasyon',l:'Elektrik Panosu & Otomasyon'},{v:'gunes-panel',l:'Güneş Paneli & Solar Sistem'}
+      ]}
+    ]
+  },
+
+  gida: { label:'Yiyecek & Tarım', icon:'🥗', color:'#8bc34a',
+    groups:[
+      { g:'Tarım & Organik', items:[
+        {v:'organik-sebze-meyve',l:'Organik Sebze & Meyve'},{v:'balik-deniz',l:'Balık & Deniz Ürünü'},
+        {v:'et-kasap',l:'Et & Kasap Ürünleri'},{v:'sut-peynir-yogurt',l:'Süt & Peynir & Yoğurt'},
+        {v:'yumurta',l:'Yumurta'},{v:'bal-pekmez-receel',l:'Bal & Pekmez & Reçel'}
+      ]},
+      { g:'Gıda Ürünleri', items:[
+        {v:'kuruyemis',l:'Kuruyemiş & Çekirdek'},{v:'tahil-baklagil',l:'Tahıl & Baklagil'},
+        {v:'baharat-sos',l:'Baharat & Sos'},{v:'zeytinyagi-yag',l:'Zeytinyağı & Yağlar'},
+        {v:'hazir-konserve',l:'Hazır Gıda & Konserve'}
+      ]},
+      { g:'İçecek', items:[
+        {v:'cay-kahve-mat',l:'Çay & Kahve'},{v:'dogal-iceecek',l:'Doğal & Bitki Çayı'},
+        {v:'meyve-suyu',l:'Meyve Suyu & İçecek'}
+      ]},
+      { g:'Tarım Ekipmanı', items:[
+        {v:'tarim-aleti',l:'Tarım Aleti'},{v:'serasyon',l:'Sera & Sera Malzemeleri'},
+        {v:'gübre-ilaç',l:'Gübre & Bitki İlacı'}
+      ]}
+    ]
+  },
+
+  diger: { label:'Diğer', icon:'🔖', color:'#9e9e9e',
+    groups:[
+      { g:'Diğer', items:[
+        {v:'hediye-ambalaj',l:'Hediye & Ambalaj'},{v:'dini-esya',l:'Dini Eşya & Tesbih'},
+        {v:'gelinlik-diger',l:'Düğün & Nişan Malzemesi'},{v:'yeni-urun',l:'Sıfır Ürün (İndirimli)'},
+        {v:'diger-genel',l:'Diğer / Belirtilmemiş'}
+      ]}
+    ]
+  }
+};
+
+/* ── YARDIMCI FONKSİYONLAR ── */
+
+/** [{key, label, icon, color}] listesi döner */
+function getCatList() {
+  return Object.entries(CAT).map(([key,c])=>({key,label:c.label,icon:c.icon,color:c.color}));
+}
+
+/** Tüm alt kategorileri düz liste olarak döner [{v,l}] */
+function getSubList(catKey) {
+  const cat = CAT[catKey];
+  if(!cat) return [];
+  const all = [];
+  (cat.groups||[]).forEach(g => {
+    if(g.items) g.items.forEach(it => all.push(it));
+  });
+  return all;
+}
+
+/** Form için optgroup'lu HTML */
+function buildSubOptions(catKey, selectedSub) {
+  const cat = CAT[catKey];
+  if(!cat) return '<option value="">Seçin</option>';
+  let html = '<option value="">Seçin</option>';
+  (cat.groups||[]).forEach(g => {
+    if(!g.items || !g.items.length) return;
+    html += `<optgroup label="${g.g}">`;
+    g.items.forEach(it => {
+      html += `<option value="${it.v}"${it.v===selectedSub?' selected':''}>${it.l}</option>`;
+    });
+    html += '</optgroup>';
+  });
+  return html;
+}
+
+/** Form kategori select HTML */
+function buildCatOptions(selectedCat) {
+  return '<option value="">— Kategori Seçin —</option>' +
+    getCatList().map(c =>
+      `<option value="${c.key}"${c.key===selectedCat?' selected':''}>${c.icon} ${c.label}</option>`
+    ).join('');
+}
+
+// ── CITIES ──
+/**
+ * Türkiye İl ve İlçe Listesi
+ */
+const TR_CITIES = {
+  "Adana": ["Aladağ","Ceyhan","Çukurova","Feke","İmamoğlu","Karaisalı","Karataş","Kozan","Pozantı","Saimbeyli","Sarıçam","Seyhan","Tufanbeyli","Yumurtalık","Yüreğir"],
+  "Adıyaman": ["Adıyaman Merkez","Besni","Çelikhan","Gerger","Gölbaşı","Kahta","Samsat","Sincik","Tut"],
+  "Afyonkarahisar": ["Afyonkarahisar Merkez","Başmakçı","Bayat","Bolvadin","Çay","Çobanlar","Dazkırı","Dinar","Emirdağ","Evciler","Hocalar","İhsaniye","İscehisar","Kızılören","Sandıklı","Sinanpaşa","Sultandağı","Şuhut"],
+  "Ağrı": ["Ağrı Merkez","Diyadin","Doğubayazıt","Eleşkirt","Hamur","Patnos","Taşlıçay","Tutak"],
+  "Amasya": ["Amasya Merkez","Göynücek","Gümüşhacıköy","Hamamözü","Merzifon","Suluova","Taşova"],
+  "Ankara": ["Altındağ","Akyurt","Ayaş","Bala","Beypazarı","Çamlıdere","Çankaya","Çubuk","Elmadağ","Etimesgut","Evren","Gölbaşı","Güdül","Haymana","Kalecik","Kazan","Keçiören","Kızılcahamam","Mamak","Nallıhan","Polatlı","Pursaklar","Sincan","Şereflikoçhisar","Yenimahalle"],
+  "Antalya": ["Akseki","Aksu","Alanya","Demre","Döşemealtı","Elmalı","Finike","Gazipaşa","Gündoğmuş","İbradı","Kaş","Kemer","Kepez","Konyaaltı","Korkuteli","Kumluca","Manavgat","Muratpaşa","Serik"],
+  "Artvin": ["Ardanuç","Arhavi","Artvin Merkez","Borçka","Hopa","Kemalpaşa","Murgul","Şavşat","Yusufeli"],
+  "Aydın": ["Bozdoğan","Buharkent","Çine","Didim","Efeler","Germencik","İncirliova","Karacasu","Karpuzlu","Koçarlı","Köşk","Kuşadası","Kuyucak","Nazilli","Söke","Sultanhisar","Yenipazar"],
+  "Balıkesir": ["Altıeylül","Ayvalık","Balya","Bandırma","Bigadiç","Burhaniye","Dursunbey","Edremit","Erdek","Gömeç","Gönen","Havran","İvrindi","Karesi","Kepsut","Manyas","Marmara","Savaştepe","Sındırgı","Susurluk"],
+  "Bilecik": ["Bozüyük","Gölpazarı","İnhisar","Merkez","Osmaneli","Pazaryeri","Söğüt","Yenipazar"],
+  "Bingöl": ["Adaklı","Bingöl Merkez","Genç","Karlıova","Kiğı","Merkez","Solhan","Yayladere","Yedisu"],
+  "Bitlis": ["Adilcevaz","Ahlat","Bitlis Merkez","Güroymak","Hizan","Mutki","Tatvan"],
+  "Bolu": ["Bolu Merkez","Dörtdivan","Gerede","Göynük","Kıbrıscık","Mengen","Mudurnu","Seben","Yeniçağa"],
+  "Burdur": ["Altınyayla","Ağlasun","Bucak","Burdur Merkez","Çavdır","Çeltikçi","Gölhisar","Kemer","Merkez","Tefenni","Yeşilova"],
+  "Bursa": ["Büyükorhan","Gemlik","Gürsu","Harmancık","İnegöl","İznik","Karacabey","Keles","Kestel","Mudanya","Mustafakemalpaşa","Nilüfer","Orhaneli","Orhangazi","Osmangazi","Yenişehir","Yıldırım"],
+  "Çanakkale": ["Ayvacık","Bayramiç","Biga","Bozcaada","Çan","Çanakkale Merkez","Eceabat","Ezine","Gelibolu","Gökçeada","Lapseki","Merkez","Yenice"],
+  "Çankırı": ["Atkaracalar","Bayramören","Çankırı Merkez","Eldivan","Ilgaz","Kızılırmak","Korgun","Kurşunlu","Orta","Şabanözü","Yapraklı"],
+  "Çorum": ["Alaca","Bayat","Boğazkale","Dodurga","İskilip","Kargı","Laçin","Mecitözü","Merkez","Oğuzlar","Ortaköy","Osmancık","Sungurlu","Uğurludağ"],
+  "Denizli": ["Acıpayam","Babadağ","Baklan","Bekilli","Beyağaç","Bozkurt","Buldan","Çal","Çameli","Çardak","Çivril","Güney","Honaz","Kale","Merkezefendi","Pamukkale","Sarayköy","Serinhisar","Tavas"],
+  "Diyarbakır": ["Bağlar","Bismil","Çermik","Çınar","Çüngüş","Dicle","Eğil","Ergani","Hani","Hazro","Kayapınar","Kocaköy","Kulp","Lice","Silvan","Sur","Yenişehir"],
+  "Edirne": ["Edirne Merkez","Enez","Havsa","İpsala","Keşan","Lalapaşa","Meriç","Süloğlu","Uzunköprü"],
+  "Elazığ": ["Ağın","Alacakaya","Arıcak","Baskil","Elazığ Merkez","Karakoçan","Keban","Kovancılar","Maden","Palu","Sivrice"],
+  "Erzincan": ["Çayırlı","Erzincan Merkez","İliç","Kemah","Kemaliye","Otlukbeli","Refahiye","Tercan","Üzümlü"],
+  "Erzurum": ["Aşkale","Aziziye","Çat","Hınıs","Horasan","İspir","Karaçoban","Karayazı","Köprüköy","Narman","Oltu","Olur","Palandöken","Pasinler","Pazaryolu","Şenkaya","Tekman","Tortum","Uzundere","Yakutiye"],
+  "Eskişehir": ["Alpu","Beylikova","Çifteler","Günyüzü","Han","İnönü","Mahmudiye","Mihalgazi","Mihalıççık","Odunpazarı","Sarıcakaya","Seyitgazi","Sivrihisar","Tepebaşı"],
+  "Gaziantep": ["Araban","İslahiye","Karkamış","Nurdağı","Nizip","Oğuzeli","Şahinbey","Şehitkamil","Yavuzeli"],
+  "Giresun": ["Alucra","Bulancak","Çamoluk","Çanakçı","Dereli","Doğankent","Espiye","Eynesil","Giresun Merkez","Görele","Güce","Keşap","Piraziz","Şebinkarahisar","Tirebolu","Yağlıdere"],
+  "Gümüşhane": ["Gümüşhane Merkez","Kelkit","Köse","Kürtün","Şiran","Torul"],
+  "Hakkari": ["Çukurca","Hakkari Merkez","Şemdinli","Yüksekova"],
+  "Hatay": ["Altınözü","Antakya","Arsuz","Belen","Defne","Dörtyol","Erzin","Hassa","İskenderun","Kırıkhan","Kumlu","Mandacı","Payas","Reyhanlı","Samandağ","Serinyol","Yayladağı"],
+  "Iğdır": ["Aralık","Iğdır Merkez","Karakoyunlu","Tuzluca"],
+  "Isparta": ["Aksu","Atabey","Eğirdir","Gelendost","Gönen","Isparta Merkez","Keçiborlu","Senirkent","Sütçüler","Şarkikaraağaç","Uluborlu","Yalvaç","Yenişarbademli"],
+  "İstanbul": ["Adalar","Arnavutköy","Ataşehir","Avcılar","Bağcılar","Bahçelievler","Bakırköy","Başakşehir","Bayrampaşa","Beşiktaş","Beykoz","Beylikdüzü","Beyoğlu","Büyükçekmece","Çatalca","Çekmeköy","Esenler","Esenyurt","Eyüpsultan","Fatih","Gaziosmanpaşa","Güngören","Kadıköy","Kağıthane","Kartal","Küçükçekmece","Maltepe","Pendik","Sancaktepe","Sarıyer","Silivri","Sultanbeyli","Sultangazi","Şile","Şişli","Tuzla","Ümraniye","Üsküdar","Zeytinburnu"],
+  "İzmir": ["Aliağa","Balçova","Bayındır","Bayraklı","Bergama","Beydağ","Bornova","Buca","Çeşme","Çiğli","Dikili","Foça","Gaziemir","Güzelbahçe","Karabağlar","Karaburun","Karşıyaka","Kemalpaşa","Kınık","Kiraz","Konak","Menderes","Menemen","Narlıdere","Ödemiş","Seferihisar","Selçuk","Tire","Torbalı","Urla"],
+  "Kahramanmaraş": ["Afşin","Andırın","Çağlayancerit","Dulkadiroğlu","Ekinözü","Elbistan","Göksun","Nurhak","Onikişubat","Pazarcık","Türkoğlu"],
+  "Karabük": ["Eflani","Eskipazar","Karabük Merkez","Ovacık","Safranbolu","Yenice"],
+  "Karaman": ["Ayrancı","Başyayla","Ermenek","Karaman Merkez","Kazımkarabekir","Merkez","Sarıveliler"],
+  "Kars": ["Akyaka","Arpaçay","Digor","Kağızman","Kars Merkez","Sarıkamış","Selim","Susuz"],
+  "Kastamonu": ["Abana","Ağlı","Araç","Azdavay","Bozkurt","Cide","Çatalzeytin","Daday","Devrekani","Doğanyurt","Hanönü","İhsangazi","İnebolu","Kastamonu Merkez","Küre","Pınarbaşı","Seydiler","Şenpazar","Taşköprü","Tosya"],
+  "Kayseri": ["Akkışla","Bünyan","Develi","Felahiye","Hacılar","İncesu","Kocasinan","Melikgazi","Özvatan","Pınarbaşı","Sarıoğlan","Sarız","Talas","Tomarza","Yahyalı","Yeşilhisar"],
+  "Kırıkkale": ["Bahşili","Balışeyh","Çelebi","Delice","Karakeçili","Keskin","Kırıkkale Merkez","Sulakyurt","Yahşihan"],
+  "Kırklareli": ["Babaeski","Demirköy","Kırklareli Merkez","Kofçaz","Lüleburgaz","Pehlivanköy","Pınarhisar","Vize"],
+  "Kırşehir": ["Akçakent","Akpınar","Boztepe","Çiçekdağı","Kaman","Kırşehir Merkez","Mucur"],
+  "Kilis": ["Elbeyli","Kilis Merkez","Musabeyli","Polateli"],
+  "Kocaeli": ["Başiskele","Çayırova","Darıca","Derince","Dilovası","Gebze","Gölcük","İzmit","Kandıra","Karamürsel","Kartepe","Körfez"],
+  "Konya": ["Ahırlı","Akören","Akşehir","Altınekin","Beyşehir","Bozkır","Cihanbeyli","Çeltik","Çumra","Derbent","Derebucak","Doğanhisar","Emirgazi","Ereğli","Güneysinir","Hadim","Halkapınar","Hüyük","Ilgın","Kadınhanı","Karapınar","Karatay","Kulu","Meram","Sarayönü","Selçuklu","Seydişehir","Taşkent","Tuzlukçu","Yalıhüyük","Yunak"],
+  "Kütahya": ["Altıntaş","Aslanapa","Çavdarhisar","Domaniç","Dumlupınar","Emet","Gediz","Hisarcık","Kütahya Merkez","Pazarlar","Simav","Şaphane","Tavşanlı"],
+  "Malatya": ["Akçadağ","Arapgir","Arguvan","Battalgazi","Darende","Doğanyol","Doğanşehir","Hekimhan","Kale","Kuluncak","Merkez","Pütürge","Yazıhan","Yeşilyurt"],
+  "Manisa": ["Ahmetli","Akhisar","Alaşehir","Demirci","Gölmarmara","Gördes","Kırkağaç","Köprübaşı","Kula","Merkez","Salihli","Sarıgöl","Saruhanlı","Selendi","Soma","Şehzadeler","Turgutlu","Yunusemre"],
+  "Mardin": ["Artuklu","Dargeçit","Derik","Kızıltepe","Mazıdağı","Midyat","Nusaybin","Ömerli","Savur","Yeşilli"],
+  "Mersin": ["Akdeniz","Anamur","Aydıncık","Bozyazı","Çamlıyayla","Erdemli","Gülnar","Mezitli","Mut","Silifke","Tarsus","Toroslar","Yenişehir"],
+  "Muğla": ["Bodrum","Dalaman","Datça","Fethiye","Kavaklıdere","Köyceğiz","Marmaris","Menteşe","Milas","Ortaca","Seydikemer","Ula","Yatağan"],
+  "Muş": ["Bulanık","Hasköy","Korkut","Malazgirt","Muş Merkez","Varto"],
+  "Nevşehir": ["Acıgöl","Avanos","Derinkuyu","Gülşehir","Hacıbektaş","Kozaklı","Nevşehir Merkez","Ürgüp"],
+  "Niğde": ["Altunhisar","Bor","Çamardı","Çiftlik","Niğde Merkez","Ulukışla"],
+  "Ordu": ["Akkuş","Altınordu","Aybastı","Çamaş","Çatalpınar","Çaybaşı","Fatsa","Gölköy","Gülyalı","Gürgentepe","İkizce","Kabadüz","Kabataş","Korgan","Kumru","Mesudiye","Perşembe","Ulubey","Ünye"],
+  "Osmaniye": ["Bahçe","Düziçi","Hasanbeyli","Kadirli","Osmaniye Merkez","Sumbas","Toprakkale"],
+  "Rize": ["Ardeşen","Çamlıhemşin","Çayeli","Derepazarı","Fındıklı","Güneysu","Hemşin","İkizdere","İyidere","Kalkandere","Merkez","Pazar","Rize Merkez"],
+  "Sakarya": ["Adapazarı","Akyazı","Arifiye","Erenler","Ferizli","Geyve","Hendek","Karapürçek","Karasu","Kaynarca","Kocaali","Mithatpaşa","Pamukova","Sapanca","Serdivan","Söğütlü","Taraklı"],
+  "Samsun": ["Alaçam","Asarcık","Atakum","Ayvacık","Bafra","Canik","Çarşamba","İlkadım","Kavak","Ladik","Ondokuzmayıs","Salıpazarı","Tekkeköy","Terme","Vezirköprü","Yakakent"],
+  "Siirt": ["Baykan","Eruh","Kurtalan","Merkez","Pervari","Şirvan","Tillo"],
+  "Sinop": ["Ayancık","Boyabat","Dikmen","Durağan","Erfelek","Gerze","Saraydüzü","Sinop Merkez","Türkeli"],
+  "Sivas": ["Akıncılar","Altınyayla","Divriği","Doğanşar","Gemerek","Gölova","Gürün","Hafik","İmranlı","Kangal","Koyulhisar","Merkez","Sivas Merkez","Suşehri","Şarkışla","Ulaş","Yıldızeli","Zara"],
+  "Şanlıurfa": ["Akçakale","Birecik","Bozova","Ceylanpınar","Eyyübiye","Halfeti","Haliliye","Harran","Hilvan","Karaköprü","Siverek","Suruç","Viranşehir"],
+  "Şırnak": ["Beytüşşebap","Cizre","Güçlükonak","İdil","Merkez","Silopi","Uludere"],
+  "Tekirdağ": ["Çerkezköy","Çorlu","Ergene","Hayrabolu","Kapaklı","Malkara","Marmaraereğlisi","Muratlı","Saray","Süleymanpaşa","Şarköy"],
+  "Tokat": ["Almus","Artova","Başçiftlik","Erbaa","Merkez","Niksar","Pazar","Reşadiye","Sulusaray","Tokat Merkez","Turhal","Yeşilyurt","Zile"],
+  "Trabzon": ["Akçaabat","Araklı","Arsin","Beşikdüzü","Çaykara","Dernekpazarı","Düzköy","Hayrat","Köprübaşı","Maçka","Of","Ortahisar","Sürmene","Şalpazarı","Tonya","Vakfıkebir","Yomra"],
+  "Tunceli": ["Çemişgezek","Hozat","Mazgirt","Merkez","Nazimiye","Ovacık","Pertek","Pülümür"],
+  "Uşak": ["Banaz","Eşme","Karahallı","Merkez","Sivaslı","Ulubey"],
+  "Van": ["Bahçesaray","Başkale","Çaldıran","Çatak","Edremit","Erciş","Gevaş","Gürpınar","İpekyolu","Muradiye","Özalp","Saray","Tuşba"],
+  "Yalova": ["Altınova","Armutlu","Çınarcık","Çiftlikköy","Termal","Yalova Merkez"],
+  "Yozgat": ["Akdağmadeni","Aydıncık","Boğazlıyan","Çandır","Çayıralan","Çekerek","Kadışehri","Merkez","Saraykent","Sarıkaya","Şefaatli","Sorgun","Yenifakılı","Yerköy","Yozgat Merkez"],
+  "Zonguldak": ["Alaplı","Çaycuma","Devrek","Ereğli","Gökçebey","Kilimli","Kozlu","Zonguldak Merkez"]
+};
+
+  </script>
 </head>
 <body>
 
-<div style="position:sticky;top:0;z-index:500;width:100%">
+<div id="siteHeader">
 <header class="header">
   <div class="header-inner">
     <!-- Logo — sadece yazı, tıklayınca ana sayfa -->
@@ -36,10 +827,6 @@
         <button class="btn-login" onclick="openModal('loginModal')">Giriş Yap</button>
         <button class="btn-join" onclick="openModal('signupModal')">Üye Ol</button>
       </div>
-      <a href="messages.html" class="icon-btn-top" title="Mesajlar" style="position:relative">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        <span id="msgBadge" style="display:none;position:absolute;top:-4px;right:-4px;background:var(--primary);color:white;border-radius:50%;width:16px;height:16px;font-size:10px;font-weight:800;align-items:center;justify-content:center;">0</span>
-      </a>
       <button class="btn-add-listing" onclick="openAddListing()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         İlan Ver
@@ -63,318 +850,14 @@
 </header>
 
 <nav class="cat-nav-bar" id="catNavBar">
+  <button class="cat-nav-arrow cat-nav-arrow-left" id="catNavLeft" onclick="scrollCatNav(-200)" aria-label="Sola kaydır">&#8249;</button>
   <div class="cat-nav-inner">
     <div class="cat-nav-item active" onclick="filterCat('');setActiveCatNav(this)">Tümü</div>
-
-    <div class="cat-nav-item cat-has-sub" onclick="filterCat('vasita');setActiveCatNav(this)">
-      Vasıta <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10"><polyline points="6 9 12 15 18 9"/></svg>
-      <div class="cat-sub-menu csm-wide">
-        <div class="csm-inner">
-          <div class="csm-col">
-            <div class="csm-title">Vasıta Türü</div>
-            <a onclick="filterCat('vasita')">Tüm Vasıta</a>
-            <a onclick="filterCat2('vasita','otomobil')">Otomobil</a>
-            <a onclick="filterCat2('vasita','suv')">SUV & 4x4</a>
-            <a onclick="filterCat2('vasita','ticari')">Ticari Araç</a>
-            <a onclick="filterCat2('vasita','motosiklet')">Motosiklet</a>
-            <a onclick="filterCat2('vasita','elektrikli')">Elektrikli Araç</a>
-            <a onclick="filterCat2('vasita','caravan')">Karavan</a>
-            <a onclick="filterCat2('vasita','klasik')">Klasik Araç</a>
-            <a onclick="filterCat2('vasita','tekne')">Tekne & Deniz</a>
-          </div>
-          <div class="csm-col">
-            <div class="csm-title">Otomobil Markaları</div>
-            <a onclick="filterBrand('BMW')">BMW</a>
-            <a onclick="filterBrand('Mercedes')">Mercedes-Benz</a>
-            <a onclick="filterBrand('Toyota')">Toyota</a>
-            <a onclick="filterBrand('Renault')">Renault</a>
-            <a onclick="filterBrand('Volkswagen')">Volkswagen</a>
-            <a onclick="filterBrand('Fiat')">Fiat</a>
-            <a onclick="filterBrand('Ford')">Ford</a>
-            <a onclick="filterBrand('Honda')">Honda</a>
-            <a onclick="filterBrand('Hyundai')">Hyundai</a>
-            <a onclick="filterBrand('Kia')">Kia</a>
-            <a onclick="filterBrand('Peugeot')">Peugeot</a>
-            <a onclick="filterBrand('Audi')">Audi</a>
-          </div>
-          <div class="csm-col">
-            <div class="csm-title">Motosiklet Markaları</div>
-            <a onclick="filterBrand('Honda')">Honda</a>
-            <a onclick="filterBrand('Yamaha')">Yamaha</a>
-            <a onclick="filterBrand('Kawasaki')">Kawasaki</a>
-            <a onclick="filterBrand('Suzuki')">Suzuki</a>
-            <a onclick="filterBrand('BMW Motorrad')">BMW Motorrad</a>
-            <a onclick="filterBrand('Ducati')">Ducati</a>
-            <div class="csm-title" style="margin-top:14px">Motosiklet Türü</div>
-            <a onclick="filterCat2('vasita','motosiklet-sport')">Sport</a>
-            <a onclick="filterCat2('vasita','motosiklet-naked')">Naked</a>
-            <a onclick="filterCat2('vasita','motosiklet-enduro')">Enduro & Cross</a>
-            <a onclick="filterCat2('vasita','motosiklet-scooter')">Scooter</a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="cat-nav-item cat-has-sub" onclick="filterCat('emlak');setActiveCatNav(this)">
-      Emlak <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10"><polyline points="6 9 12 15 18 9"/></svg>
-      <div class="cat-sub-menu csm-wide">
-        <div class="csm-inner">
-          <div class="csm-col">
-            <div class="csm-title">Konut</div>
-            <a onclick="filterCat('emlak')">Tüm Emlak</a>
-            <a onclick="filterCat2('emlak','daire')">Daire</a>
-            <a onclick="filterCat2('emlak','villa')">Villa & Müstakil</a>
-            <a onclick="filterCat2('emlak','residence')">Residence</a>
-            <a onclick="filterCat2('emlak','bina')">Bina</a>
-            <a onclick="filterCat2('emlak','prefabrik')">Prefabrik Ev</a>
-          </div>
-          <div class="csm-col">
-            <div class="csm-title">İşlem Türü</div>
-            <a onclick="filterCat2('emlak','satilik')">Satılık</a>
-            <a onclick="filterCat2('emlak','kiralik')">Kiralık</a>
-            <a onclick="filterCat2('emlak','gunluk')">Günlük Kiralık</a>
-            <a onclick="filterCat2('emlak','devren')">Devren</a>
-            <div class="csm-title" style="margin-top:14px">Arazi</div>
-            <a onclick="filterCat2('emlak','arsa')">Arsa</a>
-            <a onclick="filterCat2('emlak','tarla')">Tarla & Bağ</a>
-          </div>
-          <div class="csm-col">
-            <div class="csm-title">Ticari</div>
-            <a onclick="filterCat2('emlak','isyeri')">İşyeri & Ofis</a>
-            <a onclick="filterCat2('emlak','dukkan')">Dükkan & Mağaza</a>
-            <a onclick="filterCat2('emlak','depo')">Depo & Antrepo</a>
-            <a onclick="filterCat2('emlak','fabrika')">Fabrika & Atölye</a>
-            <a onclick="filterCat2('emlak','otel')">Otel & Pansiyon</a>
-            <div class="csm-title" style="margin-top:14px">Oda Sayısı</div>
-            <a onclick="filterCat2('emlak','studio')">Stüdyo</a>
-            <a onclick="filterCat2('emlak','1+1')">1+1</a>
-            <a onclick="filterCat2('emlak','2+1')">2+1</a>
-            <a onclick="filterCat2('emlak','3+1')">3+1</a>
-            <a onclick="filterCat2('emlak','4+1-ustu')">4+1 ve üstü</a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="cat-nav-item cat-has-sub" onclick="filterCat('elektronik');setActiveCatNav(this)">
-      Elektronik <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10"><polyline points="6 9 12 15 18 9"/></svg>
-      <div class="cat-sub-menu csm-wide">
-        <div class="csm-inner">
-          <div class="csm-col">
-            <div class="csm-title">Kategoriler</div>
-            <a onclick="filterCat('elektronik')">Tüm Elektronik</a>
-            <a onclick="filterCat2('elektronik','telefon')">Telefon & Aksesuar</a>
-            <a onclick="filterCat2('elektronik','bilgisayar')">Bilgisayar & Laptop</a>
-            <a onclick="filterCat2('elektronik','tablet')">Tablet</a>
-            <a onclick="filterCat2('elektronik','tv')">TV & Görüntü Sistemleri</a>
-            <a onclick="filterCat2('elektronik','oyun')">Oyun & Konsol</a>
-            <a onclick="filterCat2('elektronik','fotograf')">Fotoğraf & Kamera</a>
-            <a onclick="filterCat2('elektronik','ses')">Ses Sistemleri</a>
-            <a onclick="filterCat2('elektronik','giyilebilir')">Akıllı Saat & Giyilebilir</a>
-            <a onclick="filterCat2('elektronik','beyaz-esya')">Küçük Ev Aletleri</a>
-          </div>
-          <div class="csm-col">
-            <div class="csm-title">Telefon Markaları</div>
-            <a onclick="filterBrand('Apple')">Apple (iPhone)</a>
-            <a onclick="filterBrand('Samsung')">Samsung</a>
-            <a onclick="filterBrand('Xiaomi')">Xiaomi</a>
-            <a onclick="filterBrand('Huawei')">Huawei</a>
-            <a onclick="filterBrand('Oppo')">Oppo</a>
-            <a onclick="filterBrand('OnePlus')">OnePlus</a>
-            <a onclick="filterBrand('Realme')">Realme</a>
-            <div class="csm-title" style="margin-top:14px">iPhone Modelleri</div>
-            <a onclick="filterCat2('elektronik','iphone-16')">iPhone 16 Serisi</a>
-            <a onclick="filterCat2('elektronik','iphone-15')">iPhone 15 Serisi</a>
-            <a onclick="filterCat2('elektronik','iphone-14')">iPhone 14 Serisi</a>
-            <a onclick="filterCat2('elektronik','iphone-13')">iPhone 13 Serisi</a>
-          </div>
-          <div class="csm-col">
-            <div class="csm-title">Bilgisayar Markaları</div>
-            <a onclick="filterBrand('Apple')">Apple (Mac)</a>
-            <a onclick="filterBrand('Asus')">Asus</a>
-            <a onclick="filterBrand('Lenovo')">Lenovo</a>
-            <a onclick="filterBrand('Dell')">Dell</a>
-            <a onclick="filterBrand('HP')">HP</a>
-            <a onclick="filterBrand('MSI')">MSI</a>
-            <div class="csm-title" style="margin-top:14px">Oyun Konsolu</div>
-            <a onclick="filterCat2('elektronik','ps5')">PlayStation 5</a>
-            <a onclick="filterCat2('elektronik','ps4')">PlayStation 4</a>
-            <a onclick="filterCat2('elektronik','xbox-series')">Xbox Series</a>
-            <a onclick="filterCat2('elektronik','nintendo-switch')">Nintendo Switch</a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="cat-nav-item cat-has-sub" onclick="filterCat('ev-yasam');setActiveCatNav(this)">
-      Ev & Yaşam <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10"><polyline points="6 9 12 15 18 9"/></svg>
-      <div class="cat-sub-menu csm-wide">
-        <div class="csm-inner">
-          <div class="csm-col">
-            <div class="csm-title">Mobilya</div>
-            <a onclick="filterCat('ev-yasam')">Tüm Ev & Yaşam</a>
-            <a onclick="filterCat2('ev-yasam','koltuk')">Koltuk & Kanepe</a>
-            <a onclick="filterCat2('ev-yasam','yatak-odasi')">Yatak Odası</a>
-            <a onclick="filterCat2('ev-yasam','masa-sandalye')">Masa & Sandalye</a>
-            <a onclick="filterCat2('ev-yasam','raf-dolap')">Raf & Dolap</a>
-            <a onclick="filterCat2('ev-yasam','bahce-mobilya')">Bahçe Mobilyası</a>
-          </div>
-          <div class="csm-col">
-            <div class="csm-title">Ev Aletleri</div>
-            <a onclick="filterCat2('ev-yasam','buzdolabi')">Buzdolabı</a>
-            <a onclick="filterCat2('ev-yasam','camasir-makinesi')">Çamaşır Makinesi</a>
-            <a onclick="filterCat2('ev-yasam','bulasik-makinesi')">Bulaşık Makinesi</a>
-            <a onclick="filterCat2('ev-yasam','firin-ocak')">Fırın & Ocak</a>
-            <a onclick="filterCat2('ev-yasam','klima')">Klima</a>
-            <a onclick="filterCat2('ev-yasam','elektrikli-supurge')">Elektrikli Süpürge</a>
-          </div>
-          <div class="csm-col">
-            <div class="csm-title">Dekorasyon & Diğer</div>
-            <a onclick="filterCat2('ev-yasam','dekorasyon')">Dekorasyon</a>
-            <a onclick="filterCat2('ev-yasam','aydinlatma')">Aydınlatma</a>
-            <a onclick="filterCat2('ev-yasam','tekstil')">Ev Tekstili</a>
-            <a onclick="filterCat2('ev-yasam','mutfak-gerec')">Mutfak Gereçleri</a>
-            <a onclick="filterCat2('ev-yasam','bahce')">Bahçe & Bitki</a>
-            <a onclick="filterCat2('ev-yasam','guvenlik')">Güvenlik Sistemleri</a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="cat-nav-item cat-has-sub" onclick="filterCat('giyim');setActiveCatNav(this)">
-      Giyim & Moda <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10"><polyline points="6 9 12 15 18 9"/></svg>
-      <div class="cat-sub-menu csm-wide">
-        <div class="csm-inner">
-          <div class="csm-col">
-            <div class="csm-title">Kadın</div>
-            <a onclick="filterCat2('giyim','kadin-ust')">Üst Giyim</a>
-            <a onclick="filterCat2('giyim','kadin-alt')">Alt Giyim</a>
-            <a onclick="filterCat2('giyim','kadin-dis')">Dış Giyim</a>
-            <a onclick="filterCat2('giyim','kadin-elbise')">Elbise & Tulum</a>
-            <a onclick="filterCat2('giyim','kadin-ic')">İç Çamaşırı</a>
-            <a onclick="filterCat2('giyim','kadin-spor')">Spor Giyim</a>
-          </div>
-          <div class="csm-col">
-            <div class="csm-title">Erkek</div>
-            <a onclick="filterCat2('giyim','erkek-ust')">Üst Giyim</a>
-            <a onclick="filterCat2('giyim','erkek-alt')">Alt Giyim</a>
-            <a onclick="filterCat2('giyim','erkek-dis')">Dış Giyim</a>
-            <a onclick="filterCat2('giyim','erkek-takim')">Takım Elbise</a>
-            <a onclick="filterCat2('giyim','erkek-spor')">Spor Giyim</a>
-            <div class="csm-title" style="margin-top:14px">Çocuk</div>
-            <a onclick="filterCat2('giyim','cocuk-kiz')">Kız Çocuk</a>
-            <a onclick="filterCat2('giyim','cocuk-erkek')">Erkek Çocuk</a>
-          </div>
-          <div class="csm-col">
-            <div class="csm-title">Aksesuar</div>
-            <a onclick="filterCat2('giyim','kadin-ayakkabi')">Kadın Ayakkabı</a>
-            <a onclick="filterCat2('giyim','erkek-ayakkabi')">Erkek Ayakkabı</a>
-            <a onclick="filterCat2('giyim','spor-ayakkabi')">Spor Ayakkabı</a>
-            <a onclick="filterCat2('giyim','canta')">Çanta & Cüzdan</a>
-            <a onclick="filterCat2('giyim','saat')">Saat</a>
-            <a onclick="filterCat2('giyim','mucevher')">Mücevher & Takı</a>
-            <a onclick="filterCat2('giyim','gozluk')">Gözlük</a>
-            <a onclick="filterCat2('giyim','sapka')">Şapka & Bere</a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="cat-nav-item cat-has-sub" onclick="filterCat('spor');setActiveCatNav(this)">
-      Spor & Hobi <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10"><polyline points="6 9 12 15 18 9"/></svg>
-      <div class="cat-sub-menu csm-wide">
-        <div class="csm-inner">
-          <div class="csm-col">
-            <div class="csm-title">Spor</div>
-            <a onclick="filterCat('spor')">Tüm Spor & Hobi</a>
-            <a onclick="filterCat2('spor','fitness')">Fitness & Spor Aleti</a>
-            <a onclick="filterCat2('spor','bisiklet')">Bisiklet</a>
-            <a onclick="filterCat2('spor','outdoor')">Outdoor & Kamp</a>
-            <a onclick="filterCat2('spor','su-sporlari')">Su Sporları</a>
-            <a onclick="filterCat2('spor','futbol')">Futbol</a>
-            <a onclick="filterCat2('spor','tenis')">Tenis & Padel</a>
-            <a onclick="filterCat2('spor','kayak')">Kayak & Kış Sporları</a>
-          </div>
-          <div class="csm-col">
-            <div class="csm-title">Hobi</div>
-            <a onclick="filterCat2('hobi','muzik')">Müzik Aletleri</a>
-            <a onclick="filterCat2('hobi','gitar')">Gitar & Bas</a>
-            <a onclick="filterCat2('hobi','klavye')">Klavye & Piyano</a>
-            <a onclick="filterCat2('hobi','koleksiyon')">Koleksiyon & Antika</a>
-            <a onclick="filterCat2('hobi','sanat')">Sanat & El İşi</a>
-            <a onclick="filterCat2('hobi','bahce-hobi')">Bahçe & Bitki</a>
-            <a onclick="filterCat2('hobi','model-kit')">Model & Maket</a>
-          </div>
-          <div class="csm-col">
-            <div class="csm-title">Bisiklet Türü</div>
-            <a onclick="filterCat2('spor','bisiklet-dag')">Dağ Bisikleti</a>
-            <a onclick="filterCat2('spor','bisiklet-yol')">Yol Bisikleti</a>
-            <a onclick="filterCat2('spor','bisiklet-sehir')">Şehir Bisikleti</a>
-            <a onclick="filterCat2('spor','bisiklet-elektrikli')">Elektrikli Bisiklet</a>
-            <a onclick="filterCat2('spor','bisiklet-cocuk')">Çocuk Bisikleti</a>
-            <div class="csm-title" style="margin-top:14px">Oyun & Eğlence</div>
-            <a onclick="filterCat2('hobi','oyuncak')">Oyuncak</a>
-            <a onclick="filterCat2('hobi','board-game')">Kutu Oyunu</a>
-            <a onclick="filterCat2('hobi','puzzle')">Puzzle</a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="cat-nav-item cat-has-sub">
-      Daha Fazla <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10"><polyline points="6 9 12 15 18 9"/></svg>
-      <div class="cat-sub-menu csm-right csm-wide">
-        <div class="csm-inner">
-          <div class="csm-col">
-            <div class="csm-title">Bebek & Çocuk</div>
-            <a onclick="filterCat('bebek')">Tüm Bebek & Çocuk</a>
-            <a onclick="filterCat2('bebek','bebek-araba')">Bebek Arabası & Koltuk</a>
-            <a onclick="filterCat2('bebek','bebek-kiyafet')">Bebek Kıyafeti</a>
-            <a onclick="filterCat2('bebek','bebek-odasi')">Bebek Odası</a>
-            <a onclick="filterCat2('bebek','oyuncak')">Oyuncak</a>
-            <a onclick="filterCat2('bebek','cocuk-kiyafet')">Çocuk Kıyafeti</a>
-            <div class="csm-title" style="margin-top:14px">Kitap, Film & Müzik</div>
-            <a onclick="filterCat('kitap')">Tüm Kitap & Medya</a>
-            <a onclick="filterCat2('kitap','roman')">Roman & Hikaye</a>
-            <a onclick="filterCat2('kitap','ders-kitabi')">Ders Kitabı</a>
-            <a onclick="filterCat2('kitap','cd-dvd')">CD & DVD</a>
-            <a onclick="filterCat2('kitap','dergi')">Dergi & Gazete</a>
-          </div>
-          <div class="csm-col">
-            <div class="csm-title">Hayvanlar & Evcil</div>
-            <a onclick="filterCat('hayvan')">Tüm Hayvanlar</a>
-            <a onclick="filterCat2('hayvan','kopek')">Köpek</a>
-            <a onclick="filterCat2('hayvan','kedi')">Kedi</a>
-            <a onclick="filterCat2('hayvan','kus')">Kuş</a>
-            <a onclick="filterCat2('hayvan','balik')">Balık & Akvaryum</a>
-            <a onclick="filterCat2('hayvan','evcil-malzeme')">Evcil Hayvan Malzemesi</a>
-            <div class="csm-title" style="margin-top:14px">Antika & Koleksiyon</div>
-            <a onclick="filterCat('antika')">Tüm Antika</a>
-            <a onclick="filterCat2('antika','mobilya-antika')">Antika Mobilya</a>
-            <a onclick="filterCat2('antika','sikke')">Sikke & Para</a>
-            <a onclick="filterCat2('antika','pul')">Pul Koleksiyonu</a>
-            <a onclick="filterCat2('antika','porselenler')">Porselen & Kristal</a>
-          </div>
-          <div class="csm-col">
-            <div class="csm-title">İş İlanları & Hizmetler</div>
-            <a onclick="filterCat('is-ilani')">Tüm İş İlanları</a>
-            <a onclick="filterCat2('is-ilani','tam-zamanli')">Tam Zamanlı</a>
-            <a onclick="filterCat2('is-ilani','yari-zamanli')">Yarı Zamanlı</a>
-            <a onclick="filterCat2('is-ilani','freelance')">Freelance & Uzaktan</a>
-            <a onclick="filterCat2('is-ilani','staj')">Staj</a>
-            <div class="csm-title" style="margin-top:14px">Hizmetler</div>
-            <a onclick="filterCat2('hizmet','tamirat')">Tamirat & Bakım</a>
-            <a onclick="filterCat2('hizmet','egitim')">Eğitim & Ders</a>
-            <a onclick="filterCat2('hizmet','nakliye')">Nakliye & Taşıma</a>
-            <a onclick="filterCat2('hizmet','temizlik')">Temizlik Hizmetleri</a>
-            <a onclick="filterCat2('hizmet','saglik')">Sağlık & Güzellik</a>
-          </div>
-        </div>
-      </div>
-    </div>
+    <div id="desktopCatNav" style="display:contents"></div>
   </div>
+  <button class="cat-nav-arrow cat-nav-arrow-right" id="catNavRight" onclick="scrollCatNav(200)" aria-label="Sağa kaydır">&#8250;</button>
 </nav>
-</div><!-- /sticky-wrap -->
+</div><!-- /siteHeader -->
 <div class="filter-bar" id="filterBar" style="display:none">
   <div class="filter-bar-inner" id="filterBarInner"></div>
 </div>
@@ -501,46 +984,7 @@
       <span class="mob-drawer-icon">🛒</span><span class="mob-drawer-label">Tüm İlanlar</span>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="9 18 15 12 9 6"/></svg>
     </a>
-    <a onclick="openMobSub('vasita','🚗 Vasıta')" class="mob-drawer-row">
-      <span class="mob-drawer-icon">🚗</span><span class="mob-drawer-label">Vasıta</span>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="9 18 15 12 9 6"/></svg>
-    </a>
-    <a onclick="openMobSub('emlak','🏠 Emlak')" class="mob-drawer-row">
-      <span class="mob-drawer-icon">🏠</span><span class="mob-drawer-label">Emlak</span>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="9 18 15 12 9 6"/></svg>
-    </a>
-    <a onclick="openMobSub('elektronik','📱 Elektronik')" class="mob-drawer-row">
-      <span class="mob-drawer-icon">📱</span><span class="mob-drawer-label">Elektronik</span>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="9 18 15 12 9 6"/></svg>
-    </a>
-    <a onclick="openMobSub('ev-yasam','🏡 Ev & Yaşam')" class="mob-drawer-row">
-      <span class="mob-drawer-icon">🏡</span><span class="mob-drawer-label">Ev & Yaşam</span>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="9 18 15 12 9 6"/></svg>
-    </a>
-    <a onclick="openMobSub('giyim','👗 Giyim & Moda')" class="mob-drawer-row">
-      <span class="mob-drawer-icon">👗</span><span class="mob-drawer-label">Giyim & Moda</span>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="9 18 15 12 9 6"/></svg>
-    </a>
-    <a onclick="openMobSub('spor','⚽ Spor & Hobi')" class="mob-drawer-row">
-      <span class="mob-drawer-icon">⚽</span><span class="mob-drawer-label">Spor & Hobi</span>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="9 18 15 12 9 6"/></svg>
-    </a>
-    <a onclick="openMobSub('bebek','👶 Bebek & Çocuk')" class="mob-drawer-row">
-      <span class="mob-drawer-icon">👶</span><span class="mob-drawer-label">Bebek & Çocuk</span>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="9 18 15 12 9 6"/></svg>
-    </a>
-    <a onclick="openMobSub('kitap','📚 Kitap & Medya')" class="mob-drawer-row">
-      <span class="mob-drawer-icon">📚</span><span class="mob-drawer-label">Kitap, Film & Müzik</span>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="9 18 15 12 9 6"/></svg>
-    </a>
-    <a onclick="openMobSub('hayvan','🐾 Hayvanlar')" class="mob-drawer-row">
-      <span class="mob-drawer-icon">🐾</span><span class="mob-drawer-label">Hayvanlar & Evcil</span>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="9 18 15 12 9 6"/></svg>
-    </a>
-    <a onclick="openMobSub('is-ilani','💼 İş & Hizmet')" class="mob-drawer-row">
-      <span class="mob-drawer-icon">💼</span><span class="mob-drawer-label">İş İlanları & Hizmetler</span>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="9 18 15 12 9 6"/></svg>
-    </a>
+    <div id="mobCatList"><!-- JS tarafından doldurulur --></div>
     <div class="mob-drawer-sep"></div>
     <a href="messages.html" class="mob-drawer-row">
       <span class="mob-drawer-icon">💬</span><span class="mob-drawer-label">Mesajlarım</span>
@@ -612,27 +1056,23 @@
         <div class="form-group">
           <label class="form-label">Kategori *</label>
           <select id="aKat" class="form-select" required onchange="updateSubKat()">
-            <option value="">Seçin</option>
-            <option value="vasita">🚗 Vasıta</option>
-            <option value="emlak">🏠 Emlak</option>
-            <option value="elektronik">📱 Elektronik</option>
-            <option value="ev-yasam">🏡 Ev & Yaşam</option>
-            <option value="giyim">👗 Giyim & Moda</option>
-            <option value="spor">⚽ Spor</option>
-            <option value="hobi">🎨 Hobi</option>
-            <option value="bebek">👶 Bebek & Çocuk</option>
-            <option value="kitap">📚 Kitap & Medya</option>
-            <option value="hayvan">🐾 Hayvanlar & Evcil</option>
-            <option value="antika">🏺 Antika & Koleksiyon</option>
-            <option value="is-ilani">💼 İş İlanı</option>
-            <option value="hizmet">🔧 Hizmet</option>
-            <option value="diger">🔖 Diğer</option>
+            <option value="">— Kategori Seçin —</option>
           </select>
         </div>
         <div class="form-group" id="subKatWrap" style="display:none">
           <label class="form-label">Alt Kategori</label>
-          <select id="aSubKat" class="form-select"></select>
+          <select id="aSubKat" class="form-select" onchange="updateBrandKat()"></select>
         </div>
+      </div>
+      <div class="form-group" id="brandKatWrap" style="display:none">
+        <label class="form-label">Marka / Detay</label>
+        <select id="aBrandKat" class="form-select" onchange="updateModelKat()"></select>
+      </div>
+      <div class="form-group" id="modelKatWrap" style="display:none">
+        <label class="form-label">Model</label>
+        <select id="aModelKat" class="form-select">
+          <option value="">— Model Seçin —</option>
+        </select>
       </div>
       <div class="form-group">
         <label class="form-label">İlan Başlığı *</label>
@@ -654,7 +1094,16 @@
         </div>
         <div class="form-group">
           <label class="form-label">Konum</label>
-          <input type="text" id="aKonum" class="form-input" placeholder="İstanbul / Beşiktaş">
+          <div class="city-district-row">
+            <select id="aSehir" class="form-select" onchange="updateIlce()">
+              <option value="">— İl Seçin —</option>
+            </select>
+            <select id="aIlce" class="form-select" disabled onchange="updateKonum()">
+              <option value="">— İlçe Seçin —</option>
+            </select>
+          </div>
+          <input type="text" id="aMahalle" class="form-input" placeholder="Mahalle (isteğe bağlı)" style="margin-top:8px;display:none" oninput="updateKonum()">
+          <input type="hidden" id="aKonum">
         </div>
       </div>
       <!-- Pazarlık / Takas / Taksit -->
@@ -741,27 +1190,35 @@ window.setActiveCatNav = function(el) {
   if(el) el.classList.add('active');
 };
 
-// ── KATEGORİ HOVER – JS ile güvenilir açma/kapama ──
-document.addEventListener('DOMContentLoaded', function() {
-
-  // Her .cat-has-sub öğesine hover ekle
+// ── KATEGORİ – hover ile dropdown açma (fixed position) ──
+function bindCatHover() {
   document.querySelectorAll('.cat-has-sub').forEach(function(item) {
     var sub = item.querySelector('.cat-sub-menu');
     if (!sub) return;
     var closeTimer;
 
+    function positionSub() {
+      var rect = item.getBoundingClientRect();
+      sub.style.top = rect.bottom + 'px';
+      sub.style.left = rect.left + 'px';
+      // Sabit 660px genişlik — ekran dışına taşmasın
+      if (rect.left + 660 > window.innerWidth - 10) {
+        sub.style.left = (window.innerWidth - 660 - 10) + 'px';
+      }
+    }
+
     function openSub() {
       clearTimeout(closeTimer);
-      // Diğer tüm açık menüleri kapat
       document.querySelectorAll('.cat-sub-menu.is-open').forEach(function(s) {
         if (s !== sub) s.classList.remove('is-open');
       });
+      positionSub();
       sub.classList.add('is-open');
     }
     function closeSub() {
       closeTimer = setTimeout(function() {
         sub.classList.remove('is-open');
-      }, 120);
+      }, 150);
     }
 
     item.addEventListener('mouseenter', openSub);
@@ -788,11 +1245,23 @@ document.addEventListener('DOMContentLoaded', function() {
         navInner.scrollLeft += e.deltaY * 0.8;
       }
     }, { passive: false });
+    // Ok butonlarının görünürlüğünü güncelle
+    function updateCatArrows() {
+      var left = document.getElementById('catNavLeft');
+      var right = document.getElementById('catNavRight');
+      if (!left || !right) return;
+      left.style.display = navInner.scrollLeft > 10 ? 'flex' : 'none';
+      right.style.display = navInner.scrollLeft < navInner.scrollWidth - navInner.clientWidth - 10 ? 'flex' : 'none';
+    }
+    navInner.addEventListener('scroll', updateCatArrows);
+    setTimeout(updateCatArrows, 300);
   }
-});
+}
 
-
-
+window.scrollCatNav = function(amount) {
+  var navInner = document.querySelector('.cat-nav-inner');
+  if (navInner) navInner.scrollBy({ left: amount, behavior: 'smooth' });
+};
 
 // ── MOBILE ──
 window.toggleMobile = () => {
@@ -888,293 +1357,49 @@ window.gotoPage    = p => { S.page=p; loadListings(); document.getElementById('l
 window.openAddListing = () => {
   if(!S.user) { toast('İlan vermek için giriş yapın', 'warning'); openModal('loginModal'); return; }
   openModal('addModal');
+  // Modal açılınca şehir select'ini doldur
+  setTimeout(() => {
+    const sel = document.getElementById('aSehir');
+    if(sel && sel.options.length <= 1 && typeof TR_CITIES !== 'undefined') {
+      sel.innerHTML = '<option value="">— İl Seçin —</option>' +
+        Object.keys(TR_CITIES).sort().map(il => `<option value="${il}">${il}</option>`).join('');
+    }
+  }, 50);
 };
 window.setCond = el => { document.querySelectorAll('.cond-btn').forEach(b=>b.classList.remove('active')); el.classList.add('active'); S.cond=el.dataset.cond; };
 
-const SUBS = {
-  vasita: [
-    {v:'otomobil',l:'Otomobil'},{v:'suv',l:'SUV & 4x4'},{v:'ticari',l:'Ticari Araç'},
-    {v:'motosiklet',l:'Motosiklet'},{v:'elektrikli',l:'Elektrikli Araç'},{v:'caravan',l:'Karavan'},
-    {v:'klasik',l:'Klasik Araç'},{v:'tekne',l:'Tekne & Deniz'},
-    {v:'motosiklet-sport',l:'Motosiklet Sport'},{v:'motosiklet-naked',l:'Motosiklet Naked'},
-    {v:'motosiklet-enduro',l:'Enduro & Cross'},{v:'motosiklet-scooter',l:'Scooter'}
-  ],
-  emlak: [
-    {v:'daire',l:'Daire'},{v:'villa',l:'Villa & Müstakil'},{v:'residence',l:'Residence'},
-    {v:'bina',l:'Bina'},{v:'prefabrik',l:'Prefabrik Ev'},
-    {v:'satilik',l:'Satılık'},{v:'kiralik',l:'Kiralık'},{v:'gunluk',l:'Günlük Kiralık'},
-    {v:'devren',l:'Devren'},{v:'arsa',l:'Arsa'},{v:'tarla',l:'Tarla & Bağ'},
-    {v:'isyeri',l:'İşyeri & Ofis'},{v:'dukkan',l:'Dükkan & Mağaza'},{v:'depo',l:'Depo & Antrepo'},
-    {v:'fabrika',l:'Fabrika & Atölye'},{v:'otel',l:'Otel & Pansiyon'},
-    {v:'studio',l:'Stüdyo'},{v:'1+1',l:'1+1'},{v:'2+1',l:'2+1'},{v:'3+1',l:'3+1'},{v:'4+1-ustu',l:'4+1 ve Üstü'}
-  ],
-  elektronik: [
-    {v:'telefon',l:'Telefon & Aksesuar'},{v:'bilgisayar',l:'Bilgisayar & Laptop'},
-    {v:'tablet',l:'Tablet'},{v:'tv',l:'TV & Görüntü Sistemleri'},{v:'oyun',l:'Oyun & Konsol'},
-    {v:'fotograf',l:'Fotoğraf & Kamera'},{v:'ses',l:'Ses Sistemleri'},
-    {v:'giyilebilir',l:'Akıllı Saat & Giyilebilir'},{v:'beyaz-esya',l:'Küçük Ev Aletleri'},
-    {v:'iphone-16',l:'iPhone 16 Serisi'},{v:'iphone-15',l:'iPhone 15 Serisi'},
-    {v:'iphone-14',l:'iPhone 14 Serisi'},{v:'iphone-13',l:'iPhone 13 Serisi'},
-    {v:'ps5',l:'PlayStation 5'},{v:'ps4',l:'PlayStation 4'},
-    {v:'xbox-series',l:'Xbox Series'},{v:'nintendo-switch',l:'Nintendo Switch'}
-  ],
-  'ev-yasam': [
-    {v:'koltuk',l:'Koltuk & Kanepe'},{v:'yatak-odasi',l:'Yatak Odası'},
-    {v:'masa-sandalye',l:'Masa & Sandalye'},{v:'raf-dolap',l:'Raf & Dolap'},
-    {v:'bahce-mobilya',l:'Bahçe Mobilyası'},{v:'buzdolabi',l:'Buzdolabı'},
-    {v:'camasir-makinesi',l:'Çamaşır Makinesi'},{v:'bulasik-makinesi',l:'Bulaşık Makinesi'},
-    {v:'firin-ocak',l:'Fırın & Ocak'},{v:'klima',l:'Klima'},
-    {v:'elektrikli-supurge',l:'Elektrikli Süpürge'},{v:'dekorasyon',l:'Dekorasyon'},
-    {v:'aydinlatma',l:'Aydınlatma'},{v:'tekstil',l:'Ev Tekstili'},
-    {v:'mutfak-gerec',l:'Mutfak Gereçleri'},{v:'bahce',l:'Bahçe & Bitki'},
-    {v:'guvenlik',l:'Güvenlik Sistemleri'}
-  ],
-  giyim: [
-    {v:'kadin-ust',l:'Kadın Üst Giyim'},{v:'kadin-alt',l:'Kadın Alt Giyim'},
-    {v:'kadin-dis',l:'Kadın Dış Giyim'},{v:'kadin-elbise',l:'Elbise & Tulum'},
-    {v:'kadin-ic',l:'Kadın İç Çamaşırı'},{v:'kadin-spor',l:'Kadın Spor Giyim'},
-    {v:'erkek-ust',l:'Erkek Üst Giyim'},{v:'erkek-alt',l:'Erkek Alt Giyim'},
-    {v:'erkek-dis',l:'Erkek Dış Giyim'},{v:'erkek-takim',l:'Takım Elbise'},
-    {v:'erkek-spor',l:'Erkek Spor Giyim'},{v:'cocuk-kiz',l:'Kız Çocuk Giyim'},
-    {v:'cocuk-erkek',l:'Erkek Çocuk Giyim'},{v:'kadin-ayakkabi',l:'Kadın Ayakkabı'},
-    {v:'erkek-ayakkabi',l:'Erkek Ayakkabı'},{v:'spor-ayakkabi',l:'Spor Ayakkabı'},
-    {v:'canta',l:'Çanta & Cüzdan'},{v:'saat',l:'Saat'},{v:'mucevher',l:'Mücevher & Takı'},
-    {v:'gozluk',l:'Gözlük'},{v:'sapka',l:'Şapka & Bere'}
-  ],
-  spor: [
-    {v:'fitness',l:'Fitness & Spor Aleti'},{v:'bisiklet',l:'Bisiklet'},
-    {v:'outdoor',l:'Outdoor & Kamp'},{v:'su-sporlari',l:'Su Sporları'},
-    {v:'futbol',l:'Futbol'},{v:'tenis',l:'Tenis & Padel'},{v:'kayak',l:'Kayak & Kış Sporları'},
-    {v:'bisiklet-dag',l:'Dağ Bisikleti'},{v:'bisiklet-yol',l:'Yol Bisikleti'},
-    {v:'bisiklet-sehir',l:'Şehir Bisikleti'},{v:'bisiklet-elektrikli',l:'Elektrikli Bisiklet'},
-    {v:'bisiklet-cocuk',l:'Çocuk Bisikleti'}
-  ],
-  hobi: [
-    {v:'muzik',l:'Müzik Aletleri'},{v:'gitar',l:'Gitar & Bas'},{v:'klavye',l:'Klavye & Piyano'},
-    {v:'koleksiyon',l:'Koleksiyon & Antika'},{v:'sanat',l:'Sanat & El İşi'},
-    {v:'bahce-hobi',l:'Bahçe & Bitki'},{v:'model-kit',l:'Model & Maket'},
-    {v:'oyuncak',l:'Oyuncak'},{v:'board-game',l:'Kutu Oyunu'},{v:'puzzle',l:'Puzzle'}
-  ],
-  bebek: [
-    {v:'bebek-araba',l:'Bebek Arabası & Koltuk'},{v:'bebek-kiyafet',l:'Bebek Kıyafeti'},
-    {v:'bebek-odasi',l:'Bebek Odası'},{v:'oyuncak',l:'Oyuncak'},
-    {v:'cocuk-kiyafet',l:'Çocuk Kıyafeti'},{v:'cocuk-bisiklet',l:'Çocuk Bisikleti'}
-  ],
-  kitap: [
-    {v:'roman',l:'Roman & Hikaye'},{v:'ders-kitabi',l:'Ders Kitabı'},
-    {v:'cocuk-kitap',l:'Çocuk Kitapları'},{v:'bilim',l:'Bilim & Kişisel Gelişim'},
-    {v:'cd-dvd',l:'CD & DVD'},{v:'dergi',l:'Dergi & Gazete'},{v:'vinyl',l:'Plak & Vinyl'}
-  ],
-  hayvan: [
-    {v:'kopek',l:'Köpek'},{v:'kedi',l:'Kedi'},{v:'kus',l:'Kuş'},
-    {v:'balik',l:'Balık & Akvaryum'},{v:'kemirgen',l:'Kemirgen'},
-    {v:'evcil-malzeme',l:'Evcil Hayvan Malzemesi'},{v:'mama',l:'Mama & Ödül'}
-  ],
-  'is-ilani': [
-    {v:'tam-zamanli',l:'Tam Zamanlı'},{v:'yari-zamanli',l:'Yarı Zamanlı'},
-    {v:'freelance',l:'Freelance & Uzaktan'},{v:'staj',l:'Staj'},
-    {v:'tamirat',l:'Tamirat & Bakım'},{v:'egitim',l:'Eğitim & Ders'},
-    {v:'nakliye',l:'Nakliye & Taşıma'},{v:'temizlik',l:'Temizlik Hizmetleri'},
-    {v:'saglik',l:'Sağlık & Güzellik'}
-  ]
-};
+// SUBS ve MOB_SUBS artık categories.js'den CAT objesi ile dinamik oluşturuluyor
 
-const MOB_SUBS = {
-  vasita: [
-    {cat:'vasita',sub:null,label:'Tüm Vasıta',icon:'🚗'},
-    {cat:'vasita',sub:'otomobil',label:'Otomobil',icon:'🚘',hasChild:true},
-    {cat:'vasita',sub:'suv',label:'SUV & 4x4',icon:'🛻'},
-    {cat:'vasita',sub:'motosiklet',label:'Motosiklet',icon:'🏍️',hasChild:true},
-    {cat:'vasita',sub:'ticari',label:'Ticari Araç',icon:'🚐'},
-    {cat:'vasita',sub:'elektrikli',label:'Elektrikli Araç',icon:'⚡'},
-    {cat:'vasita',sub:'caravan',label:'Karavan',icon:'🚌'},
-    {cat:'vasita',sub:'klasik',label:'Klasik Araç',icon:'🏎️'},
-    {cat:'vasita',sub:'tekne',label:'Tekne & Deniz',icon:'⛵'},
-  ],
-  'vasita-otomobil': [
-    {cat:'vasita',sub:'otomobil',label:'Tüm Otomobil',icon:'🚘'},
-    {brand:'BMW',label:'BMW',icon:'🔵'},{brand:'Mercedes',label:'Mercedes-Benz',icon:'⭐'},
-    {brand:'Toyota',label:'Toyota',icon:'🔴'},{brand:'Renault',label:'Renault',icon:'🔶'},
-    {brand:'Volkswagen',label:'Volkswagen',icon:'🔷'},{brand:'Fiat',label:'Fiat',icon:'🟡'},
-    {brand:'Ford',label:'Ford',icon:'🟦'},{brand:'Honda',label:'Honda',icon:'⚪'},
-    {brand:'Hyundai',label:'Hyundai',icon:'🔵'},{brand:'Kia',label:'Kia',icon:'🔴'},
-    {brand:'Peugeot',label:'Peugeot',icon:'🦁'},{brand:'Audi',label:'Audi',icon:'⭕'},
-  ],
-  'vasita-motosiklet': [
-    {cat:'vasita',sub:'motosiklet',label:'Tüm Motosiklet',icon:'🏍️'},
-    {cat:'vasita',sub:'motosiklet-sport',label:'Sport',icon:'🏁'},
-    {cat:'vasita',sub:'motosiklet-naked',label:'Naked',icon:'🔥'},
-    {cat:'vasita',sub:'motosiklet-enduro',label:'Enduro & Cross',icon:'🌲'},
-    {cat:'vasita',sub:'motosiklet-scooter',label:'Scooter',icon:'🛵'},
-    {brand:'Yamaha',label:'Yamaha',icon:'🎵'},{brand:'Honda',label:'Honda',icon:'⚪'},
-    {brand:'Kawasaki',label:'Kawasaki',icon:'🟢'},{brand:'Suzuki',label:'Suzuki',icon:'🔵'},
-    {brand:'Ducati',label:'Ducati',icon:'🔴'},{brand:'BMW Motorrad',label:'BMW Motorrad',icon:'⚫'},
-  ],
-  emlak: [
-    {cat:'emlak',sub:null,label:'Tüm Emlak',icon:'🏠'},
-    {cat:'emlak',sub:'satilik',label:'Satılık',icon:'🏷️'},{cat:'emlak',sub:'kiralik',label:'Kiralık',icon:'🔑'},
-    {cat:'emlak',sub:'gunluk',label:'Günlük Kiralık',icon:'📅'},{cat:'emlak',sub:'devren',label:'Devren',icon:'🤝'},
-    {cat:'emlak',sub:'daire',label:'Daire',icon:'🏢'},{cat:'emlak',sub:'villa',label:'Villa & Müstakil',icon:'🏡'},
-    {cat:'emlak',sub:'arsa',label:'Arsa & Tarla',icon:'🌳'},{cat:'emlak',sub:'isyeri',label:'İşyeri & Ofis',icon:'🏬'},
-    {cat:'emlak',sub:'depo',label:'Depo & Antrepo',icon:'🏭'},{cat:'emlak',sub:'1+1',label:'1+1',icon:'🚪'},
-    {cat:'emlak',sub:'2+1',label:'2+1',icon:'🚪'},{cat:'emlak',sub:'3+1',label:'3+1',icon:'🚪'},
-    {cat:'emlak',sub:'4+1-ustu',label:'4+1 ve Üstü',icon:'🚪'},
-  ],
-  elektronik: [
-    {cat:'elektronik',sub:null,label:'Tüm Elektronik',icon:'📱'},
-    {cat:'elektronik',sub:'telefon',label:'Telefon & Aksesuar',icon:'📱',hasChild:true},
-    {cat:'elektronik',sub:'bilgisayar',label:'Bilgisayar & Laptop',icon:'💻',hasChild:true},
-    {cat:'elektronik',sub:'tablet',label:'Tablet',icon:'📟'},
-    {cat:'elektronik',sub:'tv',label:'TV & Görüntü',icon:'📺'},
-    {cat:'elektronik',sub:'oyun',label:'Oyun & Konsol',icon:'🎮',hasChild:true},
-    {cat:'elektronik',sub:'fotograf',label:'Fotoğraf & Kamera',icon:'📷'},
-    {cat:'elektronik',sub:'ses',label:'Ses Sistemleri',icon:'🔊'},
-    {cat:'elektronik',sub:'giyilebilir',label:'Akıllı Saat',icon:'⌚'},
-  ],
-  'elektronik-telefon': [
-    {cat:'elektronik',sub:'telefon',label:'Tüm Telefon',icon:'📱'},
-    {cat:'elektronik',sub:'iphone-16',label:'iPhone 16 Serisi',icon:'🍎'},
-    {cat:'elektronik',sub:'iphone-15',label:'iPhone 15 Serisi',icon:'🍎'},
-    {cat:'elektronik',sub:'iphone-14',label:'iPhone 14 Serisi',icon:'🍎'},
-    {cat:'elektronik',sub:'iphone-13',label:'iPhone 13 Serisi',icon:'🍎'},
-    {brand:'Samsung',label:'Samsung',icon:'🔵'},{brand:'Xiaomi',label:'Xiaomi',icon:'🟠'},
-    {brand:'Huawei',label:'Huawei',icon:'🔴'},{brand:'Oppo',label:'Oppo',icon:'🟢'},
-    {brand:'Realme',label:'Realme',icon:'🔵'},{brand:'OnePlus',label:'OnePlus',icon:'🔴'},
-  ],
-  'elektronik-bilgisayar': [
-    {cat:'elektronik',sub:'bilgisayar',label:'Tüm Bilgisayar',icon:'💻'},
-    {brand:'Apple',label:'Apple (Mac)',icon:'🍎'},{brand:'Asus',label:'Asus',icon:'🔵'},
-    {brand:'Lenovo',label:'Lenovo',icon:'⚫'},{brand:'Dell',label:'Dell',icon:'🔵'},
-    {brand:'HP',label:'HP',icon:'🔵'},{brand:'MSI',label:'MSI',icon:'🔴'},
-    {brand:'Acer',label:'Acer',icon:'🟢'},{brand:'Toshiba',label:'Toshiba',icon:'🔴'},
-  ],
-  'elektronik-oyun': [
-    {cat:'elektronik',sub:'oyun',label:'Tüm Oyun & Konsol',icon:'🎮'},
-    {cat:'elektronik',sub:'ps5',label:'PlayStation 5',icon:'🎮'},
-    {cat:'elektronik',sub:'ps4',label:'PlayStation 4',icon:'🎮'},
-    {cat:'elektronik',sub:'xbox-series',label:'Xbox Series',icon:'🟢'},
-    {cat:'elektronik',sub:'nintendo-switch',label:'Nintendo Switch',icon:'🔴'},
-  ],
-  'ev-yasam': [
-    {cat:'ev-yasam',sub:null,label:'Tüm Ev & Yaşam',icon:'🏡'},
-    {cat:'ev-yasam',sub:'koltuk',label:'Koltuk & Kanepe',icon:'🛋️'},
-    {cat:'ev-yasam',sub:'yatak-odasi',label:'Yatak Odası',icon:'🛏️'},
-    {cat:'ev-yasam',sub:'masa-sandalye',label:'Masa & Sandalye',icon:'🪑'},
-    {cat:'ev-yasam',sub:'raf-dolap',label:'Raf & Dolap',icon:'🗄️'},
-    {cat:'ev-yasam',sub:'buzdolabi',label:'Buzdolabı',icon:'❄️'},
-    {cat:'ev-yasam',sub:'camasir-makinesi',label:'Çamaşır Makinesi',icon:'🫧'},
-    {cat:'ev-yasam',sub:'bulasik-makinesi',label:'Bulaşık Makinesi',icon:'🍽️'},
-    {cat:'ev-yasam',sub:'klima',label:'Klima',icon:'💨'},
-    {cat:'ev-yasam',sub:'dekorasyon',label:'Dekorasyon',icon:'🖼️'},
-    {cat:'ev-yasam',sub:'aydinlatma',label:'Aydınlatma',icon:'💡'},
-    {cat:'ev-yasam',sub:'bahce',label:'Bahçe & Bitki',icon:'🌿'},
-  ],
-  giyim: [
-    {cat:'giyim',sub:null,label:'Tüm Giyim',icon:'👗'},
-    {cat:'giyim',sub:'kadin-ust',label:'Kadın Üst Giyim',icon:'👚'},
-    {cat:'giyim',sub:'kadin-elbise',label:'Elbise & Tulum',icon:'👗'},
-    {cat:'giyim',sub:'kadin-dis',label:'Kadın Dış Giyim',icon:'🧥'},
-    {cat:'giyim',sub:'erkek-ust',label:'Erkek Üst Giyim',icon:'👕'},
-    {cat:'giyim',sub:'erkek-alt',label:'Erkek Alt Giyim',icon:'👖'},
-    {cat:'giyim',sub:'erkek-takim',label:'Takım Elbise',icon:'👔'},
-    {cat:'giyim',sub:'cocuk-kiz',label:'Kız Çocuk Giyim',icon:'👧'},
-    {cat:'giyim',sub:'cocuk-erkek',label:'Erkek Çocuk Giyim',icon:'👦'},
-    {cat:'giyim',sub:'kadin-ayakkabi',label:'Kadın Ayakkabı',icon:'👠'},
-    {cat:'giyim',sub:'erkek-ayakkabi',label:'Erkek Ayakkabı',icon:'👞'},
-    {cat:'giyim',sub:'spor-ayakkabi',label:'Spor Ayakkabı',icon:'👟'},
-    {cat:'giyim',sub:'canta',label:'Çanta & Cüzdan',icon:'👜'},
-    {cat:'giyim',sub:'saat',label:'Saat',icon:'⌚'},
-    {cat:'giyim',sub:'mucevher',label:'Mücevher & Takı',icon:'💎'},
-  ],
-  spor: [
-    {cat:'spor',sub:null,label:'Tüm Spor & Hobi',icon:'⚽'},
-    {cat:'spor',sub:'fitness',label:'Fitness & Spor Aleti',icon:'🏋️'},
-    {cat:'spor',sub:'bisiklet',label:'Bisiklet',icon:'🚴',hasChild:true},
-    {cat:'spor',sub:'outdoor',label:'Outdoor & Kamp',icon:'⛺'},
-    {cat:'spor',sub:'futbol',label:'Futbol',icon:'⚽'},
-    {cat:'spor',sub:'tenis',label:'Tenis & Padel',icon:'🎾'},
-    {cat:'spor',sub:'kayak',label:'Kayak & Kış Sporları',icon:'⛷️'},
-    {cat:'hobi',sub:'muzik',label:'Müzik Aletleri',icon:'🎸'},
-    {cat:'hobi',sub:'koleksiyon',label:'Koleksiyon',icon:'🏺'},
-    {cat:'hobi',sub:'sanat',label:'Sanat & El İşi',icon:'🎨'},
-    {cat:'hobi',sub:'oyuncak',label:'Oyuncak',icon:'🧸'},
-    {cat:'hobi',sub:'board-game',label:'Kutu Oyunu',icon:'♟️'},
-  ],
-  'spor-bisiklet': [
-    {cat:'spor',sub:'bisiklet',label:'Tüm Bisiklet',icon:'🚲'},
-    {cat:'spor',sub:'bisiklet-dag',label:'Dağ Bisikleti',icon:'⛰️'},
-    {cat:'spor',sub:'bisiklet-yol',label:'Yol Bisikleti',icon:'🛣️'},
-    {cat:'spor',sub:'bisiklet-sehir',label:'Şehir Bisikleti',icon:'🏙️'},
-    {cat:'spor',sub:'bisiklet-elektrikli',label:'Elektrikli Bisiklet',icon:'⚡'},
-    {cat:'spor',sub:'bisiklet-cocuk',label:'Çocuk Bisikleti',icon:'👶'},
-  ],
-  bebek: [
-    {cat:'bebek',sub:null,label:'Tüm Bebek & Çocuk',icon:'👶'},
-    {cat:'bebek',sub:'bebek-araba',label:'Bebek Arabası & Koltuk',icon:'🍼'},
-    {cat:'bebek',sub:'bebek-kiyafet',label:'Bebek Kıyafeti',icon:'🧦'},
-    {cat:'bebek',sub:'bebek-odasi',label:'Bebek Odası',icon:'🛏️'},
-    {cat:'bebek',sub:'oyuncak',label:'Oyuncak',icon:'🧸'},
-    {cat:'bebek',sub:'cocuk-kiyafet',label:'Çocuk Kıyafeti',icon:'👕'},
-  ],
-  kitap: [
-    {cat:'kitap',sub:null,label:'Tüm Kitap & Medya',icon:'📚'},
-    {cat:'kitap',sub:'roman',label:'Roman & Hikaye',icon:'📖'},
-    {cat:'kitap',sub:'ders-kitabi',label:'Ders Kitabı',icon:'📝'},
-    {cat:'kitap',sub:'cocuk-kitap',label:'Çocuk Kitapları',icon:'🧒'},
-    {cat:'kitap',sub:'bilim',label:'Bilim & Kişisel Gelişim',icon:'🔬'},
-    {cat:'kitap',sub:'cd-dvd',label:'CD & DVD',icon:'💿'},
-    {cat:'kitap',sub:'vinyl',label:'Plak & Vinyl',icon:'🎵'},
-  ],
-  hayvan: [
-    {cat:'hayvan',sub:null,label:'Tüm Hayvanlar',icon:'🐾'},
-    {cat:'hayvan',sub:'kopek',label:'Köpek',icon:'🐕'},
-    {cat:'hayvan',sub:'kedi',label:'Kedi',icon:'🐈'},
-    {cat:'hayvan',sub:'kus',label:'Kuş',icon:'🦜'},
-    {cat:'hayvan',sub:'balik',label:'Balık & Akvaryum',icon:'🐠'},
-    {cat:'hayvan',sub:'kemirgen',label:'Kemirgen',icon:'🐹'},
-    {cat:'hayvan',sub:'evcil-malzeme',label:'Evcil Hayvan Malzemesi',icon:'🦴'},
-  ],
-  'is-ilani': [
-    {cat:'is-ilani',sub:null,label:'Tüm İş İlanları',icon:'💼'},
-    {cat:'is-ilani',sub:'tam-zamanli',label:'Tam Zamanlı',icon:'⏰'},
-    {cat:'is-ilani',sub:'yari-zamanli',label:'Yarı Zamanlı',icon:'⌛'},
-    {cat:'is-ilani',sub:'freelance',label:'Freelance & Uzaktan',icon:'💻'},
-    {cat:'is-ilani',sub:'staj',label:'Staj',icon:'🎓'},
-    {cat:'hizmet',sub:'tamirat',label:'Tamirat & Bakım',icon:'🔧'},
-    {cat:'hizmet',sub:'egitim',label:'Eğitim & Ders',icon:'📚'},
-    {cat:'hizmet',sub:'nakliye',label:'Nakliye & Taşıma',icon:'🚛'},
-    {cat:'hizmet',sub:'temizlik',label:'Temizlik Hizmetleri',icon:'🧹'},
-    {cat:'hizmet',sub:'saglik',label:'Sağlık & Güzellik',icon:'💊'},
-  ],
-};
 
 window.openMobSub = (key, title) => {
-  const items = MOB_SUBS[key] || [];
+  const cat = CAT[key];
   const body = document.getElementById('mobSubMenu');
-  const chevron = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="9 18 15 12 9 6"/></svg>`;
-  body.innerHTML = items.map(it => {
-    let onclick;
-    const subkey = key + '-' + (it.sub||'');
-    if(it.hasChild && MOB_SUBS[subkey]) {
-      onclick = `openMobSub('${subkey}','${it.icon} ${it.label}')`;
-    } else if(it.brand) {
-      onclick = `filterBrand('${it.brand}');toggleMobile()`;
-    } else if(it.sub) {
-      onclick = `filterCat2('${it.cat}','${it.sub}');toggleMobile()`;
-    } else {
-      onclick = `filterCat('${it.cat}');toggleMobile()`;
+  const chev = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="9 18 15 12 9 6"/></svg>`;
+  if(!cat){ body.innerHTML=''; return; }
+  let html = `<a onclick="filterCat('${key}');toggleMobile()" class="mob-drawer-row">
+    <span class="mob-drawer-icon">${cat.icon}</span>
+    <span class="mob-drawer-label">Tüm ${cat.label}</span>${chev}</a>`;
+  (cat.groups||[]).forEach(g => {
+    if(g.brands) {
+      html += `<div style="padding:8px 12px 4px;font-size:10px;font-weight:800;text-transform:uppercase;color:#9ca3af;letter-spacing:.5px">${g.g}</div>`;
+      g.brands.slice(0,10).forEach(b => {
+        html += `<a onclick="filterBrand('${b}');toggleMobile()" class="mob-drawer-row">
+          <span class="mob-drawer-icon" style="font-size:12px">•</span>
+          <span class="mob-drawer-label">${b}</span>${chev}</a>`;
+      });
+    } else if(g.items) {
+      html += `<div style="padding:8px 12px 4px;font-size:10px;font-weight:800;text-transform:uppercase;color:#9ca3af;letter-spacing:.5px">${g.g}</div>`;
+      g.items.forEach(it => {
+        html += `<a onclick="filterCat2('${key}','${it.v}');toggleMobile()" class="mob-drawer-row">
+          <span class="mob-drawer-icon" style="font-size:12px">›</span>
+          <span class="mob-drawer-label">${it.l}</span>${chev}</a>`;
+      });
     }
-    return `<a onclick="${onclick}" class="mob-drawer-row">
-      <span class="mob-drawer-icon">${it.icon}</span>
-      <span class="mob-drawer-label">${it.label}</span>
-      ${chevron}
-    </a>`;
-  }).join('');
-  // Show sub, hide main
+  });
+  body.innerHTML = html;
   document.getElementById('mobMainMenu').style.display='none';
   body.style.display='block';
   document.getElementById('mobBackBtn').style.display='flex';
-  // Update title
   const titleEl = document.getElementById('mobDrawerTitle');
   titleEl.innerHTML = title || 'Kategoriler';
   titleEl.style.fontSize = '16px';
@@ -1192,12 +1417,187 @@ window.updateSubKat = () => {
   const c = document.getElementById('aKat').value;
   const w = document.getElementById('subKatWrap');
   const s = document.getElementById('aSubKat');
-  const opts = (SUBS[c] || []);
-  if(opts.length) {
-    w.style.display='block';
-    s.innerHTML='<option value="">Seçin</option>'+opts.map(o=>`<option value="${o.v}">${o.l}</option>`).join('');
-  } else { w.style.display='none'; }
+  const bw = document.getElementById('brandKatWrap');
+  const bs = document.getElementById('aBrandKat');
+  bw.style.display = 'none';
+  if(CAT[c]) {
+    w.style.display = 'block';
+    s.innerHTML = buildSubOptions(c);
+  } else {
+    w.style.display = 'none';
+  }
 };
+
+window.updateBrandKat = () => {
+  const c = document.getElementById('aKat').value;
+  const bw = document.getElementById('brandKatWrap');
+  const bs = document.getElementById('aBrandKat');
+  const mw = document.getElementById('modelKatWrap');
+  const ms = document.getElementById('aModelKat');
+  const cat = CAT[c];
+  if(!cat) { bw.style.display='none'; mw.style.display='none'; return; }
+  const brandGroups = (cat.groups||[]).filter(g=>g.brands && g.brands.length);
+  if(brandGroups.length) {
+    let html = '<option value="">— Marka Seçin (İsteğe Bağlı) —</option>';
+    brandGroups.forEach(g => {
+      html += `<optgroup label="${g.g}">`;
+      g.brands.forEach(b => { html += `<option value="${b}">${b}</option>`; });
+      html += '</optgroup>';
+    });
+    bs.innerHTML = html;
+    bw.style.display = 'block';
+  } else {
+    bw.style.display = 'none';
+  }
+  // Model alanını sıfırla
+  ms.innerHTML = '<option value="">— Model Seçin —</option>';
+  mw.style.display = 'none';
+};
+
+window.updateModelKat = () => {
+  const marka = document.getElementById('aBrandKat').value;
+  const kat   = document.getElementById('aKat').value;
+  const mw    = document.getElementById('modelKatWrap');
+  const ms    = document.getElementById('aModelKat');
+  // Sadece vasıta kategorisinde ve CAR_MODELS tanımlıysa model göster
+  if(kat === 'vasita' && marka && typeof CAR_MODELS !== 'undefined' && CAR_MODELS[marka]) {
+    const models = CAR_MODELS[marka];
+    ms.innerHTML = '<option value="">— Model Seçin —</option>' +
+      models.map(m => `<option value="${m}">${m}</option>`).join('');
+    mw.style.display = 'block';
+  } else {
+    ms.innerHTML = '<option value="">— Model Seçin —</option>';
+    mw.style.display = 'none';
+  }
+};
+
+// Konum hidden input'u il/ilçe/mahalle'den oluştur
+window.updateKonum = () => {
+  const il     = document.getElementById('aSehir').value;
+  const ilce   = document.getElementById('aIlce').value;
+  const mah    = (document.getElementById('aMahalle')?.value || '').trim();
+  let konum    = il;
+  if(ilce) konum += ' / ' + ilce;
+  if(mah)  konum += ' / ' + mah;
+  document.getElementById('aKonum').value = konum;
+};
+
+// Şehir/İlçe fonksiyonları
+function fillSehirSelect() {
+  const sel = document.getElementById('aSehir');
+  if(!sel || typeof TR_CITIES === "undefined") return;
+  sel.innerHTML = '<option value="">— İl Seçin —</option>' +
+    Object.keys(TR_CITIES).sort().map(il =>
+      `<option value="${il}">${il}</option>`
+    ).join('');
+}
+
+window.updateIlce = () => {
+  const il      = document.getElementById('aSehir').value;
+  const ilceSel = document.getElementById('aIlce');
+  const mahEl   = document.getElementById('aMahalle');
+  if(!il) {
+    ilceSel.innerHTML = '<option value="">— İlçe Seçin —</option>';
+    ilceSel.disabled = true;
+    if(mahEl) { mahEl.style.display='none'; mahEl.value=''; }
+    document.getElementById('aKonum').value = '';
+    return;
+  }
+  const ilceler = (TR_CITIES[il] || []);
+  ilceSel.innerHTML = '<option value="">— İlçe Seçin —</option>' +
+    ilceler.map(ilce => `<option value="${ilce}">${ilce}</option>`).join('');
+  ilceSel.disabled = false;
+  // İlçe seçilince mahalle alanını göster
+  ilceSel.onchange = () => {
+    if(mahEl) mahEl.style.display = ilceSel.value ? 'block' : 'none';
+    if(mahEl && !ilceSel.value) mahEl.value = '';
+    window.updateKonum();
+  };
+  window.updateKonum();
+};
+
+// Build desktop cat nav from CAT object
+function buildDesktopNav() {
+  const chev = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10"><polyline points="6 9 12 15 18 9"/></svg>`;
+  const MAX_PER_COL = 9; // sütun başına max item
+  let html = '';
+
+  getCatList().forEach(({key, label, icon}) => {
+    const cat = CAT[key];
+    const itemGroups = (cat.groups||[]).filter(g => g.items && g.items.length);
+    const brandGroups = (cat.groups||[]).filter(g => g.brands && g.brands.length);
+    const hasSub = itemGroups.length > 0;
+
+    html += `<div class="cat-nav-item${hasSub ? ' cat-has-sub' : ''}" onclick="filterCat('${key}');setActiveCatNav(this)">${icon} ${label} ${hasSub ? chev : ''}`;
+
+    if (hasSub) {
+      html += `<div class="cat-sub-menu"><div class="csm-inner">`;
+
+      // Tüm grupları al, 3 sütuna böl
+      // Her grup bir sütun olur; 3'ten fazla grup varsa ilk 3'ü al
+      const cols = itemGroups.slice(0, 3);
+
+      // 3 sütun her zaman render edilir (boş olsa bile grid düzgün kalır)
+      for (let i = 0; i < 3; i++) {
+        const g = cols[i];
+        html += `<div class="csm-col">`;
+        if (g) {
+          html += `<div class="csm-title">${g.g}</div>`;
+          const items = g.items.slice(0, MAX_PER_COL);
+          items.forEach(it => {
+            html += `<a onclick="filterCat2('${key}','${it.v}')">${it.l}</a>`;
+          });
+          if (g.items.length > MAX_PER_COL) {
+            html += `<a class="csm-more" onclick="filterCat('${key}')">Tümünü gör →</a>`;
+          }
+        }
+        html += `</div>`;
+      }
+
+      html += `</div>`; // csm-inner
+
+      // Marka şeridi
+      if (brandGroups.length) {
+        html += `<div class="csm-brands">`;
+        html += `<div class="csm-brands-title">${brandGroups[0].g}</div>`;
+        brandGroups[0].brands.slice(0, 20).forEach(b => {
+          html += `<a onclick="filterBrand('${b}')">${b}</a>`;
+        });
+        html += `</div>`;
+      }
+
+      html += `</div>`; // cat-sub-menu
+    }
+
+    html += `</div>`; // cat-nav-item
+  });
+
+  const nav = document.getElementById('desktopCatNav');
+  if (nav) nav.innerHTML = html;
+}
+
+// Build mobile drawer from CAT object
+function buildMobileDrawer() {
+  const chev = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="9 18 15 12 9 6"/></svg>`;
+  let html = '';
+  getCatList().forEach(({key,label,icon}) => {
+    html += `<a onclick="openMobSub('${key}','${icon} ${label}')" class="mob-drawer-row">
+      <span class="mob-drawer-icon">${icon}</span>
+      <span class="mob-drawer-label">${label}</span>
+      ${chev}
+    </a>`;
+  });
+  const el = document.getElementById('mobMainMenu');
+  if(el) {
+    // Keep top links, add categories after
+    const existing = el.querySelector('.mob-main-links');
+    const catDiv = el.querySelector('#mobCatList') || (() => {
+      const d = document.createElement('div'); d.id='mobCatList'; el.appendChild(d); return d;
+    })();
+    catDiv.innerHTML = html;
+  }
+}
+
 
 // Character counter for title
 document.getElementById('aBaslik')?.addEventListener('input', function(){
@@ -1282,6 +1682,8 @@ window.doAddListing = async e => {
     isim:        document.getElementById('aBaslik').value.trim(),
     kategori:    document.getElementById('aKat').value,
     alt_kategori: document.getElementById('aSubKat').value || null,
+    marka:       (document.getElementById('aBrandKat')?.value || null),
+    model:       (document.getElementById('aModelKat')?.value || null),
     fiyat:       parseFloat(document.getElementById('aFiyat').value) || 0,
     aciklama:    document.getElementById('aAciklama').value.trim() || null,
     konum:       document.getElementById('aKonum').value.trim() || null,
@@ -1298,6 +1700,10 @@ window.doAddListing = async e => {
   btn.textContent='İlanı Yayınla 🚀'; btn.disabled=false;
   if(error) { toast('Hata: ' + error.message, 'error'); return; }
   toast('İlan yayınlandı! 🎉'); closeModal('addModal'); e.target.reset();
+  // Şehir/ilçe resetle
+  const ilceSel = document.getElementById('aIlce');
+  if(ilceSel){ ilceSel.innerHTML='<option value="">— İlçe Seçin —</option>'; ilceSel.disabled=true; }
+  document.getElementById('subKatWrap').style.display='none';
   document.getElementById('aImgPreview').innerHTML='';
   document.getElementById('priceSuggestion').style.display='none';
   loadListings();
@@ -1400,6 +1806,7 @@ function renderGrid() {
           <div class="lc-meta">
             ${it.konum?`<span class="lc-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px;flex-shrink:0"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${it.konum}</span>`:''}
             <span class="lc-meta-item">${ago(it.created_at)}</span>
+            ${(it.fav_count&&it.fav_count>0)?`<span class="lc-meta-item" style="color:#e74c3c">❤️ <span data-fav-id="${it.id}">${it.fav_count}</span></span>`:''}
           </div>
           ${(it.acil||it.pazarlik||it.takas)?`<div class="lc-options">${it.acil?'<span class="lc-opt-tag acil">🔥 Acil</span>':''}${it.pazarlik?'<span class="lc-opt-tag pazarlik">🤝 Pazarlık</span>':''}${it.takas?'<span class="lc-opt-tag takas">🔄 Takas</span>':''}</div>`:''}
         </div>
@@ -1443,18 +1850,37 @@ window.toggleFav = (id, btn) => {
   let favs = JSON.parse(localStorage.getItem('pm_favs')||'[]');
   const sid = String(id);
   const svg = btn.querySelector('svg');
+  // UUID formatı değilse (demo ilan) localStorage'a kaydetme
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  const isDemo = !uuidRegex.test(sid);
+  let adding;
   if(favs.includes(sid)) {
     favs = favs.filter(f=>f!==sid);
     btn.classList.remove('active');
-    svg.setAttribute('fill','none'); svg.setAttribute('stroke','currentColor');
+    if(svg){svg.setAttribute('fill','none'); svg.setAttribute('stroke','currentColor');}
     toast('Favorilerden çıkarıldı', 'info');
+    adding = false;
   } else {
     favs.push(sid);
     btn.classList.add('active');
-    svg.setAttribute('fill','var(--primary)'); svg.setAttribute('stroke','var(--primary)');
+    if(svg){svg.setAttribute('fill','var(--primary)'); svg.setAttribute('stroke','var(--primary)');}
     toast('Favorilere eklendi ❤️');
+    adding = true;
   }
-  localStorage.setItem('pm_favs', JSON.stringify(favs));
+  // Demo ilanları localStorage'a kaydetme (Supabase UUID hatası verir)
+  if (!isDemo) {
+    localStorage.setItem('pm_favs', JSON.stringify(favs));
+  }
+  // Supabase fav_count güncelle (demo ilanlar hariç)
+  if(!isDemo) {
+    sb.rpc('increment_fav_count', {ilan_id: sid, delta: adding ? 1 : -1}).catch(()=>{});
+  }
+  // Favori sayacını sayfada güncelle
+  const cntEl = document.querySelector(`[data-fav-id="${sid}"]`);
+  if(cntEl) {
+    const cur = parseInt(cntEl.textContent)||0;
+    cntEl.textContent = Math.max(0, cur + (adding?1:-1));
+  }
 };
 
 // ── MESSAGE ──
@@ -1771,6 +2197,36 @@ function enableDrag(el) {
 }
 
 // ── INIT ──
+
+// 1. Dinamik navigasyon inşa et
+buildDesktopNav();
+
+// 2. Hover binding'i nav oluştuktan SONRA bağla
+bindCatHover();
+
+// 3. Mobil drawer kategori listesi
+(function buildMobDrawer(){
+  const chev = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="9 18 15 12 9 6"/></svg>`;
+  let html = '';
+  getCatList().forEach(({key,label,icon}) => {
+    html += `<a onclick="openMobSub('${key}','${icon} ${label}')" class="mob-drawer-row">
+      <span class="mob-drawer-icon">${icon}</span>
+      <span class="mob-drawer-label">${label}</span>${chev}</a>`;
+  });
+  const el = document.getElementById('mobCatList');
+  if(el) el.innerHTML = html;
+})();
+
+// 4. Form kategori select'ini doldur
+(function fillCatSelect(){
+  const sel = document.getElementById('aKat');
+  if(sel) sel.innerHTML = buildCatOptions('');
+})();
+
+// 5. Şehir select'ini doldur
+fillSehirSelect();
+
+// 6. İlan yükle
 loadListings();
 
 

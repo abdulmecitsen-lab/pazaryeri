@@ -62,6 +62,14 @@ input, select, textarea { font-family: inherit; outline: none; }
   position: relative;
   width: 100%;
   border-bottom: 1px solid #d1d5db;
+  z-index: 500;
+}
+#siteHeader {
+  position: sticky;
+  top: 0;
+  z-index: 500;
+  width: 100%;
+  background: #fff;
 }
 .header-inner {
   width: 100%; padding: 0 32px;
@@ -75,14 +83,14 @@ input, select, textarea { font-family: inherit; outline: none; }
   gap: 10px; text-decoration: none; cursor: pointer;
 }
 .logo-icon {
-  width: 38px; height: 38px; background: var(--primary);
-  border-radius: 8px; display: flex; align-items: center; justify-content: center;
+  width: 42px; height: 42px; background: var(--primary);
+  border-radius: 9px; display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
 }
-.logo-icon svg { width: 20px; height: 20px; color: #fff; }
+.logo-icon svg { width: 22px; height: 22px; color: #fff; }
 .logo-text {
   font-family: 'Nunito', 'Inter', sans-serif;
-  font-size: 22px; font-weight: 900; color: var(--primary);
+  font-size: 25px; font-weight: 900; color: var(--primary);
   letter-spacing: -0.5px; line-height: 1;
 }
 .logo-text span { color: #1a1a2e; }
@@ -92,26 +100,26 @@ input, select, textarea { font-family: inherit; outline: none; }
 .search-wrap { position: relative; flex: 1; }
 .header-search {
   display: flex; align-items: center;
-  border: 1.5px solid #1a1a2e; border-radius: 50px;
+  border: 1.5px solid #374151; border-radius: 50px;
   background: #fff; overflow: hidden;
   transition: border-color 0.15s;
 }
-.header-search:focus-within { border-color: var(--primary); }
+.header-search:focus-within { border-color: var(--primary); background: #fff; }
 .header-search input {
-  flex: 1; padding: 9px 18px;
+  flex: 1; padding: 7px 16px;
   background: transparent; color: #1a1a2e;
   font-size: 14px; font-weight: 400;
   border: none; outline: none;
 }
 .header-search input::placeholder { color: #9ca3af; }
 .header-search button {
-  flex-shrink: 0; width: 38px; height: 38px;
+  flex-shrink: 0; width: 32px; height: 32px;
   background: var(--primary); border: none; border-radius: 50%;
   margin: 3px; display: flex; align-items: center; justify-content: center;
   color: #fff; cursor: pointer; transition: background 0.15s;
 }
 .header-search button:hover { background: var(--primary-dark); }
-.header-search button svg { width: 15px; height: 15px; }
+.header-search button svg { width: 14px; height: 14px; }
 
 /* HEADER RIGHT — sağa yapış */
 .header-right {
@@ -193,11 +201,34 @@ input, select, textarea { font-family: inherit; outline: none; }
   position: relative;
   width: 100%;
   z-index: 490;
+  display: flex;
+  align-items: stretch;
 }
+.cat-nav-arrow {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  flex-shrink: 0;
+  background: #fff;
+  border: none;
+  font-size: 22px;
+  color: #6b7280;
+  cursor: pointer;
+  z-index: 2;
+  transition: color 0.15s, background 0.15s;
+}
+.cat-nav-arrow:hover { color: #e84118; background: #fff8f6; }
+.cat-nav-arrow-left { border-right: 1px solid #e5e7eb; }
+.cat-nav-arrow-right { border-left: 1px solid #e5e7eb; }
 .cat-nav-inner {
-  width: 100%; padding: 0 32px;
+  width: 100%; padding: 0 20px;
   display: flex; align-items: stretch;
-  overflow: visible; position: relative;
+  overflow-x: auto; overflow-y: visible;
+  position: static; flex-wrap: nowrap;
+  scrollbar-width: none; -ms-overflow-style: none;
+  /* overflow-x:auto forcer tarayıcı overflow-y:auto yapar, bu dropdown'u keser.
+     Bu yüzden cat-nav-item position:static, cat-sub-menu position fixed ile çözüyoruz */
 }
 .cat-nav-inner::-webkit-scrollbar { display: none; }
 .cat-nav-item {
@@ -215,34 +246,57 @@ input, select, textarea { font-family: inherit; outline: none; }
 
 /* Dropdown menü */
 .cat-sub-menu {
-  position: absolute; top: 100%; left: 0;
-  background: #fff; border: 1px solid #d1d5db;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-  min-width: 420px; opacity: 0; visibility: hidden;
-  transform: translateY(-4px); pointer-events: none;
-  transition: opacity 0.15s, transform 0.15s, visibility 0s linear 0.15s;
-  z-index: 9999; border-radius: 0 0 12px 12px;
+  position: fixed; top: auto; left: auto;
+  background: #fff; border: 1px solid #e5e7eb;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.13);
+  width: 660px;
+  opacity: 0; visibility: hidden;
+  transform: translateY(-6px); pointer-events: none;
+  transition: opacity 0.18s, transform 0.18s, visibility 0s linear 0.18s;
+  z-index: 9999; border-radius: 0 0 14px 14px;
 }
 .cat-sub-menu.csm-right { left: auto; right: 0; }
-.cat-sub-menu.csm-wide .csm-inner { grid-template-columns: 1fr 1fr 1fr; }
 .cat-sub-menu.is-open {
   opacity: 1; visibility: visible; transform: translateY(0);
   pointer-events: auto;
   transition: opacity 0.15s, transform 0.15s, visibility 0s;
 }
-.csm-inner { display: grid; grid-template-columns: 1fr 1fr; padding: 22px 28px; gap: 0; }
-.csm-col { display: flex; flex-direction: column; gap: 0; }
-.csm-col + .csm-col { padding-left: 24px; border-left: 1px solid #f3f4f6; }
+/* Sabit 3 sütun grid — her kategoride aynı boyut */
+.csm-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  padding: 20px 24px 16px;
+  gap: 0;
+  min-height: 220px;
+}
+.csm-col { display: flex; flex-direction: column; gap: 0; padding: 0 8px; }
+.csm-col + .csm-col { border-left: 1px solid #f3f4f6; }
 .csm-title {
-  font-size: 11px; font-weight: 700; text-transform: uppercase;
-  letter-spacing: 0.8px; color: #9ca3af; margin-bottom: 10px;
+  font-size: 10px; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 1px; color: #9ca3af; margin-bottom: 8px; padding: 0 4px;
 }
 .csm-col a {
-  display: block; padding: 5px 8px; border-radius: 4px;
-  font-size: 14px; font-weight: 400; color: #1a1a2e;
-  cursor: pointer; transition: color 0.12s;
+  display: block; padding: 5px 4px; border-radius: 5px;
+  font-size: 13.5px; font-weight: 400; color: #374151;
+  cursor: pointer; transition: color 0.1s, background 0.1s; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
 }
-.csm-col a:hover { color: var(--primary); }
+.csm-col a:hover { color: var(--primary); background: #fff8f6; }
+.csm-col a.csm-more { color: var(--primary); font-weight: 600; font-size: 12.5px; margin-top: 2px; }
+.csm-col a.csm-more:hover { text-decoration: underline; background: none; }
+.csm-brands {
+  padding: 10px 24px 14px; border-top: 1px solid #f3f4f6;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 4px 0;
+}
+.csm-brands-title {
+  font-size: 10px; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 1px; color: #9ca3af; width: 100%; margin-bottom: 6px;
+}
+.csm-brands a {
+  font-size: 12.5px; color: #374151; cursor: pointer; padding: 2px 10px 2px 0;
+  transition: color 0.1s;
+}
+.csm-brands a:hover { color: var(--primary); }
 .cat-bar { display: none !important; }
 .cat-pill { display: none !important; }
 
@@ -1259,6 +1313,7 @@ input, select, textarea { font-family: inherit; outline: none; }
 }
 .form-textarea { min-height: 100px; resize: vertical; }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.city-district-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .btn-submit {
   width: 100%;
   padding: 13px;
@@ -1612,6 +1667,7 @@ input, select, textarea { font-family: inherit; outline: none; }
 @media (max-width: 768px), (max-height: 500px) and (orientation: landscape) {
   /* Mobil header — Preloved gibi turuncu zemin */
   .header { background: var(--primary) !important; border-bottom: none !important; }
+  #siteHeader { background: var(--primary) !important; }
   .header-inner { height: 56px; padding: 0 16px; gap: 10px; }
   .logo-icon { background: rgba(255,255,255,0.25) !important; }
   .logo-icon svg { color: white !important; }
@@ -1625,8 +1681,9 @@ input, select, textarea { font-family: inherit; outline: none; }
   .btn-login, .btn-join { display: none !important; }
   .icon-btn-top { background: rgba(255,255,255,0.15) !important; color: white !important; }
   .icon-btn-top:hover { background: rgba(255,255,255,0.25) !important; }
-  .cat-nav-bar { top: 56px !important; overflow-x: auto; }
+  .cat-nav-bar { overflow-x: auto; }
   .cat-nav-inner { overflow-x: auto; padding: 0 12px; }
+  .cat-nav-arrow { display: none !important; }
   .cat-sub-menu { display: none !important; }
   .cat-bar { display: none; }
   .listing-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
@@ -1654,6 +1711,8 @@ input, select, textarea { font-family: inherit; outline: none; }
   .lc-price { font-size: 16px; }
   .lc-footer { display: none; }
   .hero-title { font-size: 22px; }
+  .city-district-row { grid-template-columns: 1fr; }
+  .form-row { grid-template-columns: 1fr; }
 }
 
 /* ══════════════════════════════════════

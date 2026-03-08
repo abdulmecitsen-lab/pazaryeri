@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /messages.html
+Disallow: /profile.html
+
+Sitemap: https://pazaryeri.com/sitemap.xml

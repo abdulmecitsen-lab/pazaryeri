@@ -113,6 +113,54 @@
 </div>
 
 <!-- Modals -->
+
+<!-- İlan Düzenleme Modal -->
+<div class="modal-overlay" id="editIlanModal">
+  <div class="modal" style="max-width:560px;width:95vw">
+    <button class="modal-close" onclick="closeModal('editIlanModal')">✕</button>
+    <h2 style="font-size:18px;font-weight:900;margin-bottom:20px">✏️ İlanı Düzenle</h2>
+    <input type="hidden" id="editIlanId">
+    <div class="form-group">
+      <label class="form-label">İlan Başlığı *</label>
+      <input type="text" id="editBaslik" class="form-input" maxlength="120" required>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Fiyat (₺) *</label>
+      <input type="number" id="editFiyat" class="form-input" min="0" required>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Açıklama</label>
+      <textarea id="editAciklama" class="form-textarea" rows="4"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Konum</label>
+      <input type="text" id="editKonum" class="form-input" placeholder="İl / İlçe / Mahalle">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Durum</label>
+      <select id="editDurum" class="form-select">
+        <option value="ikinci-el">İkinci El</option>
+        <option value="sifir">Sıfır</option>
+        <option value="yeniye-yakin">Yeniye Yakın</option>
+        <option value="satilik">Satılık</option>
+        <option value="kiralik">Kiralık</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Seçenekler</label>
+      <div style="display:flex;gap:16px;flex-wrap:wrap">
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:14px"><input type="checkbox" id="editPazarlik"> 🤝 Pazarlık Var</label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:14px"><input type="checkbox" id="editTakas"> 🔄 Takas Düşünülür</label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:14px"><input type="checkbox" id="editAcil"> 🔥 Acil Satılık</label>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:8px">
+      <button onclick="closeModal('editIlanModal')" style="flex:1;padding:11px;border:1.5px solid #d1d5db;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;background:#fff">İptal</button>
+      <button onclick="saveEditIlan()" style="flex:2;padding:11px;background:var(--primary);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer" id="editSaveBtn">💾 Kaydet</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="loginModal">
   <div class="modal">
     <button class="modal-close" onclick="closeModal('loginModal')">✕</button>
@@ -204,7 +252,7 @@ window.saveProfile=async e=>{
 async function loadMyListings(){
   document.getElementById('ilanlarBody').innerHTML='<div class="es"><div class="es-i">⏳</div><p>Yükleniyor...</p></div>';
   try{
-    const{data,error,count}=await sb.from('urunler').select('*',{count:'exact'}).eq('user_id',user.id).order('created_at',{ascending:false});
+    const{data,error}=await sb.from('urunler').select('*').eq('user_id',user.id).order('created_at',{ascending:false});
     if(error)throw error;
     document.getElementById('ilanBadge').textContent=data?.length||0;
     if(!data||!data.length){
@@ -221,6 +269,7 @@ async function loadMyListings(){
         </div>
         <div class="lr-actions">
           <a href="listing.html?id=${it.id}" class="bsm">Görüntüle</a>
+          <button class="bsm" style="background:#f3f4f6;color:#374151" onclick="openEditIlan(${JSON.stringify(it).replace(/"/g,'&quot;')})">Düzenle</button>
           <button class="bsm bsm-del" onclick="delListing('${it.id}')">Sil</button>
         </div>
       </div>`).join('');
@@ -228,6 +277,43 @@ async function loadMyListings(){
     document.getElementById('ilanlarBody').innerHTML=`<div class="es"><div class="es-i">⚠️</div><p>Yüklenemedi: ${err.message}</p></div>`;
   }
 }
+
+window.openEditIlan = function(it) {
+  document.getElementById('editIlanId').value   = it.id;
+  document.getElementById('editBaslik').value   = it.isim || '';
+  document.getElementById('editFiyat').value    = it.fiyat || '';
+  document.getElementById('editAciklama').value = it.aciklama || '';
+  document.getElementById('editKonum').value    = it.konum || '';
+  document.getElementById('editDurum').value    = it.durum || 'ikinci-el';
+  document.getElementById('editPazarlik').checked = !!it.pazarlik;
+  document.getElementById('editTakas').checked    = !!it.takas;
+  document.getElementById('editAcil').checked     = !!it.acil;
+  openModal('editIlanModal');
+};
+
+window.saveEditIlan = async function() {
+  const id   = document.getElementById('editIlanId').value;
+  const isim = document.getElementById('editBaslik').value.trim();
+  const fiyat= parseFloat(document.getElementById('editFiyat').value)||0;
+  if(!isim){toast('Başlık boş olamaz','error');return;}
+  const btn = document.getElementById('editSaveBtn');
+  btn.disabled=true; btn.textContent='Kaydediliyor...';
+  const{error}=await sb.from('urunler').update({
+    isim,
+    fiyat,
+    aciklama: document.getElementById('editAciklama').value.trim()||null,
+    konum:    document.getElementById('editKonum').value.trim()||null,
+    durum:    document.getElementById('editDurum').value,
+    pazarlik: document.getElementById('editPazarlik').checked,
+    takas:    document.getElementById('editTakas').checked,
+    acil:     document.getElementById('editAcil').checked,
+  }).eq('id',id).eq('user_id',user.id);
+  btn.disabled=false; btn.textContent='💾 Kaydet';
+  if(error){toast('Güncellenemedi: '+error.message,'error');return;}
+  toast('İlan güncellendi ✅');
+  closeModal('editIlanModal');
+  loadMyListings();
+};
 
 window.delListing=async id=>{
   if(!confirm('Bu ilanı silmek istediğinizden emin misiniz?'))return;
@@ -238,7 +324,14 @@ window.delListing=async id=>{
 
 async function loadFavorites(){
   document.getElementById('favorilerBody').innerHTML='<div class="es"><div class="es-i">⏳</div><p>Yükleniyor...</p></div>';
-  const favIds=JSON.parse(localStorage.getItem('pm_favs')||'[]');
+  const allFavIds=JSON.parse(localStorage.getItem('pm_favs')||'[]');
+  // Demo ID'leri (d1, d2 vb.) filtrele — Supabase sadece UUID kabul eder
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  const favIds = allFavIds.filter(id => uuidRegex.test(id));
+  // Demo ID'leri localStorage'dan temizle
+  if (favIds.length !== allFavIds.length) {
+    localStorage.setItem('pm_favs', JSON.stringify(favIds));
+  }
   document.getElementById('favBadge').textContent=favIds.length;
   if(!favIds.length){
     document.getElementById('favorilerBody').innerHTML='<div class="es"><div class="es-i">❤️</div><p>Favori ilanınız yok.</p><br><a href="index.html" style="color:var(--primary);font-weight:700;text-decoration:none">İlanlara göz atın →</a></div>';
