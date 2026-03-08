@@ -224,6 +224,7 @@ input, select, textarea { font-family: inherit; outline: none; }
   z-index: 9999; border-radius: 0 0 12px 12px;
 }
 .cat-sub-menu.csm-right { left: auto; right: 0; }
+.cat-sub-menu.csm-wide .csm-inner { grid-template-columns: 1fr 1fr 1fr; }
 .cat-sub-menu.is-open {
   opacity: 1; visibility: visible; transform: translateY(0);
   pointer-events: auto;
@@ -2100,9 +2101,10 @@ input, select, textarea { font-family: inherit; outline: none; }
   background: var(--primary); flex-shrink: 0;
 }
 .mob-drawer-logo {
-  font-size: 20px; font-weight: 900; color: white;
+  font-size: 20px; font-weight: 900; color: white; flex: 1; text-align: center;
 }
 .mob-drawer-logo span { color: rgba(255,255,255,0.75); }
+.mob-back-btn { display: flex; align-items: center; color: white; }
 .mob-drawer-x {
   background: none; border: none; color: white; cursor: pointer;
   padding: 6px; border-radius: 8px; display: flex; align-items: center;

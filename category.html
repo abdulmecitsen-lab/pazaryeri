@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kategori — Pazaryeri</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0"></script>
+  <style>
+    /* ── CATEGORY PAGE LAYOUT ── */
+    .cat-page-wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px 16px;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+    /* ── LEFT SIDEBAR ── */
+    .sidebar {
+      position: sticky;
+      top: 80px;
+    }
+    .sidebar-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 14px;
+    }
+    .sidebar-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+    .sidebar-title svg { transition: transform .2s; }
+    .sidebar-title.collapsed svg { transform: rotate(-90deg); }
+
+    /* Search refine */
+    .filter-search-wrap {
+      position: relative;
+      margin-bottom: 12px;
+    }
+    .filter-search-wrap input {
+      width: 100%;
+      padding: 9px 36px 9px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 50px;
+      font-size: 13px;
+      color: var(--text);
+      background: var(--bg);
+      outline: none;
+      box-sizing: border-box;
+    }
+    .filter-search-wrap input:focus { border-color: var(--primary); background: white; }
+    .filter-search-wrap svg {
+      position: absolute; right: 11px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--text3); pointer-events: none;
+    }
+
+    /* Location */
+    .loc-input {
+      display: flex; align-items: center; gap: 8px;
+      padding: 9px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 50px;
+      font-size: 13px;
+      color: var(--text2);
+      background: var(--bg);
+      cursor: pointer;
+      margin-bottom: 8px;
+    }
+    .loc-input svg { color: var(--text3); flex-shrink: 0; }
+
+    /* Price */
+    .price-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .price-input {
+      padding: 8px 10px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 13px;
+      color: var(--text);
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .price-input:focus { border-color: var(--primary); outline: none; }
+    .price-label { font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 4px; }
+
+    /* Category tree */
+    .cat-tree { list-style: none; margin: 0; padding: 0; }
+    .cat-tree-item { border-bottom: 1px solid var(--border); }
+    .cat-tree-item:last-child { border-bottom: none; }
+    .cat-tree-main {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 9px 0;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .cat-tree-main:hover { color: var(--primary); }
+    .cat-tree-main.active { color: var(--primary); }
+    .cat-tree-count {
+      font-size: 12px;
+      color: var(--text3);
+      font-weight: 500;
+      margin-left: 6px;
+    }
+    .cat-tree-toggle { color: var(--text3); transition: transform .2s; }
+    .cat-tree-toggle.open { transform: rotate(90deg); }
+
+    .cat-sub-tree { list-style: none; margin: 0 0 6px 12px; padding: 0; }
+    .cat-sub-link {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 6px 0;
+      font-size: 13px;
+      color: var(--text2);
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .cat-sub-link:hover { color: var(--primary); }
+    .cat-sub-link.active { color: var(--primary); font-weight: 700; }
+
+    /* Condition checkboxes */
+    .check-row {
+      display: flex; align-items: center; gap: 9px;
+      padding: 6px 0;
+      font-size: 13px;
+      color: var(--text2);
+      cursor: pointer;
+    }
+    .check-row input[type=checkbox] { accent-color: var(--primary); width: 15px; height: 15px; cursor: pointer; }
+    .check-row:hover { color: var(--text); }
+
+    /* ── MAIN CONTENT ── */
+    .cat-main { min-width: 0; }
+    .breadcrumb {
+      font-size: 13px;
+      color: var(--text3);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .breadcrumb a { color: var(--primary); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--text3); }
+
+    .cat-page-header {
+      margin-bottom: 16px;
+    }
+    .cat-page-title {
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .cat-page-count {
+      font-size: 13px;
+      color: var(--text3);
+    }
+
+    /* Listing list (Preloved style — vertical cards) */
+    .listing-list { display: flex; flex-direction: column; gap: 0; }
+    .listing-list-card {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-bottom: none;
+      overflow: hidden;
+      transition: box-shadow .15s;
+    }
+    .listing-list-card:first-child { border-radius: 12px 12px 0 0; }
+    .listing-list-card:last-child { border-bottom: 1px solid var(--border); border-radius: 0 0 12px 12px; }
+    .listing-list-card:only-child { border-radius: 12px; border-bottom: 1px solid var(--border); }
+    .listing-list-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,.08); z-index: 1; position: relative; }
+
+    .llc-img {
+      width: 180px;
+      height: 140px;
+      object-fit: cover;
+      display: block;
+      flex-shrink: 0;
+    }
+    .llc-body {
+      padding: 14px 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 140px;
+    }
+    .llc-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+    .llc-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 20px;
+      background: #fff3e0;
+      color: #e65100;
+      flex-shrink: 0;
+    }
+    .llc-badge.new-badge { background: #e8f5e9; color: #2e7d32; }
+    .llc-badge.used-badge { background: #fff3e0; color: #e65100; }
+    .llc-for-sale { font-size: 12px; color: var(--text3); }
+    .llc-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--text);
+      margin: 6px 0 4px;
+      text-decoration: none;
+      display: block;
+      line-height: 1.3;
+    }
+    .llc-title:hover { color: var(--primary); }
+    .llc-desc {
+      font-size: 13px;
+      color: var(--text3);
+      line-height: 1.5;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      margin-bottom: 8px;
+    }
+    .llc-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .llc-price {
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--primary);
+    }
+    .llc-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 12px;
+      color: var(--text3);
+    }
+    .llc-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .llc-fav {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      color: var(--text3);
+      font-size: 20px;
+      line-height: 1;
+    }
+    .llc-fav:hover { color: var(--primary); }
+
+    /* Sort / toolbar */
+    .cat-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .sort-select {
+      padding: 8px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      background: white;
+      cursor: pointer;
+    }
+    .sort-select:focus { outline: none; border-color: var(--primary); }
+
+    /* Active filter pills */
+    .active-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .filter-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px 5px 10px;
+      background: #fff3e0;
+      color: var(--primary);
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .filter-pill button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--primary);
+      padding: 0;
+      font-size: 14px;
+      line-height: 1;
+    }
+
+    /* Pagination */
+    .pag-wrap {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 24px;
+      flex-wrap: wrap;
+    }
+
+    /* Skeleton */
+    .llc-skeleton {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      background: white;
+      border: 1px solid var(--border);
+      border-bottom: none;
+      height: 140px;
+      overflow: hidden;
+    }
+    .llc-skeleton:last-child { border-bottom: 1px solid var(--border); }
+
+    /* Mobile filter toggle */
+    .mob-filter-toggle {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: white;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      cursor: pointer;
+      margin-bottom: 14px;
+    }
+    .mob-filter-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.5);
+      z-index: 900;
+    }
+    .mob-filter-panel {
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: min(340px, 90vw);
+      background: white;
+      z-index: 901;
+      overflow-y: auto;
+      padding: 20px;
+      transform: translateX(-100%);
+      transition: transform .25s ease;
+    }
+    .mob-filter-panel.open { transform: translateX(0); }
+    .mob-filter-overlay.open { display: block; }
+    .mob-filter-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .mob-filter-header h3 { font-size: 18px; font-weight: 900; color: var(--text); }
+
+    @media (max-width: 860px) {
+      .cat-page-wrap { grid-template-columns: 1fr; }
+      .sidebar { display: none; position: static; }
+      .mob-filter-toggle { display: flex; }
+      .llc-img { width: 120px; height: 120px; }
+      .llc-body { padding: 10px 12px; min-height: 120px; }
+      .llc-title { font-size: 15px; }
+      .llc-desc { display: none; }
+    }
+    @media (max-width: 480px) {
+      .llc-img { width: 100px; height: 100px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER (same as index.html) -->
+<div style="position:sticky;top:0;z-index:500;width:100%">
+<header class="header">
+  <div class="header-inner">
+    <a href="index.html" class="logo-wrap">
+      <div class="logo-text">Pazar<span>yeri</span></div>
+    </a>
+    <div class="search-wrap">
+      <div class="header-search">
+        <input type="text" id="searchInput" placeholder="Ne arıyorsunuz?..." autocomplete="off"
+          onkeydown="if(event.key==='Enter')doSearch()">
+        <button onclick="doSearch()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="header-right">
+      <div id="authArea"></div>
+      <a href="index.html" class="btn-signin" style="text-decoration:none;margin-left:8px">← Ana Sayfa</a>
+    </div>
+    <div class="mob-top-icons" style="display:flex;gap:8px;align-items:center">
+      <button class="mob-top-btn" onclick="doSearch()" aria-label="Ara">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+</div>
+
+<!-- MOBILE FILTER OVERLAY -->
+<div class="mob-filter-overlay" id="mobFilterOverlay" onclick="closeMobFilter()"></div>
+<div class="mob-filter-panel" id="mobFilterPanel">
+  <div class="mob-filter-header">
+    <h3>Filtreler</h3>
+    <button onclick="closeMobFilter()" style="background:none;border:none;cursor:pointer;font-size:22px;color:var(--text3)">✕</button>
+  </div>
+  <div id="mobSidebarContent"></div>
+  <button onclick="closeMobFilter()" style="width:100%;padding:12px;background:var(--primary);color:white;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;margin-top:16px">Sonuçları Gör</button>
+</div>
+
+<div class="cat-page-wrap">
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar" id="desktopSidebar">
+    <!-- content injected by JS -->
+  </aside>
+
+  <!-- MAIN -->
+  <main class="cat-main">
+    <!-- Mobile filter toggle -->
+    <button class="mob-filter-toggle" onclick="openMobFilter()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+      Filtrele
+    </button>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb" id="breadcrumb">
+      <a href="index.html">Ana Sayfa</a>
+    </div>
+
+    <!-- Active filter pills -->
+    <div class="active-filters" id="activePills"></div>
+
+    <!-- Header -->
+    <div class="cat-page-header">
+      <div class="cat-page-title" id="pageTitle">İlanlar</div>
+      <div class="cat-page-count" id="pageCount">Yükleniyor...</div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="cat-toolbar">
+      <select class="sort-select" id="sortSelect" onchange="setSort(this.value)">
+        <option value="newest">En Yeni</option>
+        <option value="price_asc">Fiyat: Düşükten Yükseğe</option>
+        <option value="price_desc">Fiyat: Yüksekten Düşüğe</option>
+      </select>
+    </div>
+
+    <!-- Listings -->
+    <div id="listingList" class="listing-list"></div>
+
+    <!-- Pagination -->
+    <div class="pag-wrap" id="pagination"></div>
+  </main>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Login modal -->
+<div class="modal-overlay" id="loginModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('loginModal')">✕</button>
+    <h2>Giriş Yap 👋</h2>
+    <form onsubmit="doLogin(event)">
+      <div class="form-group"><label class="form-label">E-posta</label><input type="email" id="lEmail" class="form-input" required></div>
+      <div class="form-group"><label class="form-label">Şifre</label><input type="password" id="lPass" class="form-input" required></div>
+      <button type="submit" class="btn-submit">Giriş Yap</button>
+    </form>
+    <div class="form-footer">Hesabınız yok mu? <a onclick="switchModal('loginModal','signupModal')">Kayıt Ol</a></div>
+  </div>
+</div>
+<div class="modal-overlay" id="signupModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('signupModal')">✕</button>
+    <h2>Hesap Oluştur 🎉</h2>
+    <form onsubmit="doSignup(event)">
+      <div class="form-group"><label class="form-label">Ad Soyad</label><input type="text" id="sName" class="form-input" required></div>
+      <div class="form-group"><label class="form-label">E-posta</label><input type="email" id="sEmail" class="form-input" required></div>
+      <div class="form-group"><label class="form-label">Şifre</label><input type="password" id="sPass" class="form-input" minlength="8" required></div>
+      <button type="submit" class="btn-submit">Kayıt Ol</button>
+    </form>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+const SURL='https://sbubvjeguxuqgiklrajk.supabase.co';
+const SKEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNidWJ2amVndXh1cWdpa2xyYWprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIzOTQxNTIsImV4cCI6MjA4Nzk3MDE1Mn0.dVwPmfxu2B0o9M-lMr5_k_Qy3YPDfiuk-TX2emDk9SQ';
+if(!window._sbClient){window._sbClient=window.supabase.createClient(SURL,SKEY,{auth:{storageKey:'pz_auth',autoRefreshToken:true,persistSession:true,detectSessionInUrl:false}});}
+const sb=window._sbClient;
+let user=null;
+
+// ── CATEGORY DATA ──
+const CAT_DATA = {
+  vasita: {
+    label:'Vasıta', icon:'🚗',
+    subs:[
+      {v:'otomobil',l:'Otomobil'},{v:'suv',l:'SUV & 4x4'},{v:'ticari',l:'Ticari Araç'},
+      {v:'motosiklet',l:'Motosiklet'},{v:'elektrikli',l:'Elektrikli Araç'},
+      {v:'caravan',l:'Karavan'},{v:'klasik',l:'Klasik Araç'},{v:'tekne',l:'Tekne & Deniz'},
+      {v:'motosiklet-sport',l:'Motosiklet Sport'},{v:'motosiklet-naked',l:'Motosiklet Naked'},
+      {v:'motosiklet-enduro',l:'Enduro & Cross'},{v:'motosiklet-scooter',l:'Scooter'}
+    ]
+  },
+  emlak: {
+    label:'Emlak', icon:'🏠',
+    subs:[
+      {v:'daire',l:'Daire'},{v:'villa',l:'Villa & Müstakil'},{v:'residence',l:'Residence'},
+      {v:'bina',l:'Bina'},{v:'prefabrik',l:'Prefabrik Ev'},
+      {v:'satilik',l:'Satılık'},{v:'kiralik',l:'Kiralık'},{v:'gunluk',l:'Günlük Kiralık'},
+      {v:'devren',l:'Devren'},{v:'arsa',l:'Arsa'},{v:'tarla',l:'Tarla & Bağ'},
+      {v:'isyeri',l:'İşyeri & Ofis'},{v:'dukkan',l:'Dükkan & Mağaza'},{v:'depo',l:'Depo & Antrepo'},
+      {v:'fabrika',l:'Fabrika & Atölye'},{v:'otel',l:'Otel & Pansiyon'},
+      {v:'studio',l:'Stüdyo'},{v:'1+1',l:'1+1'},{v:'2+1',l:'2+1'},{v:'3+1',l:'3+1'},{v:'4+1-ustu',l:'4+1 ve Üstü'}
+    ]
+  },
+  elektronik: {
+    label:'Elektronik', icon:'📱',
+    subs:[
+      {v:'telefon',l:'Telefon & Aksesuar'},{v:'bilgisayar',l:'Bilgisayar & Laptop'},
+      {v:'tablet',l:'Tablet'},{v:'tv',l:'TV & Görüntü Sistemleri'},{v:'oyun',l:'Oyun & Konsol'},
+      {v:'fotograf',l:'Fotoğraf & Kamera'},{v:'ses',l:'Ses Sistemleri'},
+      {v:'giyilebilir',l:'Akıllı Saat & Giyilebilir'},
+      {v:'iphone-16',l:'iPhone 16 Serisi'},{v:'iphone-15',l:'iPhone 15 Serisi'},
+      {v:'iphone-14',l:'iPhone 14 Serisi'},{v:'iphone-13',l:'iPhone 13 Serisi'},
+      {v:'ps5',l:'PlayStation 5'},{v:'ps4',l:'PlayStation 4'},
+      {v:'xbox-series',l:'Xbox Series'},{v:'nintendo-switch',l:'Nintendo Switch'}
+    ]
+  },
+  'ev-yasam': {
+    label:'Ev & Yaşam', icon:'🏡',
+    subs:[
+      {v:'koltuk',l:'Koltuk & Kanepe'},{v:'yatak-odasi',l:'Yatak Odası'},
+      {v:'masa-sandalye',l:'Masa & Sandalye'},{v:'raf-dolap',l:'Raf & Dolap'},
+      {v:'bahce-mobilya',l:'Bahçe Mobilyası'},{v:'buzdolabi',l:'Buzdolabı'},
+      {v:'camasir-makinesi',l:'Çamaşır Makinesi'},{v:'bulasik-makinesi',l:'Bulaşık Makinesi'},
+      {v:'firin-ocak',l:'Fırın & Ocak'},{v:'klima',l:'Klima'},
+      {v:'elektrikli-supurge',l:'Elektrikli Süpürge'},{v:'dekorasyon',l:'Dekorasyon'},
+      {v:'aydinlatma',l:'Aydınlatma'},{v:'tekstil',l:'Ev Tekstili'},
+      {v:'mutfak-gerec',l:'Mutfak Gereçleri'},{v:'bahce',l:'Bahçe & Bitki'},
+      {v:'guvenlik',l:'Güvenlik Sistemleri'}
+    ]
+  },
+  giyim: {
+    label:'Giyim & Moda', icon:'👗',
+    subs:[
+      {v:'kadin-ust',l:'Kadın Üst Giyim'},{v:'kadin-alt',l:'Kadın Alt Giyim'},
+      {v:'kadin-dis',l:'Kadın Dış Giyim'},{v:'kadin-elbise',l:'Elbise & Tulum'},
+      {v:'kadin-ic',l:'Kadın İç Çamaşırı'},{v:'kadin-spor',l:'Kadın Spor Giyim'},
+      {v:'erkek-ust',l:'Erkek Üst Giyim'},{v:'erkek-alt',l:'Erkek Alt Giyim'},
+      {v:'erkek-dis',l:'Erkek Dış Giyim'},{v:'erkek-takim',l:'Takım Elbise'},
+      {v:'erkek-spor',l:'Erkek Spor Giyim'},{v:'cocuk-kiz',l:'Kız Çocuk Giyim'},
+      {v:'cocuk-erkek',l:'Erkek Çocuk Giyim'},{v:'kadin-ayakkabi',l:'Kadın Ayakkabı'},
+      {v:'erkek-ayakkabi',l:'Erkek Ayakkabı'},{v:'spor-ayakkabi',l:'Spor Ayakkabı'},
+      {v:'canta',l:'Çanta & Cüzdan'},{v:'saat',l:'Saat'},{v:'mucevher',l:'Mücevher & Takı'},
+      {v:'gozluk',l:'Gözlük'},{v:'sapka',l:'Şapka & Bere'}
+    ]
+  },
+  spor: {
+    label:'Spor & Hobi', icon:'⚽',
+    subs:[
+      {v:'fitness',l:'Fitness & Spor Aleti'},{v:'bisiklet',l:'Bisiklet'},
+      {v:'outdoor',l:'Outdoor & Kamp'},{v:'su-sporlari',l:'Su Sporları'},
+      {v:'futbol',l:'Futbol'},{v:'tenis',l:'Tenis & Padel'},{v:'kayak',l:'Kayak & Kış Sporları'},
+      {v:'bisiklet-dag',l:'Dağ Bisikleti'},{v:'bisiklet-yol',l:'Yol Bisikleti'},
+      {v:'bisiklet-sehir',l:'Şehir Bisikleti'},{v:'bisiklet-elektrikli',l:'Elektrikli Bisiklet'},
+      {v:'bisiklet-cocuk',l:'Çocuk Bisikleti'}
+    ]
+  },
+  hobi: {
+    label:'Hobi', icon:'🎨',
+    subs:[
+      {v:'muzik',l:'Müzik Aletleri'},{v:'gitar',l:'Gitar & Bas'},{v:'klavye',l:'Klavye & Piyano'},
+      {v:'koleksiyon',l:'Koleksiyon & Antika'},{v:'sanat',l:'Sanat & El İşi'},
+      {v:'bahce-hobi',l:'Bahçe & Bitki'},{v:'model-kit',l:'Model & Maket'},
+      {v:'oyuncak',l:'Oyuncak'},{v:'board-game',l:'Kutu Oyunu'},{v:'puzzle',l:'Puzzle'}
+    ]
+  },
+  bebek: {
+    label:'Bebek & Çocuk', icon:'👶',
+    subs:[
+      {v:'bebek-araba',l:'Bebek Arabası & Koltuk'},{v:'bebek-kiyafet',l:'Bebek Kıyafeti'},
+      {v:'bebek-odasi',l:'Bebek Odası'},{v:'oyuncak',l:'Oyuncak'},
+      {v:'cocuk-kiyafet',l:'Çocuk Kıyafeti'},{v:'cocuk-bisiklet',l:'Çocuk Bisikleti'}
+    ]
+  },
+  kitap: {
+    label:'Kitap & Medya', icon:'📚',
+    subs:[
+      {v:'roman',l:'Roman & Hikaye'},{v:'ders-kitabi',l:'Ders Kitabı'},
+      {v:'cocuk-kitap',l:'Çocuk Kitapları'},{v:'bilim',l:'Bilim & Kişisel Gelişim'},
+      {v:'cd-dvd',l:'CD & DVD'},{v:'dergi',l:'Dergi & Gazete'},{v:'vinyl',l:'Plak & Vinyl'}
+    ]
+  },
+  hayvan: {
+    label:'Hayvanlar & Evcil', icon:'🐾',
+    subs:[
+      {v:'kopek',l:'Köpek'},{v:'kedi',l:'Kedi'},{v:'kus',l:'Kuş'},
+      {v:'balik',l:'Balık & Akvaryum'},{v:'kemirgen',l:'Kemirgen'},
+      {v:'evcil-malzeme',l:'Evcil Hayvan Malzemesi'},{v:'mama',l:'Mama & Ödül'}
+    ]
+  },
+  antika: {
+    label:'Antika & Koleksiyon', icon:'🏺',
+    subs:[
+      {v:'mobilya-antika',l:'Antika Mobilya'},{v:'sikke',l:'Sikke & Para'},
+      {v:'pul',l:'Pul Koleksiyonu'},{v:'porselenler',l:'Porselen & Kristal'},
+      {v:'sanat-eseri',l:'Sanat Eseri'},{v:'eski-kitap',l:'Eski Kitap & Belge'}
+    ]
+  },
+  'is-ilani': {
+    label:'İş İlanları', icon:'💼',
+    subs:[
+      {v:'tam-zamanli',l:'Tam Zamanlı'},{v:'yari-zamanli',l:'Yarı Zamanlı'},
+      {v:'freelance',l:'Freelance & Uzaktan'},{v:'staj',l:'Staj'}
+    ]
+  },
+  hizmet: {
+    label:'Hizmetler', icon:'🔧',
+    subs:[
+      {v:'tamirat',l:'Tamirat & Bakım'},{v:'egitim',l:'Eğitim & Ders'},
+      {v:'nakliye',l:'Nakliye & Taşıma'},{v:'temizlik',l:'Temizlik Hizmetleri'},
+      {v:'saglik',l:'Sağlık & Güzellik'}
+    ]
+  }
+};
+
+// ── STATE ──
+const P = new URLSearchParams(window.location.search);
+const S = {
+  cat: P.get('cat') || '',
+  sub: P.get('sub') || '',
+  brand: P.get('brand') || '',
+  search: P.get('q') || '',
+  sort: P.get('sort') || 'newest',
+  page: parseInt(P.get('page')||'1'),
+  per: 15,
+  total: 0,
+  priceMin: P.get('pmin') ? parseInt(P.get('pmin')) : null,
+  priceMax: P.get('pmax') ? parseInt(P.get('pmax')) : null,
+  conds: []
+};
+let items = [];
+
+// ── UTILS ──
+function toast(m,t='success'){const ic={success:'✅',error:'❌',info:'ℹ️',warning:'⚠️'};const el=document.createElement('div');el.className='toast'+(t!=='success'?' '+t:'');el.innerHTML=`<span>${ic[t]}</span><span>${m}</span>`;document.getElementById('toastContainer').appendChild(el);setTimeout(()=>{el.style.opacity='0';el.style.transition='opacity .3s';setTimeout(()=>el.remove(),300)},3500);}
+const fmt=n=>(n&&n>0)?'₺'+Number(n).toLocaleString('tr-TR'):'Ücretsiz';
+const ini=n=>(n||'?').split(' ').filter(Boolean).map(x=>x[0]).join('').slice(0,2).toUpperCase();
+const ago=d=>{if(!d)return'';const s=Math.floor((Date.now()-new Date(d))/1000);if(s<3600)return Math.floor(s/60)+'dk önce';if(s<86400)return Math.floor(s/3600)+'sa önce';return Math.floor(s/86400)+' gün önce';};
+
+// ── AUTH ──
+window.openModal=id=>{document.getElementById(id).classList.add('open');document.body.style.overflow='hidden';};
+window.closeModal=id=>{document.getElementById(id).classList.remove('open');document.body.style.overflow='';};
+window.switchModal=(a,b)=>{closeModal(a);openModal(b);};
+document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)closeModal(o.id);}));
+window.doLogin=async e=>{e.preventDefault();const{error}=await sb.auth.signInWithPassword({email:document.getElementById('lEmail').value,password:document.getElementById('lPass').value});if(error){toast(error.message,'error');return;}toast('Hoş geldin!');closeModal('loginModal');};
+window.doSignup=async e=>{e.preventDefault();const{error}=await sb.auth.signUp({email:document.getElementById('sEmail').value,password:document.getElementById('sPass').value,options:{data:{full_name:document.getElementById('sName').value}}});if(error){toast(error.message,'error');return;}toast('Kayıt başarılı!');closeModal('signupModal');};
+sb.auth.onAuthStateChange((ev,ses)=>{user=ses?.user||null;renderAuth();});
+function renderAuth(){
+  const a=document.getElementById('authArea');if(!a)return;
+  if(user){const nm=user.user_metadata?.full_name||user.email;a.innerHTML=`<a href="profile.html"><div class="user-avatar" style="background:var(--primary)">${ini(nm)}</div></a>`;}
+  else a.innerHTML=`<button class="btn-signin" onclick="openModal('loginModal')">Giriş Yap</button>`;
+}
+
+// ── SIDEBAR BUILD ──
+function buildSidebar(target) {
+  const catInfo = CAT_DATA[S.cat];
+  const subs = catInfo ? catInfo.subs : [];
+
+  let html = `
+  <div class="sidebar-card">
+    <div class="sidebar-title">Arama Filtresi</div>
+    <div class="filter-search-wrap">
+      <input type="text" placeholder="Sonuçları daralt..." id="refineInput" value="${S.search||''}" onkeydown="if(event.key==='Enter')applyRefine()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </div>
+    <div class="loc-input">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      Tüm Türkiye
+    </div>
+  </div>`;
+
+  // Price filter
+  html += `
+  <div class="sidebar-card">
+    <div class="sidebar-title" onclick="toggleSection(this)">
+      Fiyat
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="section-body">
+      <div class="price-label" style="margin-bottom:2px">Minimum</div>
+      <div class="price-row" style="margin-bottom:10px">
+        <input class="price-input" id="priceMin" type="number" placeholder="₺ 0" value="${S.priceMin!=null?S.priceMin:''}" oninput="applyPrice()">
+        <input class="price-input" id="priceMax" type="number" placeholder="Maks" value="${S.priceMax!=null?S.priceMax:''}" oninput="applyPrice()">
+      </div>
+    </div>
+  </div>`;
+
+  // Categories tree
+  html += `
+  <div class="sidebar-card">
+    <div class="sidebar-title" onclick="toggleSection(this)">
+      Kategoriler
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="section-body">
+      <ul class="cat-tree">`;
+
+  Object.entries(CAT_DATA).forEach(([key,cat]) => {
+    const isOpen = key === S.cat;
+    const isActive = key === S.cat;
+    html += `<li class="cat-tree-item">
+      <span class="cat-tree-main${isActive?' active':''}" onclick="goCat('${key}')">
+        <span>${cat.icon} ${cat.label}</span>
+        <span class="cat-tree-toggle${isOpen?' open':''}">›</span>
+      </span>`;
+    if(isOpen && cat.subs.length) {
+      html += `<ul class="cat-sub-tree">
+        <li><span class="cat-sub-link${!S.sub?' active':''}" onclick="goCat('${key}')">Tümü</span></li>`;
+      cat.subs.forEach(s => {
+        html += `<li><span class="cat-sub-link${S.sub===s.v?' active':''}" onclick="goSubCat('${key}','${s.v}')">${s.l}</span></li>`;
+      });
+      html += `</ul>`;
+    }
+    html += `</li>`;
+  });
+
+  html += `</ul></div></div>`;
+
+  // Condition
+  html += `
+  <div class="sidebar-card">
+    <div class="sidebar-title" onclick="toggleSection(this)">
+      Durum
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="section-body">
+      ${[['sifir','Sıfır'],['ikinci-el','İkinci El'],['yeniye-yakin','Yeniye Yakın'],['satilik','Satılık'],['kiralik','Kiralık']].map(([v,l])=>`
+      <label class="check-row">
+        <input type="checkbox" value="${v}" ${S.conds.includes(v)?'checked':''} onchange="toggleCond('${v}')">
+        ${l}
+      </label>`).join('')}
+    </div>
+  </div>`;
+
+  target.innerHTML = html;
+}
+
+function toggleSection(el) {
+  const body = el.nextElementSibling;
+  if(!body) return;
+  const isHidden = body.style.display === 'none';
+  body.style.display = isHidden ? '' : 'none';
+  el.classList.toggle('collapsed', !isHidden);
+}
+
+// ── NAVIGATION ──
+function goCat(cat) {
+  S.cat=cat; S.sub=''; S.page=1;
+  updateURL(); loadListings(); buildSidebar(document.getElementById('desktopSidebar'));
+  buildSidebar(document.getElementById('mobSidebarContent'));
+  renderBreadcrumb(); renderPills();
+}
+function goSubCat(cat, sub) {
+  S.cat=cat; S.sub=sub; S.page=1;
+  updateURL(); loadListings(); buildSidebar(document.getElementById('desktopSidebar'));
+  buildSidebar(document.getElementById('mobSidebarContent'));
+  renderBreadcrumb(); renderPills();
+}
+function applyRefine() {
+  S.search = document.getElementById('refineInput')?.value || '';
+  S.page=1; updateURL(); loadListings();
+}
+let priceTimer;
+function applyPrice() {
+  clearTimeout(priceTimer);
+  priceTimer = setTimeout(()=>{
+    S.priceMin = parseInt(document.getElementById('priceMin')?.value)||null;
+    S.priceMax = parseInt(document.getElementById('priceMax')?.value)||null;
+    S.page=1; updateURL(); loadListings();
+  }, 600);
+}
+function toggleCond(v) {
+  if(S.conds.includes(v)) S.conds=S.conds.filter(c=>c!==v);
+  else S.conds.push(v);
+  S.page=1; updateURL(); loadListings();
+}
+function setSort(v) { S.sort=v; S.page=1; updateURL(); loadListings(); }
+function gotoPage(p) { S.page=p; updateURL(); loadListings(); scrollTo({top:0,behavior:'smooth'}); }
+function doSearch() { S.search=document.getElementById('searchInput')?.value||''; S.page=1; updateURL(); loadListings(); }
+
+function updateURL() {
+  const p = new URLSearchParams();
+  if(S.cat) p.set('cat',S.cat);
+  if(S.sub) p.set('sub',S.sub);
+  if(S.brand) p.set('brand',S.brand);
+  if(S.search) p.set('q',S.search);
+  if(S.sort!=='newest') p.set('sort',S.sort);
+  if(S.page>1) p.set('page',S.page);
+  if(S.priceMin) p.set('pmin',S.priceMin);
+  if(S.priceMax) p.set('pmax',S.priceMax);
+  history.replaceState({},'','?'+p.toString());
+}
+
+// ── BREADCRUMB & PILLS ──
+function renderBreadcrumb() {
+  const el = document.getElementById('breadcrumb');
+  let h = `<a href="index.html">Ana Sayfa</a>`;
+  if(S.cat) {
+    const cat = CAT_DATA[S.cat];
+    h += `<span class="breadcrumb-sep">›</span>`;
+    if(S.sub) h += `<a href="category.html?cat=${S.cat}">${cat?.label||S.cat}</a>`;
+    else h += `<span>${cat?.label||S.cat}</span>`;
+  }
+  if(S.sub) {
+    const sub = CAT_DATA[S.cat]?.subs.find(s=>s.v===S.sub);
+    h += `<span class="breadcrumb-sep">›</span><span>${sub?.l||S.sub}</span>`;
+  }
+  if(S.brand) {
+    h += `<span class="breadcrumb-sep">›</span><span>${S.brand}</span>`;
+  }
+  el.innerHTML = h;
+}
+
+function renderPills() {
+  const el = document.getElementById('activePills');
+  let h = '';
+  if(S.brand) h += pill(`Marka: ${S.brand}`, "S.brand='';updateURL();loadListings();renderPills();buildSidebar(document.getElementById('desktopSidebar'))");
+  if(S.priceMin||S.priceMax) h += pill(`Fiyat: ${S.priceMin?'₺'+S.priceMin.toLocaleString('tr-TR'):''} — ${S.priceMax?'₺'+S.priceMax.toLocaleString('tr-TR'):'Maks'}`, "S.priceMin=null;S.priceMax=null;updateURL();loadListings();renderPills()");
+  if(S.conds.length) h += pill(`Durum: ${S.conds.join(', ')}`, "S.conds=[];updateURL();loadListings();renderPills()");
+  el.innerHTML = h;
+}
+function pill(label, action) {
+  return `<span class="filter-pill">${label}<button onclick="${action}">×</button></span>`;
+}
+
+// ── PAGE TITLE ──
+function renderTitle() {
+  const cat = CAT_DATA[S.cat];
+  const sub = cat?.subs.find(s=>s.v===S.sub);
+  let title = 'Tüm İlanlar';
+  if(sub) title = sub.l;
+  else if(cat) title = `${cat.icon} ${cat.label}`;
+  if(S.brand) title += ` — ${S.brand}`;
+  document.getElementById('pageTitle').textContent = title;
+  document.title = title + ' — Pazaryeri';
+}
+
+// ── LOAD LISTINGS ──
+const DEMO_ITEMS = [
+  {id:'d1',isim:'2019 BMW 3 Serisi 320i M Sport',kategori:'vasita',alt_kategori:'otomobil',fiyat:850000,resim_url:'https://picsum.photos/seed/bmw320i/600/400',durum:'ikinci-el',konum:'İstanbul',aciklama:'Araç son derece bakımlı. Servis geçmişi mevcut. Hasar kaydı yok. Orijinal boyalı.',created_at:new Date(Date.now()-3600000).toISOString(),seller_name:'Ahmet K.'},
+  {id:'d2',isim:'3+1 Satılık Daire Kadıköy',kategori:'emlak',alt_kategori:'satilik',fiyat:4200000,resim_url:'https://picsum.photos/seed/kadikoy/600/400',durum:'satilik',konum:'İstanbul / Kadıköy',aciklama:'Deniz manzaralı 3+1 satılık daire. 120m2. Metrobüs yakını.',created_at:new Date(Date.now()-7200000).toISOString(),seller_name:'Fatma S.'},
+  {id:'d3',isim:'iPhone 15 Pro Max 256GB Titanium',kategori:'elektronik',alt_kategori:'telefon',fiyat:52000,resim_url:'https://picsum.photos/seed/iph15pro/600/400',durum:'sifir',konum:'Ankara',aciklama:'Sıfır, hiç açılmamış kutu. Faturalı. Garantili. Titanium renk.',created_at:new Date(Date.now()-86400000).toISOString(),seller_name:'Mehmet T.'},
+  {id:'d4',isim:'Samsung 65" 4K QLED TV',kategori:'elektronik',alt_kategori:'tv',fiyat:18500,resim_url:'https://picsum.photos/seed/samqled/600/400',durum:'ikinci-el',konum:'İzmir',aciklama:'Samsung 65 inç 4K QLED TV. Az kullanılmış, sıfır gibi.',created_at:new Date(Date.now()-172800000).toISOString(),seller_name:'Ayşe B.'},
+  {id:'d5',isim:'MacBook Pro M3 14" 16GB/512GB',kategori:'elektronik',alt_kategori:'bilgisayar',fiyat:68000,resim_url:'https://picsum.photos/seed/m3macbook/600/400',durum:'yeniye-yakin',konum:'Bursa',aciklama:'MacBook Pro M3 chip, 14 inç. 1 yıl kullanıldı, mükemmel durumda.',created_at:new Date(Date.now()-259200000).toISOString(),seller_name:'Ali R.'},
+  {id:'d6',isim:'2021 Honda CB500F Motosiklet',kategori:'vasita',alt_kategori:'motosiklet',fiyat:195000,resim_url:'https://picsum.photos/seed/hondacb5/600/400',durum:'ikinci-el',konum:'Antalya',aciklama:'18.000 km de Honda CB500F. Bakımları yapılmış.',created_at:new Date(Date.now()-345600000).toISOString(),seller_name:'Can Y.'},
+  {id:'d7',isim:'Kiralık 1+1 Daire Beşiktaş',kategori:'emlak',alt_kategori:'kiralik',fiyat:18000,resim_url:'https://picsum.photos/seed/bestasas/600/400',durum:'kiralik',konum:'İstanbul / Beşiktaş',aciklama:'Merkezi konumda, eşyalı 1+1 kiralık daire.',created_at:new Date(Date.now()-432000000).toISOString(),seller_name:'Zeynep K.'},
+  {id:'d8',isim:'PlayStation 5 + 2 Kol + 5 Oyun',kategori:'elektronik',alt_kategori:'oyun',fiyat:15000,resim_url:'https://picsum.photos/seed/ps5console/600/400',durum:'ikinci-el',konum:'Konya',aciklama:'PS5 Disk Edition, 2 DualSense kol ve 5 oyun dahil.',created_at:new Date(Date.now()-518400000).toISOString(),seller_name:'Emre D.'},
+  {id:'d9',isim:'Trek Marlin 5 Dağ Bisikleti 2023',kategori:'spor',alt_kategori:'bisiklet-dag',fiyat:12500,resim_url:'https://picsum.photos/seed/trekm5/600/400',durum:'yeniye-yakin',konum:'İzmir',aciklama:'Trek Marlin 5, M frame. 2023 model, az kullanılmış.',created_at:new Date(Date.now()-604800000).toISOString(),seller_name:'Selin A.'},
+  {id:'d10',isim:'L Köşe Koltuk Takımı Deri',kategori:'ev-yasam',alt_kategori:'koltuk',fiyat:8500,resim_url:'https://picsum.photos/seed/lkose/600/400',durum:'ikinci-el',konum:'Ankara',aciklama:'Gerçek deri L köşe koltuk. Temiz ve bakımlı.',created_at:new Date(Date.now()-691200000).toISOString(),seller_name:'Baran M.'},
+  {id:'d11',isim:'Adidas Ultraboost 22 Beden 43',kategori:'giyim',alt_kategori:'spor-ayakkabi',fiyat:2800,resim_url:'https://picsum.photos/seed/ultrab22/600/400',durum:'sifir',konum:'İstanbul',aciklama:'Sıfır kutusunda Adidas Ultraboost 22. Beden 43.',created_at:new Date(Date.now()-777600000).toISOString(),seller_name:'Ece S.'},
+  {id:'d12',isim:'2020 Ford Focus 1.5 Ecoboost ST Line',kategori:'vasita',alt_kategori:'otomobil',fiyat:680000,resim_url:'https://picsum.photos/seed/focusst/600/400',durum:'ikinci-el',konum:'Bursa',aciklama:'65.000 km de Ford Focus ST Line. Hasar kaydı yok.',created_at:new Date(Date.now()-864000000).toISOString(),seller_name:'Hakan O.'},
+];
+
+async function loadListings() {
+  renderSkeletons();
+  renderTitle();
+  try {
+    let q = sb.from('urunler').select('*',{count:'exact'});
+    if(S.cat) q=q.eq('kategori',S.cat);
+    if(S.sub) q=q.eq('alt_kategori',S.sub);
+    if(S.brand) q=q.or(`isim.ilike.%${S.brand}%,aciklama.ilike.%${S.brand}%`);
+    if(S.search) q=q.or(`isim.ilike.%${S.search}%,aciklama.ilike.%${S.search}%`);
+    if(S.priceMin!=null) q=q.gte('fiyat',S.priceMin);
+    if(S.priceMax!=null) q=q.lte('fiyat',S.priceMax);
+    if(S.conds.length) q=q.in('durum',S.conds);
+    const sc={newest:{col:'created_at',asc:false},price_asc:{col:'fiyat',asc:true},price_desc:{col:'fiyat',asc:false}};
+    const sort=sc[S.sort]||sc.newest;
+    q=q.order(sort.col,{ascending:sort.asc});
+    const from=(S.page-1)*S.per;
+    q=q.range(from,from+S.per-1);
+    const{data,error,count}=await q;
+    if(error) throw error;
+    items=data||[];
+    S.total=count||0;
+    if(items.length===0 && !S.cat && !S.sub && !S.brand && !S.search) {
+      items=DEMO_ITEMS; S.total=DEMO_ITEMS.length;
+    }
+    renderList(); renderPagination(); renderCount();
+  } catch(err) {
+    console.warn('Supabase err:',err);
+    let demo=DEMO_ITEMS;
+    if(S.cat) demo=demo.filter(d=>d.kategori===S.cat);
+    if(S.sub) demo=demo.filter(d=>d.alt_kategori===S.sub);
+    items=demo; S.total=demo.length;
+    renderList(); renderPagination(); renderCount();
+  }
+}
+
+function renderSkeletons() {
+  const el=document.getElementById('listingList');
+  el.innerHTML=Array(5).fill('').map(()=>`
+    <div class="llc-skeleton">
+      <div class="skel" style="width:180px;height:140px"></div>
+      <div style="padding:14px;flex:1">
+        <div class="skel" style="height:10px;width:30%;margin-bottom:10px;border-radius:4px"></div>
+        <div class="skel" style="height:16px;width:80%;margin-bottom:8px;border-radius:4px"></div>
+        <div class="skel" style="height:12px;width:60%;margin-bottom:16px;border-radius:4px"></div>
+        <div class="skel" style="height:20px;width:25%;border-radius:4px"></div>
+      </div>
+    </div>`).join('');
+}
+
+function renderList() {
+  const el=document.getElementById('listingList');
+  if(!items.length) {
+    el.innerHTML=`<div style="text-align:center;padding:60px 20px;background:white;border-radius:12px;border:1px solid var(--border)">
+      <div style="font-size:3rem;margin-bottom:12px">📭</div>
+      <h3 style="font-size:18px;font-weight:800;color:var(--text);margin-bottom:8px">İlan bulunamadı</h3>
+      <p style="color:var(--text3)">Farklı kategori veya filtre deneyin</p>
+    </div>`;
+    return;
+  }
+  const condMap={'ikinci-el':['used-badge','İkinci El'],'sifir':['new-badge','Sıfır'],'yeniye-yakin':['used-badge','Yeniye Yakın'],'satilik':['new-badge','Satılık'],'kiralik':['used-badge','Kiralık']};
+  const favs=new Set(JSON.parse(localStorage.getItem('pm_favs')||'[]'));
+  el.innerHTML=items.map(it=>{
+    const[bc,bl]=condMap[it.durum]||['used-badge','İkinci El'];
+    const fav=favs.has(String(it.id));
+    const imgSrc=it.resim_url||`https://picsum.photos/seed/${String(it.id).replace(/\D/g,'')}/600/400`;
+    const desc=(it.aciklama||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    return `<div class="listing-list-card">
+      <a href="listing.html?id=${it.id}">
+        <img class="llc-img" src="${imgSrc}" alt="${it.isim||''}" loading="lazy" onerror="this.src='https://picsum.photos/seed/default/600/400'">
+      </a>
+      <div class="llc-body">
+        <div>
+          <div class="llc-top">
+            <span><span class="llc-badge ${bc}">${bl}</span> <span class="llc-for-sale">Satışta</span></span>
+            <button class="llc-fav" onclick="toggleFav('${it.id}',this)">${fav?'❤️':'🤍'}</button>
+          </div>
+          <a class="llc-title" href="listing.html?id=${it.id}">${it.isim||'İlan'}</a>
+          <div class="llc-desc">${desc||'Açıklama yok.'}</div>
+        </div>
+        <div class="llc-bottom">
+          <div class="llc-price">${fmt(it.fiyat)}</div>
+          <div class="llc-meta">
+            ${it.konum?`<span class="llc-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${it.konum}</span>`:''}
+            <span class="llc-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${ago(it.created_at)}</span>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderPagination() {
+  const pages=Math.ceil(S.total/S.per);
+  const el=document.getElementById('pagination');
+  if(pages<=1){el.innerHTML='';return;}
+  let h=`<button class="page-btn" ${S.page===1?'disabled':''} onclick="gotoPage(${S.page-1})">← Önceki</button>`;
+  for(let i=1;i<=pages;i++){
+    if(i===1||i===pages||Math.abs(i-S.page)<=1) h+=`<button class="page-btn${i===S.page?' active':''}" onclick="gotoPage(${i})">${i}</button>`;
+    else if(Math.abs(i-S.page)===2) h+=`<span style="padding:0 6px;color:var(--text3)">…</span>`;
+  }
+  h+=`<button class="page-btn" ${S.page===pages?'disabled':''} onclick="gotoPage(${S.page+1})">Sonraki →</button>`;
+  el.innerHTML=h;
+}
+
+function renderCount() {
+  const from=(S.page-1)*S.per+1,to=Math.min(S.page*S.per,S.total);
+  const el=document.getElementById('pageCount');
+  const cat=CAT_DATA[S.cat];
+  const sub=cat?.subs.find(s=>s.v===S.sub);
+  const ctx=sub?.l||(cat?`${cat.label} kategorisinde`:'Tüm ilanlar');
+  el.textContent=S.total>0?`${ctx} — ${from}–${to} / toplam ${S.total} ilan`:`${ctx} — ilan bulunamadı`;
+}
+
+// ── FAVORITES ──
+window.toggleFav=(id,btn)=>{
+  let favs=JSON.parse(localStorage.getItem('pm_favs')||'[]');const sid=String(id);
+  if(favs.includes(sid)){favs=favs.filter(f=>f!==sid);btn.textContent='🤍';toast('Favorilerden çıkarıldı','info');}
+  else{favs.push(sid);btn.textContent='❤️';toast('Favorilere eklendi ❤️');}
+  localStorage.setItem('pm_favs',JSON.stringify(favs));
+};
+
+// ── MOBILE FILTER ──
+window.openMobFilter=()=>{
+  document.getElementById('mobFilterPanel').classList.add('open');
+  document.getElementById('mobFilterOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+};
+window.closeMobFilter=()=>{
+  document.getElementById('mobFilterPanel').classList.remove('open');
+  document.getElementById('mobFilterOverlay').classList.remove('open');
+  document.body.style.overflow='';
+};
+
+// ── INIT ──
+buildSidebar(document.getElementById('desktopSidebar'));
+buildSidebar(document.getElementById('mobSidebarContent'));
+renderBreadcrumb();
+renderPills();
+loadListings();
+})();
+</script>
+</body>
+</html>

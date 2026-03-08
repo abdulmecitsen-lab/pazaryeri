@@ -1,13 +1,5 @@
 /*
  * PAZARYERI - Supabase Configuration
- * 
- * ⚠️  SUPABASE BİLGİLERİNİZİ BURAYA GİRİN:
- *     Dashboard → Settings → API
- *     - Project URL: https://xxxx.supabase.co
- *     - anon/public key: eyJ... ile başlayan uzun key
- *
- * Tablo yapısı:
- *   urunler: id, isim, kategori, alt_kategori, fiyat, durum, konum, aciklama, resim_url, telefon, user_id, created_at
- *   mesajlar: id, gonderen_id, alici_id, ilan_id, icerik, okundu, created_at
- *   (Supabase Auth users tablosu otomatik gelir)
  */
+const SUPABASE_URL = 'https://sbubvjeguxuqgiklrajk.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNidWJ2amVndXh1cWdpa2xyYWprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIzOTQxNTIsImV4cCI6MjA4Nzk3MDE1Mn0.dVwPmfxu2B0o9M-lMr5_k_Qy3YPDfiuk-TX2emDk9SQ';

@@ -68,19 +68,22 @@
 
     <div class="cat-nav-item cat-has-sub" onclick="filterCat('vasita');setActiveCatNav(this)">
       Vasıta <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10"><polyline points="6 9 12 15 18 9"/></svg>
-      <div class="cat-sub-menu">
+      <div class="cat-sub-menu csm-wide">
         <div class="csm-inner">
           <div class="csm-col">
             <div class="csm-title">Vasıta Türü</div>
             <a onclick="filterCat('vasita')">Tüm Vasıta</a>
             <a onclick="filterCat2('vasita','otomobil')">Otomobil</a>
-            <a onclick="filterCat2('vasita','motosiklet')">Motosiklet</a>
-            <a onclick="filterCat2('vasita','ticari')">Ticari Araç</a>
             <a onclick="filterCat2('vasita','suv')">SUV & 4x4</a>
+            <a onclick="filterCat2('vasita','ticari')">Ticari Araç</a>
+            <a onclick="filterCat2('vasita','motosiklet')">Motosiklet</a>
+            <a onclick="filterCat2('vasita','elektrikli')">Elektrikli Araç</a>
+            <a onclick="filterCat2('vasita','caravan')">Karavan</a>
             <a onclick="filterCat2('vasita','klasik')">Klasik Araç</a>
+            <a onclick="filterCat2('vasita','tekne')">Tekne & Deniz</a>
           </div>
           <div class="csm-col">
-            <div class="csm-title">Popüler Markalar</div>
+            <div class="csm-title">Otomobil Markaları</div>
             <a onclick="filterBrand('BMW')">BMW</a>
             <a onclick="filterBrand('Mercedes')">Mercedes-Benz</a>
             <a onclick="filterBrand('Toyota')">Toyota</a>
@@ -89,6 +92,24 @@
             <a onclick="filterBrand('Fiat')">Fiat</a>
             <a onclick="filterBrand('Ford')">Ford</a>
             <a onclick="filterBrand('Honda')">Honda</a>
+            <a onclick="filterBrand('Hyundai')">Hyundai</a>
+            <a onclick="filterBrand('Kia')">Kia</a>
+            <a onclick="filterBrand('Peugeot')">Peugeot</a>
+            <a onclick="filterBrand('Audi')">Audi</a>
+          </div>
+          <div class="csm-col">
+            <div class="csm-title">Motosiklet Markaları</div>
+            <a onclick="filterBrand('Honda')">Honda</a>
+            <a onclick="filterBrand('Yamaha')">Yamaha</a>
+            <a onclick="filterBrand('Kawasaki')">Kawasaki</a>
+            <a onclick="filterBrand('Suzuki')">Suzuki</a>
+            <a onclick="filterBrand('BMW Motorrad')">BMW Motorrad</a>
+            <a onclick="filterBrand('Ducati')">Ducati</a>
+            <div class="csm-title" style="margin-top:14px">Motosiklet Türü</div>
+            <a onclick="filterCat2('vasita','motosiklet-sport')">Sport</a>
+            <a onclick="filterCat2('vasita','motosiklet-naked')">Naked</a>
+            <a onclick="filterCat2('vasita','motosiklet-enduro')">Enduro & Cross</a>
+            <a onclick="filterCat2('vasita','motosiklet-scooter')">Scooter</a>
           </div>
         </div>
       </div>
@@ -96,22 +117,40 @@
 
     <div class="cat-nav-item cat-has-sub" onclick="filterCat('emlak');setActiveCatNav(this)">
       Emlak <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10"><polyline points="6 9 12 15 18 9"/></svg>
-      <div class="cat-sub-menu">
+      <div class="cat-sub-menu csm-wide">
         <div class="csm-inner">
+          <div class="csm-col">
+            <div class="csm-title">Konut</div>
+            <a onclick="filterCat('emlak')">Tüm Emlak</a>
+            <a onclick="filterCat2('emlak','daire')">Daire</a>
+            <a onclick="filterCat2('emlak','villa')">Villa & Müstakil</a>
+            <a onclick="filterCat2('emlak','residence')">Residence</a>
+            <a onclick="filterCat2('emlak','bina')">Bina</a>
+            <a onclick="filterCat2('emlak','prefabrik')">Prefabrik Ev</a>
+          </div>
           <div class="csm-col">
             <div class="csm-title">İşlem Türü</div>
             <a onclick="filterCat2('emlak','satilik')">Satılık</a>
             <a onclick="filterCat2('emlak','kiralik')">Kiralık</a>
             <a onclick="filterCat2('emlak','gunluk')">Günlük Kiralık</a>
             <a onclick="filterCat2('emlak','devren')">Devren</a>
+            <div class="csm-title" style="margin-top:14px">Arazi</div>
+            <a onclick="filterCat2('emlak','arsa')">Arsa</a>
+            <a onclick="filterCat2('emlak','tarla')">Tarla & Bağ</a>
           </div>
           <div class="csm-col">
-            <div class="csm-title">Emlak Türü</div>
-            <a onclick="filterCat2('emlak','daire')">Daire</a>
-            <a onclick="filterCat2('emlak','villa')">Villa & Müstakil</a>
-            <a onclick="filterCat2('emlak','arsa')">Arsa & Tarla</a>
+            <div class="csm-title">Ticari</div>
             <a onclick="filterCat2('emlak','isyeri')">İşyeri & Ofis</a>
+            <a onclick="filterCat2('emlak','dukkan')">Dükkan & Mağaza</a>
             <a onclick="filterCat2('emlak','depo')">Depo & Antrepo</a>
+            <a onclick="filterCat2('emlak','fabrika')">Fabrika & Atölye</a>
+            <a onclick="filterCat2('emlak','otel')">Otel & Pansiyon</a>
+            <div class="csm-title" style="margin-top:14px">Oda Sayısı</div>
+            <a onclick="filterCat2('emlak','studio')">Stüdyo</a>
+            <a onclick="filterCat2('emlak','1+1')">1+1</a>
+            <a onclick="filterCat2('emlak','2+1')">2+1</a>
+            <a onclick="filterCat2('emlak','3+1')">3+1</a>
+            <a onclick="filterCat2('emlak','4+1-ustu')">4+1 ve üstü</a>
           </div>
         </div>
       </div>
@@ -119,26 +158,49 @@
 
     <div class="cat-nav-item cat-has-sub" onclick="filterCat('elektronik');setActiveCatNav(this)">
       Elektronik <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10"><polyline points="6 9 12 15 18 9"/></svg>
-      <div class="cat-sub-menu">
+      <div class="cat-sub-menu csm-wide">
         <div class="csm-inner">
           <div class="csm-col">
             <div class="csm-title">Kategoriler</div>
+            <a onclick="filterCat('elektronik')">Tüm Elektronik</a>
             <a onclick="filterCat2('elektronik','telefon')">Telefon & Aksesuar</a>
             <a onclick="filterCat2('elektronik','bilgisayar')">Bilgisayar & Laptop</a>
+            <a onclick="filterCat2('elektronik','tablet')">Tablet</a>
             <a onclick="filterCat2('elektronik','tv')">TV & Görüntü Sistemleri</a>
             <a onclick="filterCat2('elektronik','oyun')">Oyun & Konsol</a>
             <a onclick="filterCat2('elektronik','fotograf')">Fotoğraf & Kamera</a>
             <a onclick="filterCat2('elektronik','ses')">Ses Sistemleri</a>
+            <a onclick="filterCat2('elektronik','giyilebilir')">Akıllı Saat & Giyilebilir</a>
+            <a onclick="filterCat2('elektronik','beyaz-esya')">Küçük Ev Aletleri</a>
           </div>
           <div class="csm-col">
-            <div class="csm-title">Markalar</div>
-            <a onclick="filterBrand('Apple')">Apple</a>
+            <div class="csm-title">Telefon Markaları</div>
+            <a onclick="filterBrand('Apple')">Apple (iPhone)</a>
             <a onclick="filterBrand('Samsung')">Samsung</a>
             <a onclick="filterBrand('Xiaomi')">Xiaomi</a>
-            <a onclick="filterBrand('Sony')">Sony</a>
+            <a onclick="filterBrand('Huawei')">Huawei</a>
+            <a onclick="filterBrand('Oppo')">Oppo</a>
+            <a onclick="filterBrand('OnePlus')">OnePlus</a>
+            <a onclick="filterBrand('Realme')">Realme</a>
+            <div class="csm-title" style="margin-top:14px">iPhone Modelleri</div>
+            <a onclick="filterCat2('elektronik','iphone-16')">iPhone 16 Serisi</a>
+            <a onclick="filterCat2('elektronik','iphone-15')">iPhone 15 Serisi</a>
+            <a onclick="filterCat2('elektronik','iphone-14')">iPhone 14 Serisi</a>
+            <a onclick="filterCat2('elektronik','iphone-13')">iPhone 13 Serisi</a>
+          </div>
+          <div class="csm-col">
+            <div class="csm-title">Bilgisayar Markaları</div>
+            <a onclick="filterBrand('Apple')">Apple (Mac)</a>
             <a onclick="filterBrand('Asus')">Asus</a>
             <a onclick="filterBrand('Lenovo')">Lenovo</a>
-            <a onclick="filterBrand('Huawei')">Huawei</a>
+            <a onclick="filterBrand('Dell')">Dell</a>
+            <a onclick="filterBrand('HP')">HP</a>
+            <a onclick="filterBrand('MSI')">MSI</a>
+            <div class="csm-title" style="margin-top:14px">Oyun Konsolu</div>
+            <a onclick="filterCat2('elektronik','ps5')">PlayStation 5</a>
+            <a onclick="filterCat2('elektronik','ps4')">PlayStation 4</a>
+            <a onclick="filterCat2('elektronik','xbox-series')">Xbox Series</a>
+            <a onclick="filterCat2('elektronik','nintendo-switch')">Nintendo Switch</a>
           </div>
         </div>
       </div>
@@ -146,20 +208,33 @@
 
     <div class="cat-nav-item cat-has-sub" onclick="filterCat('ev-yasam');setActiveCatNav(this)">
       Ev & Yaşam <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10"><polyline points="6 9 12 15 18 9"/></svg>
-      <div class="cat-sub-menu">
+      <div class="cat-sub-menu csm-wide">
         <div class="csm-inner">
           <div class="csm-col">
-            <div class="csm-title">Ev & Mobilya</div>
-            <a onclick="filterCat2('ev-yasam','mobilya')">Mobilya</a>
-            <a onclick="filterCat2('ev-yasam','mutfak')">Mutfak & Ev Aletleri</a>
-            <a onclick="filterCat2('ev-yasam','dekorasyon')">Dekorasyon</a>
-            <a onclick="filterCat2('ev-yasam','bahce')">Bahçe & Balkon</a>
+            <div class="csm-title">Mobilya</div>
+            <a onclick="filterCat('ev-yasam')">Tüm Ev & Yaşam</a>
+            <a onclick="filterCat2('ev-yasam','koltuk')">Koltuk & Kanepe</a>
+            <a onclick="filterCat2('ev-yasam','yatak-odasi')">Yatak Odası</a>
+            <a onclick="filterCat2('ev-yasam','masa-sandalye')">Masa & Sandalye</a>
+            <a onclick="filterCat2('ev-yasam','raf-dolap')">Raf & Dolap</a>
+            <a onclick="filterCat2('ev-yasam','bahce-mobilya')">Bahçe Mobilyası</a>
           </div>
           <div class="csm-col">
-            <div class="csm-title">Diğer</div>
+            <div class="csm-title">Ev Aletleri</div>
+            <a onclick="filterCat2('ev-yasam','buzdolabi')">Buzdolabı</a>
+            <a onclick="filterCat2('ev-yasam','camasir-makinesi')">Çamaşır Makinesi</a>
+            <a onclick="filterCat2('ev-yasam','bulasik-makinesi')">Bulaşık Makinesi</a>
+            <a onclick="filterCat2('ev-yasam','firin-ocak')">Fırın & Ocak</a>
+            <a onclick="filterCat2('ev-yasam','klima')">Klima</a>
+            <a onclick="filterCat2('ev-yasam','elektrikli-supurge')">Elektrikli Süpürge</a>
+          </div>
+          <div class="csm-col">
+            <div class="csm-title">Dekorasyon & Diğer</div>
+            <a onclick="filterCat2('ev-yasam','dekorasyon')">Dekorasyon</a>
             <a onclick="filterCat2('ev-yasam','aydinlatma')">Aydınlatma</a>
             <a onclick="filterCat2('ev-yasam','tekstil')">Ev Tekstili</a>
-            <a onclick="filterCat2('ev-yasam','banyo')">Banyo & Tuvalet</a>
+            <a onclick="filterCat2('ev-yasam','mutfak-gerec')">Mutfak Gereçleri</a>
+            <a onclick="filterCat2('ev-yasam','bahce')">Bahçe & Bitki</a>
             <a onclick="filterCat2('ev-yasam','guvenlik')">Güvenlik Sistemleri</a>
           </div>
         </div>
@@ -168,21 +243,38 @@
 
     <div class="cat-nav-item cat-has-sub" onclick="filterCat('giyim');setActiveCatNav(this)">
       Giyim & Moda <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10"><polyline points="6 9 12 15 18 9"/></svg>
-      <div class="cat-sub-menu">
+      <div class="cat-sub-menu csm-wide">
         <div class="csm-inner">
           <div class="csm-col">
-            <div class="csm-title">Giyim</div>
-            <a onclick="filterCat2('giyim','kadin')">Kadın Giyim</a>
-            <a onclick="filterCat2('giyim','erkek')">Erkek Giyim</a>
-            <a onclick="filterCat2('giyim','cocuk')">Çocuk Giyim</a>
-            <a onclick="filterCat2('giyim','spor')">Spor Giyim</a>
+            <div class="csm-title">Kadın</div>
+            <a onclick="filterCat2('giyim','kadin-ust')">Üst Giyim</a>
+            <a onclick="filterCat2('giyim','kadin-alt')">Alt Giyim</a>
+            <a onclick="filterCat2('giyim','kadin-dis')">Dış Giyim</a>
+            <a onclick="filterCat2('giyim','kadin-elbise')">Elbise & Tulum</a>
+            <a onclick="filterCat2('giyim','kadin-ic')">İç Çamaşırı</a>
+            <a onclick="filterCat2('giyim','kadin-spor')">Spor Giyim</a>
+          </div>
+          <div class="csm-col">
+            <div class="csm-title">Erkek</div>
+            <a onclick="filterCat2('giyim','erkek-ust')">Üst Giyim</a>
+            <a onclick="filterCat2('giyim','erkek-alt')">Alt Giyim</a>
+            <a onclick="filterCat2('giyim','erkek-dis')">Dış Giyim</a>
+            <a onclick="filterCat2('giyim','erkek-takim')">Takım Elbise</a>
+            <a onclick="filterCat2('giyim','erkek-spor')">Spor Giyim</a>
+            <div class="csm-title" style="margin-top:14px">Çocuk</div>
+            <a onclick="filterCat2('giyim','cocuk-kiz')">Kız Çocuk</a>
+            <a onclick="filterCat2('giyim','cocuk-erkek')">Erkek Çocuk</a>
           </div>
           <div class="csm-col">
             <div class="csm-title">Aksesuar</div>
-            <a onclick="filterCat2('giyim','ayakkabi')">Ayakkabı & Çizme</a>
+            <a onclick="filterCat2('giyim','kadin-ayakkabi')">Kadın Ayakkabı</a>
+            <a onclick="filterCat2('giyim','erkek-ayakkabi')">Erkek Ayakkabı</a>
+            <a onclick="filterCat2('giyim','spor-ayakkabi')">Spor Ayakkabı</a>
             <a onclick="filterCat2('giyim','canta')">Çanta & Cüzdan</a>
-            <a onclick="filterCat2('giyim','saat')">Saat & Mücevher</a>
-            <a onclick="filterCat2('giyim','gozluk')">Gözlük & Güneş</a>
+            <a onclick="filterCat2('giyim','saat')">Saat</a>
+            <a onclick="filterCat2('giyim','mucevher')">Mücevher & Takı</a>
+            <a onclick="filterCat2('giyim','gozluk')">Gözlük</a>
+            <a onclick="filterCat2('giyim','sapka')">Şapka & Bere</a>
           </div>
         </div>
       </div>
@@ -190,21 +282,40 @@
 
     <div class="cat-nav-item cat-has-sub" onclick="filterCat('spor');setActiveCatNav(this)">
       Spor & Hobi <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10"><polyline points="6 9 12 15 18 9"/></svg>
-      <div class="cat-sub-menu">
+      <div class="cat-sub-menu csm-wide">
         <div class="csm-inner">
           <div class="csm-col">
             <div class="csm-title">Spor</div>
+            <a onclick="filterCat('spor')">Tüm Spor & Hobi</a>
             <a onclick="filterCat2('spor','fitness')">Fitness & Spor Aleti</a>
             <a onclick="filterCat2('spor','bisiklet')">Bisiklet</a>
             <a onclick="filterCat2('spor','outdoor')">Outdoor & Kamp</a>
             <a onclick="filterCat2('spor','su-sporlari')">Su Sporları</a>
+            <a onclick="filterCat2('spor','futbol')">Futbol</a>
+            <a onclick="filterCat2('spor','tenis')">Tenis & Padel</a>
+            <a onclick="filterCat2('spor','kayak')">Kayak & Kış Sporları</a>
           </div>
           <div class="csm-col">
             <div class="csm-title">Hobi</div>
             <a onclick="filterCat2('hobi','muzik')">Müzik Aletleri</a>
+            <a onclick="filterCat2('hobi','gitar')">Gitar & Bas</a>
+            <a onclick="filterCat2('hobi','klavye')">Klavye & Piyano</a>
             <a onclick="filterCat2('hobi','koleksiyon')">Koleksiyon & Antika</a>
             <a onclick="filterCat2('hobi','sanat')">Sanat & El İşi</a>
-            <a onclick="filterCat2('hobi','oyuncak')">Oyuncak & Oyun</a>
+            <a onclick="filterCat2('hobi','bahce-hobi')">Bahçe & Bitki</a>
+            <a onclick="filterCat2('hobi','model-kit')">Model & Maket</a>
+          </div>
+          <div class="csm-col">
+            <div class="csm-title">Bisiklet Türü</div>
+            <a onclick="filterCat2('spor','bisiklet-dag')">Dağ Bisikleti</a>
+            <a onclick="filterCat2('spor','bisiklet-yol')">Yol Bisikleti</a>
+            <a onclick="filterCat2('spor','bisiklet-sehir')">Şehir Bisikleti</a>
+            <a onclick="filterCat2('spor','bisiklet-elektrikli')">Elektrikli Bisiklet</a>
+            <a onclick="filterCat2('spor','bisiklet-cocuk')">Çocuk Bisikleti</a>
+            <div class="csm-title" style="margin-top:14px">Oyun & Eğlence</div>
+            <a onclick="filterCat2('hobi','oyuncak')">Oyuncak</a>
+            <a onclick="filterCat2('hobi','board-game')">Kutu Oyunu</a>
+            <a onclick="filterCat2('hobi','puzzle')">Puzzle</a>
           </div>
         </div>
       </div>
@@ -212,22 +323,51 @@
 
     <div class="cat-nav-item cat-has-sub">
       Daha Fazla <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10"><polyline points="6 9 12 15 18 9"/></svg>
-      <div class="cat-sub-menu csm-right">
+      <div class="cat-sub-menu csm-right csm-wide">
         <div class="csm-inner">
           <div class="csm-col">
-            <div class="csm-title">Kategoriler</div>
-            <a onclick="filterCat('bebek')">Bebek & Çocuk</a>
-            <a onclick="filterCat('kitap')">Kitap, Müzik & Film</a>
-            <a onclick="filterCat('hayvan')">Hayvanlar & Evcil</a>
-            <a onclick="filterCat('antika')">Antika & Koleksiyon</a>
-            <a onclick="filterCat('is-ilani')">İş İlanları</a>
+            <div class="csm-title">Bebek & Çocuk</div>
+            <a onclick="filterCat('bebek')">Tüm Bebek & Çocuk</a>
+            <a onclick="filterCat2('bebek','bebek-araba')">Bebek Arabası & Koltuk</a>
+            <a onclick="filterCat2('bebek','bebek-kiyafet')">Bebek Kıyafeti</a>
+            <a onclick="filterCat2('bebek','bebek-odasi')">Bebek Odası</a>
+            <a onclick="filterCat2('bebek','oyuncak')">Oyuncak</a>
+            <a onclick="filterCat2('bebek','cocuk-kiyafet')">Çocuk Kıyafeti</a>
+            <div class="csm-title" style="margin-top:14px">Kitap, Film & Müzik</div>
+            <a onclick="filterCat('kitap')">Tüm Kitap & Medya</a>
+            <a onclick="filterCat2('kitap','roman')">Roman & Hikaye</a>
+            <a onclick="filterCat2('kitap','ders-kitabi')">Ders Kitabı</a>
+            <a onclick="filterCat2('kitap','cd-dvd')">CD & DVD</a>
+            <a onclick="filterCat2('kitap','dergi')">Dergi & Gazete</a>
           </div>
           <div class="csm-col">
-            <div class="csm-title">Hizmetler</div>
+            <div class="csm-title">Hayvanlar & Evcil</div>
+            <a onclick="filterCat('hayvan')">Tüm Hayvanlar</a>
+            <a onclick="filterCat2('hayvan','kopek')">Köpek</a>
+            <a onclick="filterCat2('hayvan','kedi')">Kedi</a>
+            <a onclick="filterCat2('hayvan','kus')">Kuş</a>
+            <a onclick="filterCat2('hayvan','balik')">Balık & Akvaryum</a>
+            <a onclick="filterCat2('hayvan','evcil-malzeme')">Evcil Hayvan Malzemesi</a>
+            <div class="csm-title" style="margin-top:14px">Antika & Koleksiyon</div>
+            <a onclick="filterCat('antika')">Tüm Antika</a>
+            <a onclick="filterCat2('antika','mobilya-antika')">Antika Mobilya</a>
+            <a onclick="filterCat2('antika','sikke')">Sikke & Para</a>
+            <a onclick="filterCat2('antika','pul')">Pul Koleksiyonu</a>
+            <a onclick="filterCat2('antika','porselenler')">Porselen & Kristal</a>
+          </div>
+          <div class="csm-col">
+            <div class="csm-title">İş İlanları & Hizmetler</div>
+            <a onclick="filterCat('is-ilani')">Tüm İş İlanları</a>
+            <a onclick="filterCat2('is-ilani','tam-zamanli')">Tam Zamanlı</a>
+            <a onclick="filterCat2('is-ilani','yari-zamanli')">Yarı Zamanlı</a>
+            <a onclick="filterCat2('is-ilani','freelance')">Freelance & Uzaktan</a>
+            <a onclick="filterCat2('is-ilani','staj')">Staj</a>
+            <div class="csm-title" style="margin-top:14px">Hizmetler</div>
             <a onclick="filterCat2('hizmet','tamirat')">Tamirat & Bakım</a>
             <a onclick="filterCat2('hizmet','egitim')">Eğitim & Ders</a>
             <a onclick="filterCat2('hizmet','nakliye')">Nakliye & Taşıma</a>
             <a onclick="filterCat2('hizmet','temizlik')">Temizlik Hizmetleri</a>
+            <a onclick="filterCat2('hizmet','saglik')">Sağlık & Güzellik</a>
           </div>
         </div>
       </div>
@@ -345,40 +485,60 @@
 <div class="mobile-drawer-overlay" id="mobileOverlay" onclick="toggleMobile()"></div>
 <div class="mobile-drawer" id="mobileDrawer">
   <!-- Turuncu header -->
-  <div class="mob-drawer-top">
-    <span class="mob-drawer-logo">Pazar<span>yeri</span></span>
+  <div class="mob-drawer-top" id="mobDrawerTop">
+    <button class="mob-back-btn" id="mobBackBtn" onclick="closeMobSub()" style="display:none;background:none;border:none;cursor:pointer;padding:4px 8px 4px 0;color:white">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <span class="mob-drawer-logo" id="mobDrawerTitle">Pazar<span>yeri</span></span>
     <button class="mob-drawer-x" onclick="toggleMobile()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
   </div>
-  <!-- Kategori listesi -->
-  <div class="mob-drawer-body">
+
+  <!-- Ana Menü -->
+  <div class="mob-drawer-body" id="mobMainMenu">
     <a onclick="filterCat('');toggleMobile()" class="mob-drawer-row">
       <span class="mob-drawer-icon">🛒</span><span class="mob-drawer-label">Tüm İlanlar</span>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="9 18 15 12 9 6"/></svg>
     </a>
-    <a onclick="filterCat('vasita');toggleMobile()" class="mob-drawer-row">
+    <a onclick="openMobSub('vasita','🚗 Vasıta')" class="mob-drawer-row">
       <span class="mob-drawer-icon">🚗</span><span class="mob-drawer-label">Vasıta</span>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="9 18 15 12 9 6"/></svg>
     </a>
-    <a onclick="filterCat('emlak');toggleMobile()" class="mob-drawer-row">
+    <a onclick="openMobSub('emlak','🏠 Emlak')" class="mob-drawer-row">
       <span class="mob-drawer-icon">🏠</span><span class="mob-drawer-label">Emlak</span>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="9 18 15 12 9 6"/></svg>
     </a>
-    <a onclick="filterCat('elektronik');toggleMobile()" class="mob-drawer-row">
+    <a onclick="openMobSub('elektronik','📱 Elektronik')" class="mob-drawer-row">
       <span class="mob-drawer-icon">📱</span><span class="mob-drawer-label">Elektronik</span>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="9 18 15 12 9 6"/></svg>
     </a>
-    <a onclick="filterCat('ev-yasam');toggleMobile()" class="mob-drawer-row">
+    <a onclick="openMobSub('ev-yasam','🏡 Ev & Yaşam')" class="mob-drawer-row">
       <span class="mob-drawer-icon">🏡</span><span class="mob-drawer-label">Ev & Yaşam</span>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="9 18 15 12 9 6"/></svg>
     </a>
-    <a onclick="filterCat('giyim');toggleMobile()" class="mob-drawer-row">
+    <a onclick="openMobSub('giyim','👗 Giyim & Moda')" class="mob-drawer-row">
       <span class="mob-drawer-icon">👗</span><span class="mob-drawer-label">Giyim & Moda</span>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="9 18 15 12 9 6"/></svg>
     </a>
-    <a onclick="filterCat('spor');toggleMobile()" class="mob-drawer-row">
+    <a onclick="openMobSub('spor','⚽ Spor & Hobi')" class="mob-drawer-row">
       <span class="mob-drawer-icon">⚽</span><span class="mob-drawer-label">Spor & Hobi</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+    <a onclick="openMobSub('bebek','👶 Bebek & Çocuk')" class="mob-drawer-row">
+      <span class="mob-drawer-icon">👶</span><span class="mob-drawer-label">Bebek & Çocuk</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+    <a onclick="openMobSub('kitap','📚 Kitap & Medya')" class="mob-drawer-row">
+      <span class="mob-drawer-icon">📚</span><span class="mob-drawer-label">Kitap, Film & Müzik</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+    <a onclick="openMobSub('hayvan','🐾 Hayvanlar')" class="mob-drawer-row">
+      <span class="mob-drawer-icon">🐾</span><span class="mob-drawer-label">Hayvanlar & Evcil</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+    <a onclick="openMobSub('is-ilani','💼 İş & Hizmet')" class="mob-drawer-row">
+      <span class="mob-drawer-icon">💼</span><span class="mob-drawer-label">İş İlanları & Hizmetler</span>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="9 18 15 12 9 6"/></svg>
     </a>
     <div class="mob-drawer-sep"></div>
@@ -391,6 +551,10 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="9 18 15 12 9 6"/></svg>
     </a>
   </div>
+
+  <!-- Alt Kategori Paneli -->
+  <div class="mob-drawer-body" id="mobSubMenu" style="display:none"></div>
+
   <!-- Alt butonlar -->
   <div class="mob-drawer-footer" id="mobileAuthBtns">
     <button onclick="openAddListing();toggleMobile()" class="mob-drawer-cta">İlan Ver</button>
@@ -453,12 +617,15 @@
             <option value="emlak">🏠 Emlak</option>
             <option value="elektronik">📱 Elektronik</option>
             <option value="ev-yasam">🏡 Ev & Yaşam</option>
-            <option value="giyim">👗 Giyim</option>
+            <option value="giyim">👗 Giyim & Moda</option>
             <option value="spor">⚽ Spor</option>
             <option value="hobi">🎨 Hobi</option>
-            <option value="bebek">👶 Bebek</option>
-            <option value="kitap">📚 Kitap</option>
+            <option value="bebek">👶 Bebek & Çocuk</option>
+            <option value="kitap">📚 Kitap & Medya</option>
+            <option value="hayvan">🐾 Hayvanlar & Evcil</option>
+            <option value="antika">🏺 Antika & Koleksiyon</option>
             <option value="is-ilani">💼 İş İlanı</option>
+            <option value="hizmet">🔧 Hizmet</option>
             <option value="diger">🔖 Diğer</option>
           </select>
         </div>
@@ -700,10 +867,10 @@ function renderMobileAuth() {
   }
 }
 
-// ── FILTERS ──
-window.filterCat   = c => { S.cat=c; S.sub=''; S.brand=''; S.page=1; loadListings(); scrollTo({top:0,behavior:'smooth'}); updateFilterBar(); };
-window.filterCat2  = (c,s) => { S.cat=c; S.sub=s; S.brand=''; S.page=1; loadListings(); scrollTo({top:0,behavior:'smooth'}); updateFilterBar(); };
-window.filterBrand = b => { S.brand=b; S.page=1; loadListings(); scrollTo({top:0,behavior:'smooth'}); updateFilterBar(); };
+// ── FILTERS — navigate to category.html ──
+window.filterCat   = c => { if(!c){S.cat='';S.sub='';S.brand='';S.page=1;loadListings();scrollTo({top:0,behavior:'smooth'});updateFilterBar();return;} window.location.href='category.html?cat='+c; };
+window.filterCat2  = (c,s) => { window.location.href='category.html?cat='+c+'&sub='+s; };
+window.filterBrand = b => { window.location.href='category.html?brand='+encodeURIComponent(b); };
 window.doSearch    = () => {
   const val = document.getElementById('searchInput').value.trim();
   S.search = val;
@@ -725,20 +892,310 @@ window.openAddListing = () => {
 window.setCond = el => { document.querySelectorAll('.cond-btn').forEach(b=>b.classList.remove('active')); el.classList.add('active'); S.cond=el.dataset.cond; };
 
 const SUBS = {
-  vasita: ['otomobil','motosiklet','ticari','caravan','tekne'],
-  emlak:  ['satilik','kiralik','gunluk-kiralik','arsa','isyeri'],
-  elektronik: ['telefon','bilgisayar','tablet','tv','kamera','oyun'],
-  'ev-yasam': ['mobilya','beyaz-esya','mutfak','dekorasyon'],
-  giyim: ['kadin','erkek','cocuk','ayakkabi','canta']
+  vasita: [
+    {v:'otomobil',l:'Otomobil'},{v:'suv',l:'SUV & 4x4'},{v:'ticari',l:'Ticari Araç'},
+    {v:'motosiklet',l:'Motosiklet'},{v:'elektrikli',l:'Elektrikli Araç'},{v:'caravan',l:'Karavan'},
+    {v:'klasik',l:'Klasik Araç'},{v:'tekne',l:'Tekne & Deniz'},
+    {v:'motosiklet-sport',l:'Motosiklet Sport'},{v:'motosiklet-naked',l:'Motosiklet Naked'},
+    {v:'motosiklet-enduro',l:'Enduro & Cross'},{v:'motosiklet-scooter',l:'Scooter'}
+  ],
+  emlak: [
+    {v:'daire',l:'Daire'},{v:'villa',l:'Villa & Müstakil'},{v:'residence',l:'Residence'},
+    {v:'bina',l:'Bina'},{v:'prefabrik',l:'Prefabrik Ev'},
+    {v:'satilik',l:'Satılık'},{v:'kiralik',l:'Kiralık'},{v:'gunluk',l:'Günlük Kiralık'},
+    {v:'devren',l:'Devren'},{v:'arsa',l:'Arsa'},{v:'tarla',l:'Tarla & Bağ'},
+    {v:'isyeri',l:'İşyeri & Ofis'},{v:'dukkan',l:'Dükkan & Mağaza'},{v:'depo',l:'Depo & Antrepo'},
+    {v:'fabrika',l:'Fabrika & Atölye'},{v:'otel',l:'Otel & Pansiyon'},
+    {v:'studio',l:'Stüdyo'},{v:'1+1',l:'1+1'},{v:'2+1',l:'2+1'},{v:'3+1',l:'3+1'},{v:'4+1-ustu',l:'4+1 ve Üstü'}
+  ],
+  elektronik: [
+    {v:'telefon',l:'Telefon & Aksesuar'},{v:'bilgisayar',l:'Bilgisayar & Laptop'},
+    {v:'tablet',l:'Tablet'},{v:'tv',l:'TV & Görüntü Sistemleri'},{v:'oyun',l:'Oyun & Konsol'},
+    {v:'fotograf',l:'Fotoğraf & Kamera'},{v:'ses',l:'Ses Sistemleri'},
+    {v:'giyilebilir',l:'Akıllı Saat & Giyilebilir'},{v:'beyaz-esya',l:'Küçük Ev Aletleri'},
+    {v:'iphone-16',l:'iPhone 16 Serisi'},{v:'iphone-15',l:'iPhone 15 Serisi'},
+    {v:'iphone-14',l:'iPhone 14 Serisi'},{v:'iphone-13',l:'iPhone 13 Serisi'},
+    {v:'ps5',l:'PlayStation 5'},{v:'ps4',l:'PlayStation 4'},
+    {v:'xbox-series',l:'Xbox Series'},{v:'nintendo-switch',l:'Nintendo Switch'}
+  ],
+  'ev-yasam': [
+    {v:'koltuk',l:'Koltuk & Kanepe'},{v:'yatak-odasi',l:'Yatak Odası'},
+    {v:'masa-sandalye',l:'Masa & Sandalye'},{v:'raf-dolap',l:'Raf & Dolap'},
+    {v:'bahce-mobilya',l:'Bahçe Mobilyası'},{v:'buzdolabi',l:'Buzdolabı'},
+    {v:'camasir-makinesi',l:'Çamaşır Makinesi'},{v:'bulasik-makinesi',l:'Bulaşık Makinesi'},
+    {v:'firin-ocak',l:'Fırın & Ocak'},{v:'klima',l:'Klima'},
+    {v:'elektrikli-supurge',l:'Elektrikli Süpürge'},{v:'dekorasyon',l:'Dekorasyon'},
+    {v:'aydinlatma',l:'Aydınlatma'},{v:'tekstil',l:'Ev Tekstili'},
+    {v:'mutfak-gerec',l:'Mutfak Gereçleri'},{v:'bahce',l:'Bahçe & Bitki'},
+    {v:'guvenlik',l:'Güvenlik Sistemleri'}
+  ],
+  giyim: [
+    {v:'kadin-ust',l:'Kadın Üst Giyim'},{v:'kadin-alt',l:'Kadın Alt Giyim'},
+    {v:'kadin-dis',l:'Kadın Dış Giyim'},{v:'kadin-elbise',l:'Elbise & Tulum'},
+    {v:'kadin-ic',l:'Kadın İç Çamaşırı'},{v:'kadin-spor',l:'Kadın Spor Giyim'},
+    {v:'erkek-ust',l:'Erkek Üst Giyim'},{v:'erkek-alt',l:'Erkek Alt Giyim'},
+    {v:'erkek-dis',l:'Erkek Dış Giyim'},{v:'erkek-takim',l:'Takım Elbise'},
+    {v:'erkek-spor',l:'Erkek Spor Giyim'},{v:'cocuk-kiz',l:'Kız Çocuk Giyim'},
+    {v:'cocuk-erkek',l:'Erkek Çocuk Giyim'},{v:'kadin-ayakkabi',l:'Kadın Ayakkabı'},
+    {v:'erkek-ayakkabi',l:'Erkek Ayakkabı'},{v:'spor-ayakkabi',l:'Spor Ayakkabı'},
+    {v:'canta',l:'Çanta & Cüzdan'},{v:'saat',l:'Saat'},{v:'mucevher',l:'Mücevher & Takı'},
+    {v:'gozluk',l:'Gözlük'},{v:'sapka',l:'Şapka & Bere'}
+  ],
+  spor: [
+    {v:'fitness',l:'Fitness & Spor Aleti'},{v:'bisiklet',l:'Bisiklet'},
+    {v:'outdoor',l:'Outdoor & Kamp'},{v:'su-sporlari',l:'Su Sporları'},
+    {v:'futbol',l:'Futbol'},{v:'tenis',l:'Tenis & Padel'},{v:'kayak',l:'Kayak & Kış Sporları'},
+    {v:'bisiklet-dag',l:'Dağ Bisikleti'},{v:'bisiklet-yol',l:'Yol Bisikleti'},
+    {v:'bisiklet-sehir',l:'Şehir Bisikleti'},{v:'bisiklet-elektrikli',l:'Elektrikli Bisiklet'},
+    {v:'bisiklet-cocuk',l:'Çocuk Bisikleti'}
+  ],
+  hobi: [
+    {v:'muzik',l:'Müzik Aletleri'},{v:'gitar',l:'Gitar & Bas'},{v:'klavye',l:'Klavye & Piyano'},
+    {v:'koleksiyon',l:'Koleksiyon & Antika'},{v:'sanat',l:'Sanat & El İşi'},
+    {v:'bahce-hobi',l:'Bahçe & Bitki'},{v:'model-kit',l:'Model & Maket'},
+    {v:'oyuncak',l:'Oyuncak'},{v:'board-game',l:'Kutu Oyunu'},{v:'puzzle',l:'Puzzle'}
+  ],
+  bebek: [
+    {v:'bebek-araba',l:'Bebek Arabası & Koltuk'},{v:'bebek-kiyafet',l:'Bebek Kıyafeti'},
+    {v:'bebek-odasi',l:'Bebek Odası'},{v:'oyuncak',l:'Oyuncak'},
+    {v:'cocuk-kiyafet',l:'Çocuk Kıyafeti'},{v:'cocuk-bisiklet',l:'Çocuk Bisikleti'}
+  ],
+  kitap: [
+    {v:'roman',l:'Roman & Hikaye'},{v:'ders-kitabi',l:'Ders Kitabı'},
+    {v:'cocuk-kitap',l:'Çocuk Kitapları'},{v:'bilim',l:'Bilim & Kişisel Gelişim'},
+    {v:'cd-dvd',l:'CD & DVD'},{v:'dergi',l:'Dergi & Gazete'},{v:'vinyl',l:'Plak & Vinyl'}
+  ],
+  hayvan: [
+    {v:'kopek',l:'Köpek'},{v:'kedi',l:'Kedi'},{v:'kus',l:'Kuş'},
+    {v:'balik',l:'Balık & Akvaryum'},{v:'kemirgen',l:'Kemirgen'},
+    {v:'evcil-malzeme',l:'Evcil Hayvan Malzemesi'},{v:'mama',l:'Mama & Ödül'}
+  ],
+  'is-ilani': [
+    {v:'tam-zamanli',l:'Tam Zamanlı'},{v:'yari-zamanli',l:'Yarı Zamanlı'},
+    {v:'freelance',l:'Freelance & Uzaktan'},{v:'staj',l:'Staj'},
+    {v:'tamirat',l:'Tamirat & Bakım'},{v:'egitim',l:'Eğitim & Ders'},
+    {v:'nakliye',l:'Nakliye & Taşıma'},{v:'temizlik',l:'Temizlik Hizmetleri'},
+    {v:'saglik',l:'Sağlık & Güzellik'}
+  ]
 };
+
+const MOB_SUBS = {
+  vasita: [
+    {cat:'vasita',sub:null,label:'Tüm Vasıta',icon:'🚗'},
+    {cat:'vasita',sub:'otomobil',label:'Otomobil',icon:'🚘',hasChild:true},
+    {cat:'vasita',sub:'suv',label:'SUV & 4x4',icon:'🛻'},
+    {cat:'vasita',sub:'motosiklet',label:'Motosiklet',icon:'🏍️',hasChild:true},
+    {cat:'vasita',sub:'ticari',label:'Ticari Araç',icon:'🚐'},
+    {cat:'vasita',sub:'elektrikli',label:'Elektrikli Araç',icon:'⚡'},
+    {cat:'vasita',sub:'caravan',label:'Karavan',icon:'🚌'},
+    {cat:'vasita',sub:'klasik',label:'Klasik Araç',icon:'🏎️'},
+    {cat:'vasita',sub:'tekne',label:'Tekne & Deniz',icon:'⛵'},
+  ],
+  'vasita-otomobil': [
+    {cat:'vasita',sub:'otomobil',label:'Tüm Otomobil',icon:'🚘'},
+    {brand:'BMW',label:'BMW',icon:'🔵'},{brand:'Mercedes',label:'Mercedes-Benz',icon:'⭐'},
+    {brand:'Toyota',label:'Toyota',icon:'🔴'},{brand:'Renault',label:'Renault',icon:'🔶'},
+    {brand:'Volkswagen',label:'Volkswagen',icon:'🔷'},{brand:'Fiat',label:'Fiat',icon:'🟡'},
+    {brand:'Ford',label:'Ford',icon:'🟦'},{brand:'Honda',label:'Honda',icon:'⚪'},
+    {brand:'Hyundai',label:'Hyundai',icon:'🔵'},{brand:'Kia',label:'Kia',icon:'🔴'},
+    {brand:'Peugeot',label:'Peugeot',icon:'🦁'},{brand:'Audi',label:'Audi',icon:'⭕'},
+  ],
+  'vasita-motosiklet': [
+    {cat:'vasita',sub:'motosiklet',label:'Tüm Motosiklet',icon:'🏍️'},
+    {cat:'vasita',sub:'motosiklet-sport',label:'Sport',icon:'🏁'},
+    {cat:'vasita',sub:'motosiklet-naked',label:'Naked',icon:'🔥'},
+    {cat:'vasita',sub:'motosiklet-enduro',label:'Enduro & Cross',icon:'🌲'},
+    {cat:'vasita',sub:'motosiklet-scooter',label:'Scooter',icon:'🛵'},
+    {brand:'Yamaha',label:'Yamaha',icon:'🎵'},{brand:'Honda',label:'Honda',icon:'⚪'},
+    {brand:'Kawasaki',label:'Kawasaki',icon:'🟢'},{brand:'Suzuki',label:'Suzuki',icon:'🔵'},
+    {brand:'Ducati',label:'Ducati',icon:'🔴'},{brand:'BMW Motorrad',label:'BMW Motorrad',icon:'⚫'},
+  ],
+  emlak: [
+    {cat:'emlak',sub:null,label:'Tüm Emlak',icon:'🏠'},
+    {cat:'emlak',sub:'satilik',label:'Satılık',icon:'🏷️'},{cat:'emlak',sub:'kiralik',label:'Kiralık',icon:'🔑'},
+    {cat:'emlak',sub:'gunluk',label:'Günlük Kiralık',icon:'📅'},{cat:'emlak',sub:'devren',label:'Devren',icon:'🤝'},
+    {cat:'emlak',sub:'daire',label:'Daire',icon:'🏢'},{cat:'emlak',sub:'villa',label:'Villa & Müstakil',icon:'🏡'},
+    {cat:'emlak',sub:'arsa',label:'Arsa & Tarla',icon:'🌳'},{cat:'emlak',sub:'isyeri',label:'İşyeri & Ofis',icon:'🏬'},
+    {cat:'emlak',sub:'depo',label:'Depo & Antrepo',icon:'🏭'},{cat:'emlak',sub:'1+1',label:'1+1',icon:'🚪'},
+    {cat:'emlak',sub:'2+1',label:'2+1',icon:'🚪'},{cat:'emlak',sub:'3+1',label:'3+1',icon:'🚪'},
+    {cat:'emlak',sub:'4+1-ustu',label:'4+1 ve Üstü',icon:'🚪'},
+  ],
+  elektronik: [
+    {cat:'elektronik',sub:null,label:'Tüm Elektronik',icon:'📱'},
+    {cat:'elektronik',sub:'telefon',label:'Telefon & Aksesuar',icon:'📱',hasChild:true},
+    {cat:'elektronik',sub:'bilgisayar',label:'Bilgisayar & Laptop',icon:'💻',hasChild:true},
+    {cat:'elektronik',sub:'tablet',label:'Tablet',icon:'📟'},
+    {cat:'elektronik',sub:'tv',label:'TV & Görüntü',icon:'📺'},
+    {cat:'elektronik',sub:'oyun',label:'Oyun & Konsol',icon:'🎮',hasChild:true},
+    {cat:'elektronik',sub:'fotograf',label:'Fotoğraf & Kamera',icon:'📷'},
+    {cat:'elektronik',sub:'ses',label:'Ses Sistemleri',icon:'🔊'},
+    {cat:'elektronik',sub:'giyilebilir',label:'Akıllı Saat',icon:'⌚'},
+  ],
+  'elektronik-telefon': [
+    {cat:'elektronik',sub:'telefon',label:'Tüm Telefon',icon:'📱'},
+    {cat:'elektronik',sub:'iphone-16',label:'iPhone 16 Serisi',icon:'🍎'},
+    {cat:'elektronik',sub:'iphone-15',label:'iPhone 15 Serisi',icon:'🍎'},
+    {cat:'elektronik',sub:'iphone-14',label:'iPhone 14 Serisi',icon:'🍎'},
+    {cat:'elektronik',sub:'iphone-13',label:'iPhone 13 Serisi',icon:'🍎'},
+    {brand:'Samsung',label:'Samsung',icon:'🔵'},{brand:'Xiaomi',label:'Xiaomi',icon:'🟠'},
+    {brand:'Huawei',label:'Huawei',icon:'🔴'},{brand:'Oppo',label:'Oppo',icon:'🟢'},
+    {brand:'Realme',label:'Realme',icon:'🔵'},{brand:'OnePlus',label:'OnePlus',icon:'🔴'},
+  ],
+  'elektronik-bilgisayar': [
+    {cat:'elektronik',sub:'bilgisayar',label:'Tüm Bilgisayar',icon:'💻'},
+    {brand:'Apple',label:'Apple (Mac)',icon:'🍎'},{brand:'Asus',label:'Asus',icon:'🔵'},
+    {brand:'Lenovo',label:'Lenovo',icon:'⚫'},{brand:'Dell',label:'Dell',icon:'🔵'},
+    {brand:'HP',label:'HP',icon:'🔵'},{brand:'MSI',label:'MSI',icon:'🔴'},
+    {brand:'Acer',label:'Acer',icon:'🟢'},{brand:'Toshiba',label:'Toshiba',icon:'🔴'},
+  ],
+  'elektronik-oyun': [
+    {cat:'elektronik',sub:'oyun',label:'Tüm Oyun & Konsol',icon:'🎮'},
+    {cat:'elektronik',sub:'ps5',label:'PlayStation 5',icon:'🎮'},
+    {cat:'elektronik',sub:'ps4',label:'PlayStation 4',icon:'🎮'},
+    {cat:'elektronik',sub:'xbox-series',label:'Xbox Series',icon:'🟢'},
+    {cat:'elektronik',sub:'nintendo-switch',label:'Nintendo Switch',icon:'🔴'},
+  ],
+  'ev-yasam': [
+    {cat:'ev-yasam',sub:null,label:'Tüm Ev & Yaşam',icon:'🏡'},
+    {cat:'ev-yasam',sub:'koltuk',label:'Koltuk & Kanepe',icon:'🛋️'},
+    {cat:'ev-yasam',sub:'yatak-odasi',label:'Yatak Odası',icon:'🛏️'},
+    {cat:'ev-yasam',sub:'masa-sandalye',label:'Masa & Sandalye',icon:'🪑'},
+    {cat:'ev-yasam',sub:'raf-dolap',label:'Raf & Dolap',icon:'🗄️'},
+    {cat:'ev-yasam',sub:'buzdolabi',label:'Buzdolabı',icon:'❄️'},
+    {cat:'ev-yasam',sub:'camasir-makinesi',label:'Çamaşır Makinesi',icon:'🫧'},
+    {cat:'ev-yasam',sub:'bulasik-makinesi',label:'Bulaşık Makinesi',icon:'🍽️'},
+    {cat:'ev-yasam',sub:'klima',label:'Klima',icon:'💨'},
+    {cat:'ev-yasam',sub:'dekorasyon',label:'Dekorasyon',icon:'🖼️'},
+    {cat:'ev-yasam',sub:'aydinlatma',label:'Aydınlatma',icon:'💡'},
+    {cat:'ev-yasam',sub:'bahce',label:'Bahçe & Bitki',icon:'🌿'},
+  ],
+  giyim: [
+    {cat:'giyim',sub:null,label:'Tüm Giyim',icon:'👗'},
+    {cat:'giyim',sub:'kadin-ust',label:'Kadın Üst Giyim',icon:'👚'},
+    {cat:'giyim',sub:'kadin-elbise',label:'Elbise & Tulum',icon:'👗'},
+    {cat:'giyim',sub:'kadin-dis',label:'Kadın Dış Giyim',icon:'🧥'},
+    {cat:'giyim',sub:'erkek-ust',label:'Erkek Üst Giyim',icon:'👕'},
+    {cat:'giyim',sub:'erkek-alt',label:'Erkek Alt Giyim',icon:'👖'},
+    {cat:'giyim',sub:'erkek-takim',label:'Takım Elbise',icon:'👔'},
+    {cat:'giyim',sub:'cocuk-kiz',label:'Kız Çocuk Giyim',icon:'👧'},
+    {cat:'giyim',sub:'cocuk-erkek',label:'Erkek Çocuk Giyim',icon:'👦'},
+    {cat:'giyim',sub:'kadin-ayakkabi',label:'Kadın Ayakkabı',icon:'👠'},
+    {cat:'giyim',sub:'erkek-ayakkabi',label:'Erkek Ayakkabı',icon:'👞'},
+    {cat:'giyim',sub:'spor-ayakkabi',label:'Spor Ayakkabı',icon:'👟'},
+    {cat:'giyim',sub:'canta',label:'Çanta & Cüzdan',icon:'👜'},
+    {cat:'giyim',sub:'saat',label:'Saat',icon:'⌚'},
+    {cat:'giyim',sub:'mucevher',label:'Mücevher & Takı',icon:'💎'},
+  ],
+  spor: [
+    {cat:'spor',sub:null,label:'Tüm Spor & Hobi',icon:'⚽'},
+    {cat:'spor',sub:'fitness',label:'Fitness & Spor Aleti',icon:'🏋️'},
+    {cat:'spor',sub:'bisiklet',label:'Bisiklet',icon:'🚴',hasChild:true},
+    {cat:'spor',sub:'outdoor',label:'Outdoor & Kamp',icon:'⛺'},
+    {cat:'spor',sub:'futbol',label:'Futbol',icon:'⚽'},
+    {cat:'spor',sub:'tenis',label:'Tenis & Padel',icon:'🎾'},
+    {cat:'spor',sub:'kayak',label:'Kayak & Kış Sporları',icon:'⛷️'},
+    {cat:'hobi',sub:'muzik',label:'Müzik Aletleri',icon:'🎸'},
+    {cat:'hobi',sub:'koleksiyon',label:'Koleksiyon',icon:'🏺'},
+    {cat:'hobi',sub:'sanat',label:'Sanat & El İşi',icon:'🎨'},
+    {cat:'hobi',sub:'oyuncak',label:'Oyuncak',icon:'🧸'},
+    {cat:'hobi',sub:'board-game',label:'Kutu Oyunu',icon:'♟️'},
+  ],
+  'spor-bisiklet': [
+    {cat:'spor',sub:'bisiklet',label:'Tüm Bisiklet',icon:'🚲'},
+    {cat:'spor',sub:'bisiklet-dag',label:'Dağ Bisikleti',icon:'⛰️'},
+    {cat:'spor',sub:'bisiklet-yol',label:'Yol Bisikleti',icon:'🛣️'},
+    {cat:'spor',sub:'bisiklet-sehir',label:'Şehir Bisikleti',icon:'🏙️'},
+    {cat:'spor',sub:'bisiklet-elektrikli',label:'Elektrikli Bisiklet',icon:'⚡'},
+    {cat:'spor',sub:'bisiklet-cocuk',label:'Çocuk Bisikleti',icon:'👶'},
+  ],
+  bebek: [
+    {cat:'bebek',sub:null,label:'Tüm Bebek & Çocuk',icon:'👶'},
+    {cat:'bebek',sub:'bebek-araba',label:'Bebek Arabası & Koltuk',icon:'🍼'},
+    {cat:'bebek',sub:'bebek-kiyafet',label:'Bebek Kıyafeti',icon:'🧦'},
+    {cat:'bebek',sub:'bebek-odasi',label:'Bebek Odası',icon:'🛏️'},
+    {cat:'bebek',sub:'oyuncak',label:'Oyuncak',icon:'🧸'},
+    {cat:'bebek',sub:'cocuk-kiyafet',label:'Çocuk Kıyafeti',icon:'👕'},
+  ],
+  kitap: [
+    {cat:'kitap',sub:null,label:'Tüm Kitap & Medya',icon:'📚'},
+    {cat:'kitap',sub:'roman',label:'Roman & Hikaye',icon:'📖'},
+    {cat:'kitap',sub:'ders-kitabi',label:'Ders Kitabı',icon:'📝'},
+    {cat:'kitap',sub:'cocuk-kitap',label:'Çocuk Kitapları',icon:'🧒'},
+    {cat:'kitap',sub:'bilim',label:'Bilim & Kişisel Gelişim',icon:'🔬'},
+    {cat:'kitap',sub:'cd-dvd',label:'CD & DVD',icon:'💿'},
+    {cat:'kitap',sub:'vinyl',label:'Plak & Vinyl',icon:'🎵'},
+  ],
+  hayvan: [
+    {cat:'hayvan',sub:null,label:'Tüm Hayvanlar',icon:'🐾'},
+    {cat:'hayvan',sub:'kopek',label:'Köpek',icon:'🐕'},
+    {cat:'hayvan',sub:'kedi',label:'Kedi',icon:'🐈'},
+    {cat:'hayvan',sub:'kus',label:'Kuş',icon:'🦜'},
+    {cat:'hayvan',sub:'balik',label:'Balık & Akvaryum',icon:'🐠'},
+    {cat:'hayvan',sub:'kemirgen',label:'Kemirgen',icon:'🐹'},
+    {cat:'hayvan',sub:'evcil-malzeme',label:'Evcil Hayvan Malzemesi',icon:'🦴'},
+  ],
+  'is-ilani': [
+    {cat:'is-ilani',sub:null,label:'Tüm İş İlanları',icon:'💼'},
+    {cat:'is-ilani',sub:'tam-zamanli',label:'Tam Zamanlı',icon:'⏰'},
+    {cat:'is-ilani',sub:'yari-zamanli',label:'Yarı Zamanlı',icon:'⌛'},
+    {cat:'is-ilani',sub:'freelance',label:'Freelance & Uzaktan',icon:'💻'},
+    {cat:'is-ilani',sub:'staj',label:'Staj',icon:'🎓'},
+    {cat:'hizmet',sub:'tamirat',label:'Tamirat & Bakım',icon:'🔧'},
+    {cat:'hizmet',sub:'egitim',label:'Eğitim & Ders',icon:'📚'},
+    {cat:'hizmet',sub:'nakliye',label:'Nakliye & Taşıma',icon:'🚛'},
+    {cat:'hizmet',sub:'temizlik',label:'Temizlik Hizmetleri',icon:'🧹'},
+    {cat:'hizmet',sub:'saglik',label:'Sağlık & Güzellik',icon:'💊'},
+  ],
+};
+
+window.openMobSub = (key, title) => {
+  const items = MOB_SUBS[key] || [];
+  const body = document.getElementById('mobSubMenu');
+  const chevron = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="9 18 15 12 9 6"/></svg>`;
+  body.innerHTML = items.map(it => {
+    let onclick;
+    const subkey = key + '-' + (it.sub||'');
+    if(it.hasChild && MOB_SUBS[subkey]) {
+      onclick = `openMobSub('${subkey}','${it.icon} ${it.label}')`;
+    } else if(it.brand) {
+      onclick = `filterBrand('${it.brand}');toggleMobile()`;
+    } else if(it.sub) {
+      onclick = `filterCat2('${it.cat}','${it.sub}');toggleMobile()`;
+    } else {
+      onclick = `filterCat('${it.cat}');toggleMobile()`;
+    }
+    return `<a onclick="${onclick}" class="mob-drawer-row">
+      <span class="mob-drawer-icon">${it.icon}</span>
+      <span class="mob-drawer-label">${it.label}</span>
+      ${chevron}
+    </a>`;
+  }).join('');
+  // Show sub, hide main
+  document.getElementById('mobMainMenu').style.display='none';
+  body.style.display='block';
+  document.getElementById('mobBackBtn').style.display='flex';
+  // Update title
+  const titleEl = document.getElementById('mobDrawerTitle');
+  titleEl.innerHTML = title || 'Kategoriler';
+  titleEl.style.fontSize = '16px';
+};
+window.closeMobSub = () => {
+  document.getElementById('mobMainMenu').style.display='block';
+  document.getElementById('mobSubMenu').style.display='none';
+  document.getElementById('mobBackBtn').style.display='none';
+  const titleEl = document.getElementById('mobDrawerTitle');
+  titleEl.innerHTML = 'Pazar<span>yeri</span>';
+  titleEl.style.fontSize = '';
+};
+
 window.updateSubKat = () => {
   const c = document.getElementById('aKat').value;
   const w = document.getElementById('subKatWrap');
   const s = document.getElementById('aSubKat');
-  const opts = SUBS[c] || [];
+  const opts = (SUBS[c] || []);
   if(opts.length) {
     w.style.display='block';
-    s.innerHTML='<option value="">Seçin</option>'+opts.map(o=>`<option value="${o}">${o.charAt(0).toUpperCase()+o.slice(1).replace(/-/g,' ')}</option>`).join('');
+    s.innerHTML='<option value="">Seçin</option>'+opts.map(o=>`<option value="${o.v}">${o.l}</option>`).join('');
   } else { w.style.display='none'; }
 };
 

@@ -7,109 +7,133 @@
   <link rel="stylesheet" href="css/style.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0"></script>
   <style>
-    .det-page{max-width:1080px;margin:28px auto;padding:0 20px;display:grid;grid-template-columns:1fr 320px;gap:24px;align-items:start}
-    .det-img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:12px;border:1px solid var(--border)}
-    .det-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:14px}
-    .det-title{font-size:22px;font-weight:900;color:var(--text);margin-bottom:6px;line-height:1.25}
-    .det-price{font-size:28px;font-weight:900;color:var(--primary);margin-bottom:14px}
-    .det-specs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+    .det-wrap{max-width:1100px;margin:0 auto;padding:20px 16px 40px}
+    .breadcrumb{font-size:13px;color:var(--text3);margin-bottom:16px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+    .breadcrumb a{color:var(--primary);text-decoration:none}
+    .breadcrumb a:hover{text-decoration:underline}
+    .breadcrumb-sep{color:var(--text3)}
+    .det-grid{display:grid;grid-template-columns:1fr 340px;gap:24px;align-items:start}
+    /* Gallery */
+    .gallery-wrap{position:relative}
+    .gallery-main{position:relative;border-radius:12px;overflow:hidden;background:#f3f4f6;aspect-ratio:4/3}
+    .gallery-main img{width:100%;height:100%;object-fit:cover;display:block;transition:opacity .2s}
+    .gallery-nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.9);border:none;border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.15);z-index:2;transition:background .15s;color:var(--text)}
+    .gallery-nav:hover{background:white}
+    .gallery-nav.prev{left:10px}.gallery-nav.next{right:10px}
+    .gallery-nav:disabled{opacity:.3;cursor:default}
+    .gallery-counter{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.55);color:white;font-size:12px;font-weight:700;padding:4px 10px;border-radius:20px}
+    .gallery-thumbs{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+    .gallery-thumb{width:72px;height:56px;object-fit:cover;border-radius:8px;cursor:pointer;border:2.5px solid transparent;transition:border-color .15s,opacity .15s;opacity:.75}
+    .gallery-thumb.active{border-color:var(--primary);opacity:1}
+    .gallery-thumb:hover{opacity:1}
+    /* Cards */
+    .det-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:20px;margin-top:16px}
+    .det-card-title{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--text3);margin-bottom:12px}
+    .desc-text{font-size:14px;line-height:1.75;color:var(--text2);white-space:pre-wrap}
+    .det-specs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
     .spec{background:var(--bg);border-radius:8px;padding:10px 13px}
     .spec-l{font-size:10.5px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
     .spec-v{font-size:13px;font-weight:700;color:var(--text)}
-    .seller-av{width:50px;height:50px;border-radius:50%;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;flex-shrink:0}
-    .btn-msg{width:100%;padding:12px;background:var(--primary);color:white;border:none;border-radius:var(--radius);font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:9px;transition:.15s}
-    .btn-msg:hover{background:var(--primary-dark)}
-    .btn-phone{width:100%;padding:10px;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--radius);font-size:14px;font-weight:700;cursor:pointer;transition:.15s}
-    .btn-phone:hover{border-color:var(--primary);color:var(--primary)}
-    .desc-text{font-size:14px;line-height:1.75;color:var(--text2);white-space:pre-wrap;margin-top:10px}
-    .sec-lbl{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--text3);margin-bottom:10px}
-    .breadcrumb{font-size:13px;color:var(--text3);margin-bottom:16px}
-    .breadcrumb a{color:var(--primary);text-decoration:none}
-    @media(max-width:740px){.det-page{grid-template-columns:1fr}}
+    /* Sidebar */
+    .det-sidebar{position:sticky;top:80px}
+    .det-main-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:14px}
+    .det-badge-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+    .det-badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:#e8f5e9;color:#2e7d32}
+    .det-badge.used{background:#fff3e0;color:#e65100}
+    .det-for-sale{font-size:13px;color:var(--text3)}
+    .det-title{font-size:22px;font-weight:900;color:var(--text);line-height:1.25;margin-bottom:10px}
+    .det-price{font-size:30px;font-weight:900;color:var(--primary);margin-bottom:10px}
+    .det-location{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text3);margin-bottom:16px;flex-wrap:wrap}
+    .btn-primary-full{width:100%;padding:13px;background:var(--primary);color:white;border:none;border-radius:var(--radius);font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:10px;transition:background .15s;text-decoration:none}
+    .btn-primary-full:hover{background:#c0392b}
+    .btn-outline-full{width:100%;padding:11px;background:none;color:var(--primary);border:1.5px solid var(--primary);border-radius:var(--radius);font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:10px;transition:.15s;text-decoration:none}
+    .btn-outline-full:hover{background:#fff3e0}
+    .btn-save-share{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+    .btn-ss{padding:9px;background:none;border:1.5px solid var(--border);border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;color:var(--text2);transition:.15s}
+    .btn-ss:hover{border-color:var(--primary);color:var(--primary)}
+    .seller-av{width:48px;height:48px;border-radius:50%;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;flex-shrink:0}
+    .seller-name{font-weight:800;font-size:15px;color:var(--text)}
+    .seller-role{font-size:12px;color:var(--text3);margin-top:2px}
+    .det-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+    .det-tag{font-size:12px;font-weight:700;padding:4px 10px;border-radius:20px;background:#fff3e0;color:#e65100}
+    .det-report{font-size:12px;color:var(--text3);text-align:center;margin-top:8px;cursor:pointer}
+    .det-report:hover{color:var(--primary)}
+    @media(max-width:860px){.det-grid{grid-template-columns:1fr}.det-sidebar{position:static}.gallery-thumb{width:56px;height:44px}}
   </style>
 </head>
 <body>
-
+<div style="position:sticky;top:0;z-index:500;width:100%">
 <header class="header">
   <div class="header-inner">
-    <a href="index.html" class="logo-wrap">
-      <div class="logo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
-      <div><div class="logo-text">Pazar<span>yeri</span></div><div class="logo-tagline">İlan & Alım Satım</div></div>
-    </a>
+    <a href="index.html" class="logo-wrap"><div class="logo-text">Pazar<span>yeri</span></div></a>
     <div style="flex:1"></div>
     <div class="header-right">
-      <a href="index.html" class="btn-signin" style="text-decoration:none">← İlanlara Dön</a>
       <div id="authArea"></div>
+      <a id="backBtn" href="index.html" class="btn-signin" style="text-decoration:none;margin-left:8px">← Geri</a>
     </div>
   </div>
 </header>
-
-<div id="pageWrap" style="min-height:60vh;display:flex;align-items:center;justify-content:center">
-  <div style="text-align:center;color:var(--text3)">
-    <div style="font-size:2rem;margin-bottom:8px">⏳</div>Yükleniyor...
-  </div>
 </div>
-
+<div class="det-wrap" id="pageWrap">
+  <div style="text-align:center;padding:80px 20px;color:var(--text3)"><div style="font-size:2rem;margin-bottom:8px">⏳</div>Yükleniyor...</div>
+</div>
 <div class="toast-container" id="toastContainer"></div>
-
-<div class="modal-overlay" id="loginModal">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal('loginModal')">✕</button>
-    <h2>Giriş Yap 👋</h2>
-    <form onsubmit="doLogin(event)">
-      <div class="form-group"><label class="form-label">E-posta</label><input type="email" id="lEmail" class="form-input" required></div>
-      <div class="form-group"><label class="form-label">Şifre</label><input type="password" id="lPass" class="form-input" required></div>
-      <button type="submit" class="btn-submit">Giriş Yap</button>
-    </form>
-    <div class="form-footer">Hesabınız yok mu? <a onclick="switchModal('loginModal','signupModal')">Kayıt Ol</a></div>
-  </div>
-</div>
-<div class="modal-overlay" id="signupModal">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal('signupModal')">✕</button>
-    <h2>Hesap Oluştur 🎉</h2>
-    <form onsubmit="doSignup(event)">
-      <div class="form-group"><label class="form-label">Ad Soyad</label><input type="text" id="sName" class="form-input" required></div>
-      <div class="form-group"><label class="form-label">E-posta</label><input type="email" id="sEmail" class="form-input" required></div>
-      <div class="form-group"><label class="form-label">Şifre</label><input type="password" id="sPass" class="form-input" minlength="8" required></div>
-      <button type="submit" class="btn-submit">Kayıt Ol</button>
-    </form>
-  </div>
-</div>
-
+<div class="modal-overlay" id="loginModal"><div class="modal"><button class="modal-close" onclick="closeModal('loginModal')">✕</button><h2>Giriş Yap 👋</h2><form onsubmit="doLogin(event)"><div class="form-group"><label class="form-label">E-posta</label><input type="email" id="lEmail" class="form-input" required></div><div class="form-group"><label class="form-label">Şifre</label><input type="password" id="lPass" class="form-input" required></div><button type="submit" class="btn-submit">Giriş Yap</button></form><div class="form-footer">Hesabınız yok mu? <a onclick="switchModal('loginModal','signupModal')">Kayıt Ol</a></div></div></div>
+<div class="modal-overlay" id="signupModal"><div class="modal"><button class="modal-close" onclick="closeModal('signupModal')">✕</button><h2>Hesap Oluştur 🎉</h2><form onsubmit="doSignup(event)"><div class="form-group"><label class="form-label">Ad Soyad</label><input type="text" id="sName" class="form-input" required></div><div class="form-group"><label class="form-label">E-posta</label><input type="email" id="sEmail" class="form-input" required></div><div class="form-group"><label class="form-label">Şifre</label><input type="password" id="sPass" class="form-input" minlength="8" required></div><button type="submit" class="btn-submit">Kayıt Ol</button></form></div></div>
 <script>
 (function(){
 'use strict';
 const SURL='https://sbubvjeguxuqgiklrajk.supabase.co';
 const SKEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNidWJ2amVndXh1cWdpa2xyYWprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIzOTQxNTIsImV4cCI6MjA4Nzk3MDE1Mn0.dVwPmfxu2B0o9M-lMr5_k_Qy3YPDfiuk-TX2emDk9SQ';
-if(!window._sbClient){window._sbClient=window.supabase.createClient(SURL,SKEY,{auth:{storageKey:'pz_auth',autoRefreshToken:true,persistSession:true,detectSessionInUrl:false}});}const sb=window._sbClient;
+if(!window._sbClient){window._sbClient=window.supabase.createClient(SURL,SKEY,{auth:{storageKey:'pz_auth',autoRefreshToken:true,persistSession:true,detectSessionInUrl:false}});}
+const sb=window._sbClient;
 let user=null;
+let galleryImgs=[],galIdx=0;
 const id=new URLSearchParams(window.location.search).get('id');
+// Set back button
+const ref=document.referrer;
+if(ref.includes('category.html'))document.getElementById('backBtn').href=ref;
+else if(ref.includes('index.html')||ref.endsWith('/'))document.getElementById('backBtn').href='index.html';
 
-function toast(m,t='success'){const ic={success:'✅',error:'❌',info:'ℹ️',warning:'⚠️'};const el=document.createElement('div');el.className='toast'+(t!=='success'?' '+t:'');el.innerHTML=`<span>${ic[t]}</span><span>${m}</span>`;document.getElementById('toastContainer').appendChild(el);setTimeout(()=>{el.style.opacity='0';el.style.transition='opacity .3s';setTimeout(()=>el.remove(),300)},3500);}
+function toast(m,t='success'){const ic={success:'✅',error:'❌',info:'ℹ️',warning:'⚠️'};const el=document.createElement('div');el.className='toast'+(t!=='success'?' '+t:'');el.innerHTML='<span>'+ic[t]+'</span><span>'+m+'</span>';document.getElementById('toastContainer').appendChild(el);setTimeout(()=>{el.style.opacity='0';el.style.transition='opacity .3s';setTimeout(()=>el.remove(),300)},3500);}
 const fmt=n=>(n&&n>0)?'₺'+Number(n).toLocaleString('tr-TR'):'Ücretsiz';
 const ini=n=>(n||'?').split(' ').filter(Boolean).map(x=>x[0]).join('').slice(0,2).toUpperCase();
+const ago=d=>{if(!d)return'';const s=Math.floor((Date.now()-new Date(d))/1000);if(s<3600)return Math.floor(s/60)+'dk önce';if(s<86400)return Math.floor(s/3600)+'sa önce';return Math.floor(s/86400)+' gün önce';};
 
-window.openModal=id=>{document.getElementById(id).classList.add('open');document.body.style.overflow='hidden';};
-window.closeModal=id=>{document.getElementById(id).classList.remove('open');document.body.style.overflow='';};
+window.openModal=i=>{document.getElementById(i).classList.add('open');document.body.style.overflow='hidden';};
+window.closeModal=i=>{document.getElementById(i).classList.remove('open');document.body.style.overflow='';};
 window.switchModal=(a,b)=>{closeModal(a);openModal(b);};
 document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)closeModal(o.id);}));
-
 window.doLogin=async e=>{e.preventDefault();const{error}=await sb.auth.signInWithPassword({email:document.getElementById('lEmail').value,password:document.getElementById('lPass').value});if(error){toast(error.message,'error');return;}toast('Hoş geldin!');closeModal('loginModal');};
-window.doSignup=async e=>{e.preventDefault();const{error}=await sb.auth.signUp({email:document.getElementById('sEmail').value,password:document.getElementById('sPass').value,options:{data:{full_name:document.getElementById('sName').value}}});if(error){toast(error.message,'error');return;}toast('Kayıt başarılı! 📧');closeModal('signupModal');};
-
+window.doSignup=async e=>{e.preventDefault();const{error}=await sb.auth.signUp({email:document.getElementById('sEmail').value,password:document.getElementById('sPass').value,options:{data:{full_name:document.getElementById('sName').value}}});if(error){toast(error.message,'error');return;}toast('Kayıt başarılı!');closeModal('signupModal');};
 sb.auth.onAuthStateChange((ev,ses)=>{user=ses?.user||null;renderAuth();});
+function renderAuth(){const a=document.getElementById('authArea');if(!a)return;if(user){const nm=user.user_metadata?.full_name||user.email;a.innerHTML='<a href="profile.html"><div class="user-avatar" style="background:var(--primary)">'+ini(nm)+'</div></a>';}else a.innerHTML='<button class="btn-signin" onclick="openModal(\'loginModal\')">Giriş Yap</button>';}
 
-function renderAuth(){
-  const a=document.getElementById('authArea');if(!a)return;
-  if(user){const nm=user.user_metadata?.full_name||user.email;a.innerHTML=`<a href="profile.html"><div class="user-avatar" style="background:var(--primary)">${ini(nm)}</div></a>`;}
-  else a.innerHTML=`<button class="btn-signin" onclick="openModal('loginModal')">Giriş Yap</button>`;
+window.galGo=dir=>{galIdx=Math.max(0,Math.min(galleryImgs.length-1,galIdx+dir));updateGallery();};
+window.galSet=i=>{galIdx=i;updateGallery();};
+function updateGallery(){
+  const mi=document.getElementById('galMain'),counter=document.getElementById('galCounter');
+  if(mi){mi.style.opacity='0';setTimeout(()=>{mi.src=galleryImgs[galIdx];mi.style.opacity='1';},150);}
+  if(counter)counter.textContent=(galIdx+1)+' / '+galleryImgs.length;
+  document.querySelectorAll('.gallery-thumb').forEach((t,i)=>t.classList.toggle('active',i===galIdx));
+  const pBtn=document.querySelector('.gallery-nav.prev'),nBtn=document.querySelector('.gallery-nav.next');
+  if(pBtn)pBtn.disabled=galIdx===0;
+  if(nBtn)nBtn.disabled=galIdx===galleryImgs.length-1;
 }
 
 const DEMO={
-  d1:{id:'d1',isim:'2019 BMW 3 Serisi 320i M Sport',kategori:'vasita',fiyat:850000,resim_url:'https://picsum.photos/seed/bmw320i/600/400',durum:'ikinci-el',konum:'İstanbul',aciklama:'Araç son derece bakımlı. Servis geçmişi mevcut. Hasar kaydı yok. Orijinal boyalı. İlk sahibinden.',telefon:'05321234567',user_id:'u1',seller_name:'Ahmet K.',created_at:new Date().toISOString()},
-  d2:{id:'d2',isim:'3+1 Satılık Daire Kadıköy',kategori:'emlak',fiyat:4200000,resim_url:'https://picsum.photos/seed/kadikoy/600/400',durum:'satilik',konum:'İstanbul / Kadıköy',aciklama:'Deniz manzaralı, güney cepheli 3+1 satılık daire. 120m2. Metrobüs yakını. Tapu hazır.',telefon:'05329876543',user_id:'u2',seller_name:'Fatma S.',created_at:new Date().toISOString()},
-  d3:{id:'d3',isim:'iPhone 15 Pro Max 256GB Titanium',kategori:'elektronik',fiyat:52000,resim_url:'https://picsum.photos/seed/iph15pro/600/400',durum:'sifir',konum:'Ankara',aciklama:'Sıfır, hiç açılmamış kutu. Faturalı. Garantili.',telefon:'05335556677',user_id:'u3',seller_name:'Mehmet T.',created_at:new Date().toISOString()},
+  d1:{id:'d1',isim:'2019 BMW 3 Serisi 320i M Sport',kategori:'vasita',alt_kategori:'otomobil',fiyat:850000,resim_url:'https://picsum.photos/seed/bmw320i/600/400',durum:'ikinci-el',konum:'İstanbul',aciklama:'Araç son derece bakımlı. Servis geçmişi mevcut.\nHasar kaydı yok. Orijinal boyalı.\n\nAraçta mevcut özellikler:\n• Panoramik cam tavan\n• Deri döşeme\n• Adaptif cruise control\n• Geri görüş kamerası',telefon:'05321234567',user_id:'u1',seller_name:'Ahmet K.',created_at:new Date(Date.now()-3600000).toISOString()},
+  d2:{id:'d2',isim:'3+1 Satılık Daire Kadıköy',kategori:'emlak',alt_kategori:'satilik',fiyat:4200000,resim_url:'https://picsum.photos/seed/kadikoy/600/400',durum:'satilik',konum:'İstanbul / Kadıköy',aciklama:'Deniz manzaralı 3+1 satılık daire. 120m2.\n\n• 3. kat\n• Asansörlü bina\n• Doğalgaz kombi\n• Metrobüs 5 dk yürüme mesafesi',telefon:'05329876543',user_id:'u2',seller_name:'Fatma S.',created_at:new Date(Date.now()-7200000).toISOString()},
+  d3:{id:'d3',isim:'iPhone 15 Pro Max 256GB Titanium',kategori:'elektronik',alt_kategori:'telefon',fiyat:52000,resim_url:'https://picsum.photos/seed/iph15pro/600/400',durum:'sifir',konum:'Ankara',aciklama:'Sıfır, hiç açılmamış kutu. Faturalı. Garantili.\n\n• 256GB depolama\n• Titanium renk\n• A17 Pro chip\n• 48MP kamera sistemi',telefon:'05335556677',user_id:'u3',seller_name:'Mehmet T.',created_at:new Date(Date.now()-86400000).toISOString()},
+  d4:{id:'d4',isim:'Samsung 65" 4K QLED TV',kategori:'elektronik',alt_kategori:'tv',fiyat:18500,resim_url:'https://picsum.photos/seed/samqled/600/400',durum:'ikinci-el',konum:'İzmir',aciklama:'Samsung 65 inç 4K QLED TV. Az kullanılmış.',telefon:'05441234567',user_id:'u4',seller_name:'Ayşe B.',created_at:new Date(Date.now()-172800000).toISOString()},
+  d5:{id:'d5',isim:'MacBook Pro M3 14" 16GB/512GB',kategori:'elektronik',alt_kategori:'bilgisayar',fiyat:68000,resim_url:'https://picsum.photos/seed/m3macbook/600/400',durum:'yeniye-yakin',konum:'Bursa',aciklama:'MacBook Pro M3 chip 14 inç. 16GB RAM / 512GB SSD. 1 yıl kullanıldı.',telefon:'05324445566',user_id:'u5',seller_name:'Ali R.',created_at:new Date(Date.now()-259200000).toISOString()},
+  d6:{id:'d6',isim:'2021 Honda CB500F Motosiklet',kategori:'vasita',alt_kategori:'motosiklet',fiyat:195000,resim_url:'https://picsum.photos/seed/hondacb5/600/400',durum:'ikinci-el',konum:'Antalya',aciklama:'18.000 km de Honda CB500F. Bakımları yapılmış.',telefon:'05551234567',user_id:'u6',seller_name:'Can Y.',created_at:new Date(Date.now()-345600000).toISOString()},
+  d7:{id:'d7',isim:'Kiralık 1+1 Daire Beşiktaş',kategori:'emlak',alt_kategori:'kiralik',fiyat:18000,resim_url:'https://picsum.photos/seed/bestasas/600/400',durum:'kiralik',konum:'İstanbul / Beşiktaş',aciklama:'Merkezi konumda tam eşyalı 1+1 kiralık daire.',telefon:'05329998877',user_id:'u7',seller_name:'Zeynep K.',created_at:new Date(Date.now()-432000000).toISOString()},
+  d8:{id:'d8',isim:'PlayStation 5 + 2 Kol + 5 Oyun',kategori:'elektronik',alt_kategori:'oyun',fiyat:15000,resim_url:'https://picsum.photos/seed/ps5console/600/400',durum:'ikinci-el',konum:'Konya',aciklama:'PS5 Disk Edition, 2 DualSense kol ve 5 oyun dahil.',telefon:'05441122334',user_id:'u8',seller_name:'Emre D.',created_at:new Date(Date.now()-518400000).toISOString()},
+  d9:{id:'d9',isim:'Trek Marlin 5 Dağ Bisikleti 2023',kategori:'spor',alt_kategori:'bisiklet-dag',fiyat:12500,resim_url:'https://picsum.photos/seed/trekm5/600/400',durum:'yeniye-yakin',konum:'İzmir',aciklama:'Trek Marlin 5, M frame. 2023 model, az kullanılmış.',telefon:'05554433221',user_id:'u9',seller_name:'Selin A.',created_at:new Date(Date.now()-604800000).toISOString()},
+  d10:{id:'d10',isim:'L Köşe Koltuk Takımı Deri',kategori:'ev-yasam',alt_kategori:'koltuk',fiyat:8500,resim_url:'https://picsum.photos/seed/lkose/600/400',durum:'ikinci-el',konum:'Ankara',aciklama:'Gerçek deri L köşe koltuk. Temiz ve bakımlı.',telefon:'05321122334',user_id:'u10',seller_name:'Baran M.',created_at:new Date(Date.now()-691200000).toISOString()},
+  d11:{id:'d11',isim:'Adidas Ultraboost 22 Beden 43',kategori:'giyim',alt_kategori:'spor-ayakkabi',fiyat:2800,resim_url:'https://picsum.photos/seed/ultrab22/600/400',durum:'sifir',konum:'İstanbul',aciklama:'Sıfır kutusunda Adidas Ultraboost 22. Beden 43. Orijinal.',telefon:'05337654321',user_id:'u11',seller_name:'Ece S.',created_at:new Date(Date.now()-777600000).toISOString()},
+  d12:{id:'d12',isim:'2020 Ford Focus 1.5 Ecoboost ST Line',kategori:'vasita',alt_kategori:'otomobil',fiyat:680000,resim_url:'https://picsum.photos/seed/focusst/600/400',durum:'ikinci-el',konum:'Bursa',aciklama:'65.000 km de Ford Focus 1.5 Ecoboost ST Line. Hasar kaydı yok.',telefon:'05551234000',user_id:'u12',seller_name:'Hakan O.',created_at:new Date(Date.now()-864000000).toISOString()},
 };
 
 async function load(){
@@ -120,88 +144,114 @@ async function load(){
   render(data);
 }
 
-function show404(){
-  document.getElementById('pageWrap').innerHTML=`<div style="text-align:center;padding:80px 20px">
-    <div style="font-size:3rem;margin-bottom:12px">📭</div>
-    <h3 style="font-size:20px;font-weight:900;color:var(--text);margin-bottom:8px">İlan Bulunamadı</h3>
-    <p style="color:var(--text3);margin-bottom:20px">Bu ilan silinmiş veya mevcut değil.</p>
-    <a href="index.html" style="padding:10px 24px;background:var(--primary);color:white;border-radius:var(--radius);font-weight:700;text-decoration:none">← İlanlara Dön</a>
-  </div>`;
-}
+function show404(){document.getElementById('pageWrap').innerHTML='<div style="text-align:center;padding:80px 20px"><div style="font-size:3rem;margin-bottom:12px">📭</div><h3 style="font-size:20px;font-weight:900;color:var(--text);margin-bottom:8px">İlan Bulunamadı</h3><p style="color:var(--text3);margin-bottom:20px">Bu ilan silinmiş veya mevcut değil.</p><a href="index.html" style="padding:10px 24px;background:var(--primary);color:white;border-radius:var(--radius);font-weight:700;text-decoration:none">← İlanlara Dön</a></div>';}
 
 function render(it){
-  document.title=`${it.isim||'İlan'} — Pazaryeri`;
-  const conds={'ikinci-el':'İkinci El','sifir':'Sıfır','yeniye-yakin':'Yeniye Yakın','satilik':'Satılık','kiralik':'Kiralık'};
+  document.title=(it.isim||'İlan')+' — Pazaryeri';
+  const condMap={'ikinci-el':['used','İkinci El'],'sifir':['','Sıfır'],'yeniye-yakin':['used','Yeniye Yakın'],'satilik':['','Satılık'],'kiralik':['used','Kiralık'],'hasarli':['used','Hasarlı'],'yenilenmiş':['','Yenilenmiş']};
+  const[badgeCls,badgeLbl]=condMap[it.durum]||['used','İkinci El'];
+  const sellerName=it.seller_name||'Satıcı';
   const favs=JSON.parse(localStorage.getItem('pm_favs')||'[]');
   const isFav=favs.includes(String(it.id));
-  const sellerName=it.seller_name||'Satıcı';
-  const imgSrc=it.resim_url||`https://picsum.photos/seed/${it.id}/600/400`;
+  // Build images
+  let images=[];
+  if(it.resim_urls&&Array.isArray(it.resim_urls))images=it.resim_urls;
+  else if(it.resim_url)images=[it.resim_url];
+  if(it.id&&String(it.id).startsWith('d')&&images.length===1){const s=it.id;images=[images[0],'https://picsum.photos/seed/'+s+'2/600/400','https://picsum.photos/seed/'+s+'3/600/400','https://picsum.photos/seed/'+s+'4/600/400'];}
+  if(!images.length)images=['https://picsum.photos/seed/default/600/400'];
+  galleryImgs=images;galIdx=0;
+  const catLink=it.kategori?'category.html?cat='+it.kategori:'index.html';
+  const subLink=it.alt_kategori?'category.html?cat='+it.kategori+'&sub='+it.alt_kategori:catLink;
+  const ago_str=ago(it.created_at);
+  const desc=(it.aciklama||'Açıklama girilmemiş.').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const thumbsHtml=images.map((src,i)=>'<img class="gallery-thumb'+(i===0?' active':'')+'" src="'+src+'" onclick="galSet('+i+')" alt="Fotoğraf '+(i+1)+'" loading="lazy">').join('');
+  const navSvgPrev='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><polyline points="15 18 9 12 15 6"/></svg>';
+  const navSvgNext='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg>';
 
   document.getElementById('pageWrap').innerHTML=`
-  <div class="det-page">
+  <div class="breadcrumb">
+    <a href="index.html">Ana Sayfa</a><span class="breadcrumb-sep">›</span>
+    <a href="${catLink}">${it.kategori||'İlan'}</a>
+    ${it.alt_kategori?'<span class="breadcrumb-sep">›</span><a href="'+subLink+'">'+it.alt_kategori+'</a>':''}
+    <span class="breadcrumb-sep">›</span><span>${it.isim||'İlan'}</span>
+  </div>
+  <div class="det-grid">
     <div>
-      <div class="breadcrumb"><a href="index.html">Ana Sayfa</a> › <a href="index.html" onclick="return true">${it.kategori||'İlan'}</a> › ${it.isim||'İlan'}</div>
-      <img class="det-img" id="mainImg" src="${imgSrc}" alt="${it.isim||''}" onerror="this.src='https://picsum.photos/seed/x/600/400'">
-      <div class="det-card" style="margin-top:16px">
-        <div class="sec-lbl">Açıklama</div>
-        <div class="desc-text">${(it.aciklama||'Açıklama girilmemiş.').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+      <div class="gallery-wrap">
+        <div class="gallery-main">
+          <img id="galMain" src="${images[0]}" alt="${it.isim||''}" onerror="this.src='https://picsum.photos/seed/default/600/400'">
+          <button class="gallery-nav prev" onclick="galGo(-1)" ${images.length<=1?'disabled':''}>${navSvgPrev}</button>
+          <button class="gallery-nav next" onclick="galGo(1)" ${images.length<=1?'disabled':''}>${navSvgNext}</button>
+          ${images.length>1?'<div class="gallery-counter" id="galCounter">1 / '+images.length+'</div>':''}
+        </div>
+        ${images.length>1?'<div class="gallery-thumbs">'+thumbsHtml+'</div>':''}
+      </div>
+      <div class="det-card">
+        <div class="det-card-title">Açıklama</div>
+        <div class="desc-text">${desc}</div>
+      </div>
+      <div class="det-card">
+        <div class="det-card-title">İlan Detayları</div>
+        <div class="det-specs">
+          <div class="spec"><div class="spec-l">Durum</div><div class="spec-v">${badgeLbl}</div></div>
+          <div class="spec"><div class="spec-l">Konum</div><div class="spec-v">${it.konum||'—'}</div></div>
+          <div class="spec"><div class="spec-l">Kategori</div><div class="spec-v">${it.kategori||'—'}</div></div>
+          ${it.alt_kategori?'<div class="spec"><div class="spec-l">Alt Kategori</div><div class="spec-v">'+it.alt_kategori+'</div></div>':''}
+          <div class="spec"><div class="spec-l">İlan Tarihi</div><div class="spec-v">${new Date(it.created_at).toLocaleDateString('tr-TR')}</div></div>
+          <div class="spec"><div class="spec-l">İlan No</div><div class="spec-v">#${String(it.id).slice(-6)}</div></div>
+        </div>
+        ${(it.acil||it.pazarlik||it.takas)?'<div class="det-tags">'+(it.acil?'<span class="det-tag">🔥 Acil Satılık</span>':'')+(it.pazarlik?'<span class="det-tag">🤝 Pazarlık Yapılır</span>':'')+(it.takas?'<span class="det-tag">🔄 Takasla Olur</span>':'')+'</div>':''}
       </div>
     </div>
-    <div>
-      <div class="det-card">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start">
-          <div class="lc-cat" style="margin-bottom:6px">${it.kategori||''}</div>
-          <button onclick="toggleFav('${it.id}',this)" style="background:none;border:none;cursor:pointer;font-size:22px;line-height:1">${isFav?'❤️':'🤍'}</button>
+    <div class="det-sidebar">
+      <div class="det-main-card">
+        <div class="det-badge-row">
+          <span class="det-badge ${badgeCls}">${badgeLbl}</span>
+          <span class="det-for-sale">Satışta</span>
         </div>
         <div class="det-title">${it.isim||'İlan'}</div>
         <div class="det-price">${fmt(it.fiyat)}</div>
-        <div class="det-specs">
-          <div class="spec"><div class="spec-l">Durum</div><div class="spec-v">${conds[it.durum]||it.durum||'—'}</div></div>
-          <div class="spec"><div class="spec-l">Konum</div><div class="spec-v">${it.konum||'—'}</div></div>
-          <div class="spec"><div class="spec-l">Kategori</div><div class="spec-v">${it.kategori||'—'}</div></div>
-          <div class="spec"><div class="spec-l">İlan Tarihi</div><div class="spec-v">${new Date(it.created_at).toLocaleDateString('tr-TR')}</div></div>
+        <div class="det-location">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          ${it.konum||'Konum belirtilmemiş'}
+          ${ago_str?'<span style="color:var(--text3)">·</span><span>'+ago_str+'</span>':''}
         </div>
-      </div>
-      <div class="det-card">
-        <div class="sec-lbl">Satıcı</div>
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
-          <div class="seller-av">${ini(sellerName)}</div>
-          <div>
-            <div style="font-weight:800;font-size:15px;color:var(--text)">${sellerName}</div>
-            <div style="font-size:12px;color:var(--text3);margin-top:2px">Üye Satıcı</div>
-          </div>
-        </div>
-        <button class="btn-msg" onclick="goMsg('${it.id}','${it.user_id||''}')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <button class="btn-primary-full" onclick="goMsg('${it.id}','${it.user_id||''}')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
           Mesaj Gönder
         </button>
-        ${it.telefon?`<button class="btn-phone" id="phoneBtn" onclick="showPhone('${it.telefon}')">📞 Telefonu Göster</button>`:''}
+        ${it.telefon?'<button class="btn-outline-full" id="phoneBtn" onclick="showPhone(\''+it.telefon+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.07 6.07l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg> Telefonu Göster</button>':''}
+        <div class="btn-save-share">
+          <button class="btn-ss" id="favBtn" onclick="toggleFav('${it.id}',this)">
+            <svg viewBox="0 0 24 24" fill="${isFav?'var(--primary)':'none'}" stroke="${isFav?'var(--primary)':'currentColor'}" stroke-width="2" width="14" height="14"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            ${isFav?'Favoride':'Kaydet'}
+          </button>
+          <button class="btn-ss" onclick="shareItem()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            Paylaş
+          </button>
+        </div>
+        <div class="det-report" onclick="toast('Şikayet alındı.','info')">🚩 İlanı Şikayet Et</div>
+      </div>
+      <div class="det-main-card">
+        <div class="det-card-title">Satıcı</div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+          <div class="seller-av">${ini(sellerName)}</div>
+          <div><div class="seller-name">${sellerName}</div><div class="seller-role">Üye Satıcı</div></div>
+        </div>
+        <button class="btn-outline-full" onclick="goMsg('${it.id}','${it.user_id||''}')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Mesaj Gönder
+        </button>
       </div>
     </div>
   </div>`;
 }
 
-window.toggleFav=(id,btn)=>{
-  let favs=JSON.parse(localStorage.getItem('pm_favs')||'[]');const sid=String(id);
-  if(favs.includes(sid)){favs=favs.filter(f=>f!==sid);btn.textContent='🤍';toast('Favorilerden çıkarıldı','info');}
-  else{favs.push(sid);btn.textContent='❤️';toast('Favorilere eklendi ❤️');}
-  localStorage.setItem('pm_favs',JSON.stringify(favs));
-};
-window.showPhone=tel=>{const btn=document.getElementById('phoneBtn');if(btn){btn.textContent='📞 '+tel;btn.style.color='var(--primary)';btn.onclick=null;}};
-window.goMsg=async(listingId,sellerId)=>{
-  if(!user){toast('Mesaj için giriş yapın','warning');openModal('loginModal');return;}
-  // sellerId boşsa veya demo ise — ilanı Supabase'den çek
-  if(!sellerId || sellerId==='' || sellerId==='undefined' || sellerId.startsWith('u')){
-    toast('Satıcı bilgisi alınıyor...','info');
-    try{
-      const{data}=await sb.from('urunler').select('user_id').eq('id',listingId).single();
-      if(data?.user_id) sellerId=data.user_id;
-      else { toast('Bu ilan demo içeriği, gerçek bir satıcısı yok.','warning'); return; }
-    }catch(e){ toast('Satıcı bilgisi alınamadı.','error'); return; }
-  }
-  if(user.id===sellerId){toast('Kendi ilanınıza mesaj gönderemezsiniz','warning');return;}
-  window.location.href=`messages.html?listing=${listingId}&seller=${sellerId}`;
-};
+window.toggleFav=(id,btn)=>{let favs=JSON.parse(localStorage.getItem('pm_favs')||'[]');const sid=String(id);const svg=btn.querySelector('svg');if(favs.includes(sid)){favs=favs.filter(f=>f!==sid);if(svg){svg.setAttribute('fill','none');svg.setAttribute('stroke','currentColor');}btn.innerHTML=btn.innerHTML.replace('Favoride','Kaydet');toast('Favorilerden çıkarıldı','info');}else{favs.push(sid);if(svg){svg.setAttribute('fill','var(--primary)');svg.setAttribute('stroke','var(--primary)');}btn.innerHTML=btn.innerHTML.replace('Kaydet','Favoride');toast('Favorilere eklendi ❤️');}localStorage.setItem('pm_favs',JSON.stringify(favs));};
+window.showPhone=tel=>{const btn=document.getElementById('phoneBtn');if(btn){btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.07 6.07l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg> '+tel;btn.onclick=()=>window.open('tel:'+tel);}};
+window.shareItem=()=>{if(navigator.share){navigator.share({title:document.title,url:window.location.href});}else{navigator.clipboard.writeText(window.location.href);toast('Link kopyalandı','info');}};
+window.goMsg=async(listingId,sellerId)=>{if(!user){toast('Mesaj için giriş yapın','warning');openModal('loginModal');return;}if(!sellerId||sellerId===''||sellerId==='undefined'||sellerId.startsWith('u')){toast('Satıcı bilgisi alınıyor...','info');try{const{data}=await sb.from('urunler').select('user_id').eq('id',listingId).single();if(data?.user_id)sellerId=data.user_id;else{toast('Bu ilan demo içeriği.','warning');return;}}catch(e){toast('Satıcı bilgisi alınamadı.','error');return;}}if(user.id===sellerId){toast('Kendi ilanınıza mesaj gönderemezsiniz','warning');return;}window.location.href='messages.html?listing='+listingId+'&seller='+sellerId;};
 
 load();
 })();
