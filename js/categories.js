@@ -5,39 +5,10 @@
 const CAT = {
 
   vasita: { label:'Vasıta', icon:'🚗', color:'#e74c3c',
-    groups:[
-      { g:'Otomobil', items:[
-        {v:'otomobil',l:'Tüm Otomobil'},{v:'sedan',l:'Sedan'},{v:'hatchback',l:'Hatchback'},
-        {v:'station-wagon',l:'Station Wagon'},{v:'coupe',l:'Coupe / Cabrio'},
-        {v:'suv',l:'SUV'},{v:'crossover',l:'Crossover'},{v:'pick-up',l:'Pick-up'},
-        {v:'minivan',l:'Minivan & MPV'},{v:'elektrikli-araba',l:'Elektrikli Araç'},
-        {v:'hibrit',l:'Hibrit Araç'},{v:'klasik-araba',l:'Klasik & Koleksiyon Araç'}
-      ]},
-      { g:'Ticari Araç', items:[
-        {v:'hafif-ticari',l:'Hafif Ticari'},{v:'kamyonet',l:'Kamyonet'},
-        {v:'kamyon',l:'Kamyon'},{v:'minibus',l:'Minibüs'},{v:'otobus',l:'Otobüs'},
-        {v:'cekici-tir',l:'Çekici & Tır'},{v:'is-makinesi',l:'İş Makinesi & Forklift'},
-        {v:'tarim-arac',l:'Tarım Aracı & Traktör'}
-      ]},
-      { g:'Motosiklet', items:[
-        {v:'motosiklet',l:'Tüm Motosiklet'},{v:'motosiklet-sport',l:'Sport'},
-        {v:'motosiklet-naked',l:'Naked'},{v:'motosiklet-touring',l:'Touring & Adventure'},
-        {v:'motosiklet-enduro',l:'Enduro & Cross'},{v:'motosiklet-scooter',l:'Scooter & Moped'},
-        {v:'motosiklet-chopper',l:'Chopper & Custom'},{v:'atv-utv',l:'ATV & UTV'},
-        {v:'elektrikli-motor',l:'Elektrikli Motor'}
-      ]},
-      { g:'Deniz & Hava', items:[
-        {v:'tekne',l:'Tekne & Motor Bot'},{v:'yat',l:'Yat & Yelkenli'},
-        {v:'jet-ski',l:'Jet-ski & Su Aracı'},{v:'karavela',l:'Karavan & Römork'},
-        {v:'kucuk-hava',l:'Ultralight & Paramotor'}
-      ]},
-      { g:'Bisiklet & Elektrikli', items:[
-        {v:'bisiklet-dag',l:'Dağ Bisikleti'},{v:'bisiklet-yol',l:'Yol Bisikleti'},
-        {v:'bisiklet-sehir',l:'Şehir Bisikleti'},{v:'bisiklet-bmx',l:'BMX'},
-        {v:'bisiklet-elektrik',l:'Elektrikli Bisiklet'},{v:'elektrikli-scooter',l:'Elektrikli Scooter'},
-        {v:'monopalet',l:'Monowheel & Hoverboard'}
-      ]},
-      { g:'Otomobil Markaları', brands:[
+    // Yeni yapı: her alt kategori kendi brands listesini taşıyor
+    // buildSidebar: vasita seçili → subs listesi, sub seçili → o sub'ın brands'i, brand seçili → CAR_MODELS
+    subs: [
+      { v:'otomobil',       l:'Otomobil',            brands:[
         'Alfa Romeo','Aston Martin','Audi','Bentley','BMW','Bugatti','Citroen',
         'Dacia','Ferrari','Fiat','Ford','Honda','Hyundai','Infiniti','Jaguar',
         'Jeep','Kia','Lamborghini','Land Rover','Lexus','Maserati','Mazda',
@@ -45,11 +16,40 @@ const CAT = {
         'Renault','Rolls-Royce','Seat','Skoda','Smart','Subaru','Suzuki',
         'Tesla','Togg','Toyota','Volkswagen','Volvo'
       ]},
-      { g:'Motosiklet Markaları', brands:[
+      { v:'arazi-suv',      l:'Arazi, SUV & Pickup',  brands:[
+        'BMW','Dacia','Ford','Honda','Hyundai','Jeep','Kia','Land Rover',
+        'Mazda','Mercedes-Benz','Mitsubishi','Nissan','Opel','Peugeot',
+        'Renault','Skoda','Subaru','Suzuki','Toyota','Volkswagen','Volvo'
+      ]},
+      { v:'elektrikli',     l:'Elektrikli Araçlar',   brands:[
+        'Audi','BMW','Fiat','Ford','Hyundai','Kia','Mercedes-Benz',
+        'Mini','Nissan','Opel','Peugeot','Renault','Tesla','Togg','Volkswagen','Volvo'
+      ]},
+      { v:'motosiklet',     l:'Motosiklet',            brands:[
         'Aprilia','BMW Motorrad','Ducati','Harley-Davidson','Honda','Husqvarna',
         'Indian','Kawasaki','KTM','Moto Guzzi','Royal Enfield','Suzuki','Triumph','Yamaha'
-      ]}
-    ]
+      ]},
+      { v:'minivan',        l:'Minivan & Panelvan',    brands:[
+        'Citroen','Fiat','Ford','Honda','Hyundai','Kia','Mercedes-Benz',
+        'Opel','Peugeot','Renault','Toyota','Volkswagen'
+      ]},
+      { v:'ticari',         l:'Ticari Araçlar',        brands:[
+        'Citroen','Fiat','Ford','Hyundai','Isuzu','Iveco','MAN',
+        'Mercedes-Benz','Opel','Peugeot','Renault','Toyota','Volkswagen'
+      ]},
+      { v:'kiralik',        l:'Kiralık Araçlar',       brands:[] },
+      { v:'deniz',          l:'Deniz Araçları',        brands:[] },
+      { v:'hasarli',        l:'Hasarlı Araçlar',       brands:[
+        'Audi','BMW','Fiat','Ford','Honda','Hyundai','Kia',
+        'Mercedes-Benz','Nissan','Opel','Renault','Toyota','Volkswagen'
+      ]},
+      { v:'karavan',        l:'Karavan',               brands:[] },
+      { v:'klasik',         l:'Klasik Araçlar',        brands:[] },
+      { v:'hava',           l:'Hava Araçları',         brands:[] },
+      { v:'atv-utv',        l:'ATV',                   brands:[] }
+    ],
+    // Eski groups alanı da bırakıyoruz — diğer sayfalar kullanıyor olabilir
+    groups:[]
   },
 
   emlak: { label:'Emlak', icon:'🏠', color:'#27ae60',
